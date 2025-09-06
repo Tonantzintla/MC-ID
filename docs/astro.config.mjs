@@ -1,7 +1,6 @@
 // @ts-check
 import sitemap from "@astrojs/sitemap";
 import starlight from "@astrojs/starlight";
-import svelte from "@astrojs/svelte";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 
@@ -36,8 +35,7 @@ export default defineConfig({
       customCss: ["./src/styles/global.css"],
       plugins: []
     }),
-    sitemap(),
-    svelte()
+    sitemap()
   ],
 
   vite: {

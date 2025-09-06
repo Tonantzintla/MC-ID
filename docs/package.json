@@ -15,11 +15,9 @@
     "@astrojs/sitemap": "^3.5.1",
     "@astrojs/starlight": "^0.35.2",
     "@astrojs/starlight-tailwind": "^4.0.1",
-    "@astrojs/svelte": "^7.1.0",
     "@tailwindcss/vite": "^4.1.13",
     "astro": "^5.6.1",
     "sharp": "^0.34.2",
-    "svelte": "^5.38.6",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.9.2",
     "wrangler": "^4.34.0"
@@ -28,7 +26,6 @@
     "prettier": "^3.6.2",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-svelte": "^3.4.0",
-    "prettier-plugin-tailwindcss": "^0.6.14",
-    "starlight-theme-next": "^0.3.2"
+    "prettier-plugin-tailwindcss": "^0.6.14"
   }
 }

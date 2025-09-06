@@ -1,7 +1,38 @@
-@import "tailwindcss";
-@layer base, starlight, theme, nextjs, components, utilities;
+@layer base, starlight, theme, components, utilities;
+
 @import "@astrojs/starlight-tailwind";
+@import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
+@theme {
+  /*
+	Configure your Tailwind theme that will be used by Starlight.
+	https://starlight.astro.build/guides/css-and-tailwind/#styling-starlight-with-tailwind
+	*/
+  /* --font-sans: InterVariable, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; */
+  --font-sans: InterVariable;
+  --font-sans--font-feature-settings: "cv01", "cv02", "cv03", "cv04", "cv05", "cv06", "cv07", "cv08", "cv09", "cv10", "cv11", "cv12", "cv13", "alt-1", "alt-3", "open-4", "open-6", "open-9", "lc-l-with-tail", "simplified-u", "alt-double-s", "uc-i-with-serif", "uc-g-with-spur", "single-story-a", "compact-lc-f", "compact-lc-t";
+  --font-sans--font-feature-variant: "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "ss07", "ss08", "open-digits", "disambiguation", "disambiguation-except-zero", "round-quotes-and-commas", "square-punctuation", "square-quotes", "circled-characters", "squared-characters";
+
+  /* Generated accent color palettes. */
+  --color-accent-200: #bacfbf;
+  --color-accent-600: #165a31;
+  --color-accent-900: #1e3926;
+  --color-accent-950: #18281c;
+  /* Generated gray color palettes. */
+  --color-gray-100: #f5f5f5;
+  --color-gray-200: #e5e5e5;
+  --color-gray-300: #d4d4d4;
+  --color-gray-400: #a3a3a3;
+  --color-gray-500: #737373;
+  --color-gray-700: #404040;
+  --color-gray-800: #262626;
+  --color-gray-900: #171717;
+}
+
+/*
+Add additional Tailwind styles to this file:
+https://tailwindcss.com/docs/adding-custom-styles#using-custom-css
+*/
 
 @layer base {
   @font-face {
@@ -9,7 +40,7 @@
     font-style: normal;
     font-weight: 100 900;
     font-display: swap;
-    src: url("/assets/fonts/InterVariable.woff2") format("woff2");
+    src: url("../assets/fonts/InterVariable.woff2") format("woff2");
   }
 
   @font-face {
@@ -17,7 +48,7 @@
     font-style: italic;
     font-weight: 100 900;
     font-display: swap;
-    src: url("/assets/fonts/InterVariable-Italic.woff2") format("woff2");
+    src: url("../assets/fonts/InterVariable-Italic.woff2") format("woff2");
   }
 
   @font-feature-values InterVariable {
@@ -68,37 +99,4 @@
       squared-characters: 6; /* Squared characters */
     }
   }
-}
-
-@theme {
-  --font-sans: InterVariable, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-sans--font-feature-settings: "cv01", "cv02", "cv03", "cv04", "cv05", "cv06", "cv07", "cv08", "cv09", "cv10", "cv11", "cv12", "cv13", "alt-1", "alt-3", "open-4", "open-6", "open-9", "lc-l-with-tail", "simplified-u", "alt-double-s", "uc-i-with-serif", "uc-g-with-spur", "single-story-a", "compact-lc-f", "compact-lc-t";
-  --font-sans--font-feature-variant: "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "ss07", "ss08", "open-digits", "disambiguation", "disambiguation-except-zero", "round-quotes-and-commas", "square-punctuation", "square-quotes", "circled-characters", "squared-characters";
-
-  /* Generated accent color palettes. */
-  --color-accent-50: #f0f6f0;
-  --color-accent-100: #d9eadd;
-
-  --color-accent-200: #bacfbf;
-
-  --color-accent-300: #9bbf9f;
-  --color-accent-400: #7fbf80;
-  --color-accent-500: #57a64e;
-
-  --color-accent-600: #165a31;
-
-  --color-accent-700: #204d2f;
-  --color-accent-800: #1a3e26;
-
-  --color-accent-900: #1e3926;
-  --color-accent-950: #18281c;
-  /* Generated gray color palettes. */
-  --color-gray-100: #f5f5f5;
-  --color-gray-200: #e5e5e5;
-  --color-gray-300: #d4d4d4;
-  --color-gray-400: #a3a3a3;
-  --color-gray-500: #737373;
-  --color-gray-700: #404040;
-  --color-gray-800: #262626;
-  --color-gray-900: #171717;
 }
