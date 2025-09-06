@@ -4,5 +4,14 @@
   "description": "The MC-ID project",
   "author": "Tonantzintla",
   "license": "GPL-3.0-only",
-  "packageManager": "pnpm@10.15.1"
+  "packageManager": "pnpm@10.15.1",
+    "pnpm": {
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "esbuild"
+    ],
+    "overrides": {
+      "zod": "4.0.10"
+    }
+  }
 }
