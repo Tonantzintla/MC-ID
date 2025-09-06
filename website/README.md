@@ -5,6 +5,8 @@
 
 This is the website for the [MC-ID](../) project, which provides the most secure and simple way to authorize, identify, and/or verify users via Minecraft.
 
+You can visit the website at [mc-id.com](https://mc-id.com).
+
 ## Contributing
 
 Check the [CONTRIBUTING.md](CONTRIBUTING.md) file for information on how to contribute to this project or on how to build the plugin from source.

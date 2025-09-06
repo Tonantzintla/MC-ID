@@ -7,6 +7,13 @@ MC-ID is a Minecraft authentication and identification service that allows users
 
 It provides a simple and secure way to authorize, identify, and/or verify users via Minecraft, without using sensitive tokens unlike Microsoft OAuth2; which grants access to the user's Minecraft account and therefore easily used for malicious purposes.
 
+## Projects
+
+- [MC-ID Website](website): The main website for the MC-ID project, accessible at [mc-id.com](https://mc-id.com).
+- [MC-ID API](api): The backend API for the MC-ID project, accessible at [api.mc-id.com](https://api.mc-id.com).
+- [MC-ID Plugin](plugin): A companion plugin for the MC-ID project, designed to be used with the MC-ID API.
+- [MC-ID Docs](docs): The documentation for the MC-ID project, accessible at [docs.mc-id.com](https://docs.mc-id.com).
+
 ## Contributing
 
 Check the CONTRIBUTING.md files for the respective repositories for information on how to contribute to this project.
