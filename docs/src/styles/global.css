@@ -1,0 +1,104 @@
+@import "tailwindcss";
+@layer base, starlight, theme, nextjs, components, utilities;
+@import "@astrojs/starlight-tailwind";
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@layer base {
+  @font-face {
+    font-family: InterVariable;
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url("/assets/fonts/InterVariable.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterVariable;
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url("/assets/fonts/InterVariable-Italic.woff2") format("woff2");
+  }
+
+  @font-feature-values InterVariable {
+    @character-variant {
+      cv01: 1;
+      cv02: 2;
+      cv03: 3;
+      cv04: 4;
+      cv05: 5;
+      cv06: 6;
+      cv07: 7;
+      cv08: 8;
+      cv09: 9;
+      cv10: 10;
+      cv11: 11;
+      cv12: 12;
+      cv13: 13;
+      alt-1: 1; /* Alternate one */
+      alt-3: 9; /* Flat-top three */
+      open-4: 2; /* Open four */
+      open-6: 3; /* Open six */
+      open-9: 4; /* Open nine */
+      lc-l-with-tail: 5; /* Lower-case L with tail */
+      simplified-u: 6; /* Simplified u */
+      alt-double-s: 7; /* Alternate German double s */
+      uc-i-with-serif: 8; /* Upper-case i with serif */
+      uc-g-with-spur: 10; /* Capital G with spur */
+      single-story-a: 11; /* Single-story a */
+      compact-lc-f: 12; /* Compact f */
+      compact-lc-t: 13; /* Compact t */
+    }
+    @styleset {
+      ss01: 1;
+      ss02: 2;
+      ss03: 3;
+      ss04: 4;
+      ss05: 5;
+      ss06: 6;
+      ss07: 7;
+      ss08: 8;
+      open-digits: 1; /* Open digits */
+      disambiguation: 2; /* Disambiguation (with zero) */
+      disambiguation-except-zero: 4; /* Disambiguation (no zero) */
+      round-quotes-and-commas: 3; /* Round quotes &amp; commas */
+      square-punctuation: 7; /* Square punctuation */
+      square-quotes: 8; /* Square quotes */
+      circled-characters: 5; /* Circled characters */
+      squared-characters: 6; /* Squared characters */
+    }
+  }
+}
+
+@theme {
+  --font-sans: InterVariable, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans--font-feature-settings: "cv01", "cv02", "cv03", "cv04", "cv05", "cv06", "cv07", "cv08", "cv09", "cv10", "cv11", "cv12", "cv13", "alt-1", "alt-3", "open-4", "open-6", "open-9", "lc-l-with-tail", "simplified-u", "alt-double-s", "uc-i-with-serif", "uc-g-with-spur", "single-story-a", "compact-lc-f", "compact-lc-t";
+  --font-sans--font-feature-variant: "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "ss07", "ss08", "open-digits", "disambiguation", "disambiguation-except-zero", "round-quotes-and-commas", "square-punctuation", "square-quotes", "circled-characters", "squared-characters";
+
+  /* Generated accent color palettes. */
+  --color-accent-50: #f0f6f0;
+  --color-accent-100: #d9eadd;
+
+  --color-accent-200: #bacfbf;
+
+  --color-accent-300: #9bbf9f;
+  --color-accent-400: #7fbf80;
+  --color-accent-500: #57a64e;
+
+  --color-accent-600: #165a31;
+
+  --color-accent-700: #204d2f;
+  --color-accent-800: #1a3e26;
+
+  --color-accent-900: #1e3926;
+  --color-accent-950: #18281c;
+  /* Generated gray color palettes. */
+  --color-gray-100: #f5f5f5;
+  --color-gray-200: #e5e5e5;
+  --color-gray-300: #d4d4d4;
+  --color-gray-400: #a3a3a3;
+  --color-gray-500: #737373;
+  --color-gray-700: #404040;
+  --color-gray-800: #262626;
+  --color-gray-900: #171717;
+}
