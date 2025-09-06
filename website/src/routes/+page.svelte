@@ -41,7 +41,8 @@
 <Header
   menuItems={[
     { name: "Developers", href: "#developers" },
-    { name: "GitHub", href: "https://github.com/Tonantzintla/MC-ID-Website" }
+    { name: "Docs", href: "https://docs.mc-id.com" },
+    { name: "GitHub", href: "https://github.com/Tonantzintla/MC-ID" }
   ]} />
 
 <HeroOne />
