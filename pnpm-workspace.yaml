@@ -1,4 +1,4 @@
 packages:
-  - 'website'
-  - 'docs'
-  - 'api'
+  - website
+  - docs
+  - api
