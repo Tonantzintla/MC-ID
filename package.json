@@ -1,0 +1,8 @@
+{
+  "name": "mcid",
+  "version": "1.0.0",
+  "description": "The MC-ID project",
+  "author": "Tonantzintla",
+  "license": "GPL-3.0-only",
+  "packageManager": "pnpm@10.15.1"
+}
