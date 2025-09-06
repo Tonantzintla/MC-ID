@@ -1,0 +1,8 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mc-id-docs",
+  "compatibility_date": "2025-09-04",
+  "assets": {
+    "directory": "./dist"
+  }
+}

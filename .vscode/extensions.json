@@ -1,0 +1,4 @@
+{
+  "recommendations": ["edwinhuish.better-comments-next", "bradlc.vscode-tailwindcss", "astro-build.astro-vscode", "esbenp.prettier-vscode", "svelte.svelte-vscode"],
+  "unwantedRecommendations": ["aaron-bond.better-comments"]
+}
