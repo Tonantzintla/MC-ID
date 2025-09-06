@@ -3,8 +3,6 @@
 </p>
 <h1 align="center">MC-ID</h1>
 
-## MC-ID
-
 MC-ID is a Minecraft authentication and identification service that allows users to securely log in to third-party websites and applications using their Minecraft account.
 
 It provides a simple and secure way to authorize, identify, and/or verify users via Minecraft, without using sensitive tokens unlike Microsoft OAuth2; which grants access to the user's Minecraft account and therefore easily used for malicious purposes.

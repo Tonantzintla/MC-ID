@@ -3,9 +3,7 @@
 </p>
 <h1 align="center">MC-ID API</h1>
 
-## MC-ID
-
-This is the backend API for the MC-ID project. It is designed to provide a 6-digit code for users to log in to various applications. The API is built using NestJS. It is designed to be used with the [MC-ID plugin](https://github.com/Tonantzintla/MC-ID-Plugin).
+This is the backend API for the MC-ID project. It is designed to provide a 6-digit code for users to log in to various applications. The API is built using NestJS. It is designed to be used with the [MC-ID plugin](../plugin).
 
 ## API Documentation
 

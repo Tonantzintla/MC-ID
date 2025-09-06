@@ -3,13 +3,11 @@
 </p>
 <h1 align="center">MC-ID Plugin</h1>
 
-## MC-ID
-
-This is a companion plugin for the [MC-ID](https://github.com/Tonantzintla/MC-ID-API) project, which provides the most secure and simple way to authorize, identify, and/or verify users via Minecraft.
+This is a companion plugin for the [MC-ID](../) project.
 
 ## Plugin
 
-This plugin is designed to be used with the [MC-ID API](https://github.com/Tonantzintla/MC-ID-API) and sends requests to the API to get the 6-digit code and display it to the user. The user can then use this code to log in the app they are using.
+This plugin is designed to be used with the [MC-ID API](../api) and sends requests to the API to get the 6-digit code and display it to the user. The user can then use this code to log in the app they are using.
 
 ## Installation
 

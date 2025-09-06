@@ -3,9 +3,7 @@
 </p>
 <h1 align="center">MC-ID Website</h1>
 
-## MC-ID
-
-This is a companion plugin for the [MC-ID](https://github.com/Tonantzintla/MC-ID-API) project, which provides the most secure and simple way to authorize, identify, and/or verify users via Minecraft.
+This is the website for the [MC-ID](../) project, which provides the most secure and simple way to authorize, identify, and/or verify users via Minecraft.
 
 ## Contributing
 
