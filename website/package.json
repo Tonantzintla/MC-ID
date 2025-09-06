@@ -75,5 +75,14 @@
     "drizzle-orm": "^0.44.5",
     "postgres": "^3.4.7",
     "@node-rs/argon2": "^2.0.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "esbuild"
+    ],
+    "overrides": {
+      "zod": "4.0.10"
+    }
   }
 }

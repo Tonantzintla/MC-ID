@@ -5,7 +5,7 @@
   "author": "Tonantzintla",
   "license": "GPL-3.0-only",
   "packageManager": "pnpm@10.15.1",
-    "pnpm": {
+  "pnpm": {
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
       "esbuild"
