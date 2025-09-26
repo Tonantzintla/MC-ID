@@ -1,96 +1,81 @@
-import { PUBLIC_BASE_URL } from "$env/static/public";
-import { MCIDky } from "$lib/customKy";
+import { auth } from "$lib/server/auth";
+import { db } from "$lib/server/db";
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
-import ky from "ky";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 as zod } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types";
-import { appSchema } from "./schema";
-import type { DeveloperApp } from "./types";
+import { appSchema, deleteAppSchema } from "./schema";
+import type { SelectOauthApplicationWithoutSecret } from "./types";
 
 export const load = (async (event) => {
+  const { locals } = event;
+
+  if (!locals.user) redirect(303, "/login");
+
   try {
-    const jwt = await ky(PUBLIC_BASE_URL + "/api/auth/token", {
-      headers: event.request.headers
-    }).json<{ token: string }>();
-
-    if (!jwt?.token) {
-      console.error("JWT token is missing");
-      error(401, "Unauthorized: JWT token is missing");
-    }
-
-    const apps = await MCIDky("v1/apps", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt.token}`
+    const apps: SelectOauthApplicationWithoutSecret[] = await db.query.oauthApplication.findMany({
+      where: (app, { eq }) => eq(app.userId, locals.user!.id),
+      columns: {
+        clientSecret: false
       }
-    }).json<DeveloperApp[]>();
+    });
 
     return {
       appForm: await superValidate(zod(appSchema)),
+      deleteAppForm: await superValidate(zod(deleteAppSchema)),
       appsData: apps
     };
   } catch (err) {
-    if (err instanceof Error) {
-      console.error("Error during apps data fetch:", err.message);
-      error(500, err?.message ?? "Internal server error during app data fetch");
-    } else {
-      console.error("Unexpected error during apps data fetch:", err);
-      error(500, "Internal server error during app data fetch");
-    }
+    console.error("Unexpected error during apps data fetch:", err);
+    error(500, "Something went wrong trying to fetch your apps");
   }
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
   createApp: async (event) => {
+    const { request } = event;
     const form = await superValidate(event, zod(appSchema));
-    let newApp: DeveloperApp;
-    try {
-      const jwt = await ky(PUBLIC_BASE_URL + "/api/auth/token", {
-        headers: event.request.headers
-      }).json<{ token: string }>();
 
+    let createdApp;
+    try {
       if (!form.valid) {
         return fail(400, {
           form
         });
       }
 
-      if (!jwt?.token) {
-        console.error("JWT token is missing");
-        return fail(401, {
-          form,
-          error: "Unauthorized: JWT token is missing"
-        });
-      }
-
-      newApp = await MCIDky.post("v1/apps", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt.token}`
-        },
-        body: JSON.stringify({
-          name: form.data.name,
-          website: form.data.website,
-          description: form.data.description
-        })
-      }).json<DeveloperApp>();
+      createdApp = await auth.api.registerOAuthApplication({
+        headers: request.headers,
+        body: {
+          redirect_uris: form.data.redirectUris,
+          token_endpoint_auth_method: "client_secret_basic",
+          grant_types: ["authorization_code", "refresh_token"],
+          response_types: ["code"],
+          client_name: form.data.name,
+          client_uri: form.data.uri,
+          scope: form.data.scopes.join(" "),
+          contacts: form.data.contacts,
+          tos_uri: form.data.tosUri,
+          policy_uri: form.data.policyUri,
+          metadata: {
+            description: form.data.description || undefined,
+            uri: form.data.uri || undefined,
+            internal: false,
+            scopes: form.data.scopes || undefined,
+            contacts: form.data.contacts || undefined,
+            tosUri: form.data.tosUri || undefined,
+            policyUri: form.data.policyUri || undefined
+          }
+        }
+      });
     } catch (err) {
-      if (err instanceof Error) {
-        console.error("Error during app creation:", err.message);
-        return fail(500, {
-          form,
-          error: err?.message ?? "Internal server error during app creation"
-        });
-      } else {
-        console.error("Unexpected error during app creation:", err);
-        return fail(500, {
-          form,
-          error: "Internal server error during app creation"
-        });
-      }
+      console.error("Error during app creation:", err);
+      return fail(500, {
+        form,
+        error: "Internal server error during app creation"
+      });
     }
 
-    redirect(307, `/dashboard/developer/apps/${newApp.id}`);
+    redirect(307, `/dashboard/developer/apps/${createdApp.client_id}`);
   }
 };

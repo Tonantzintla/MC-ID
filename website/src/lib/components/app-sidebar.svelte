@@ -1,32 +1,38 @@
 <script lang="ts" module>
   import type { Icon as IconType } from "@lucide/svelte";
   import CodeXmlIcon from "@lucide/svelte/icons/code-xml";
+  import ExternalLink from "@lucide/svelte/icons/external-link";
   import HouseIcon from "@lucide/svelte/icons/house";
+  import Key from "@lucide/svelte/icons/key";
+  import Link from "@lucide/svelte/icons/link";
+  import MessageCircleMore from "@lucide/svelte/icons/message-circle-more";
+  import Pickaxe from "@lucide/svelte/icons/pickaxe";
   import Settings2Icon from "@lucide/svelte/icons/settings-2";
   import UserIcon from "@lucide/svelte/icons/user";
 
+  type SingleNavItem = {
+    name: string;
+    url: string;
+    icon: typeof IconType;
+    subItems?: undefined;
+    target?: "_blank" | "_self" | "_parent" | "_top";
+  };
+
+  type SubNavItem = Omit<SingleNavItem, "name" | "subItems"> & { title: string };
+
+  type NestedNavItem = Pick<SingleNavItem, "name" | "icon"> & {
+    subItems: SubNavItem[];
+  };
+
   export type NavItem =
-    | {
-        name: string;
-        url: string;
-        icon: typeof IconType;
-        subItems?: undefined;
-      }
+    | SingleNavItem
     // Item with subItems (no url)
-    | {
-        name: string;
-        icon: typeof IconType;
-        subItems: {
-          title: string;
-          url: string;
-          icon: typeof IconType;
-        }[];
-        url?: undefined;
-      };
+    | NestedNavItem;
 
   const BASE_DASHBOARD_URL = "/dashboard";
   const BASE_DEVELOPER_URL = BASE_DASHBOARD_URL + "/developer";
   const BASE_SETTINGS_URL = BASE_DASHBOARD_URL + "/settings";
+  const BASE_CONNECTIONS_URL = BASE_DASHBOARD_URL + "/connections";
 
   const data = {
     navMain: [
@@ -50,6 +56,22 @@
             icon: Settings2Icon
           }
         ]
+      },
+      {
+        name: "Connections",
+        icon: Link,
+        subItems: [
+          {
+            title: "Minecraft",
+            url: BASE_CONNECTIONS_URL + "/minecraft",
+            icon: Pickaxe
+          },
+          {
+            title: "Discord",
+            url: BASE_CONNECTIONS_URL + "/discord",
+            icon: MessageCircleMore
+          }
+        ]
       }
     ],
     navDeveloper: [
@@ -57,6 +79,23 @@
         name: "Apps",
         url: BASE_DEVELOPER_URL + "/apps",
         icon: CodeXmlIcon
+      },
+      {
+        name: "Keys",
+        url: BASE_DEVELOPER_URL + "/keys",
+        icon: Key
+      },
+      {
+        name: "Documentation",
+        url: "https://docs.mc-id.com",
+        icon: ExternalLink,
+        target: "_blank"
+      },
+      {
+        name: "API Reference",
+        url: "https://api.mc-id.com",
+        icon: ExternalLink,
+        target: "_blank"
       }
     ]
   } as const satisfies Record<string, NavItem[]>;

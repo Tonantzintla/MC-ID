@@ -89,12 +89,12 @@
         }
       }}
       class="relative mx-auto flex h-1/2 max-w-md flex-col justify-center gap-y-2 self-center px-4 md:px-0">
-      <Form.Field {form} name="username">
+      <Form.Field {form} name="email">
         <Form.Control>
           {#snippet children({ props })}
-            <Form.Label for={props.name}>Username</Form.Label>
-            <Form.Description>This is your <span class="font-semibold">Minecraft</span> username.</Form.Description>
-            <Input {...props} bind:value={$formData.username} maxlength={16} type="text" autocomplete="username webauthn" />
+            <Form.Label for={props.name}>Email</Form.Label>
+            <Form.Description>This is your <span class="font-semibold">MC-ID</span> email.</Form.Description>
+            <Input {...props} bind:value={$formData.email} maxlength={16} type="text" autocomplete="email webauthn" />
             <Form.FieldErrors variant="single" />
           {/snippet}
         </Form.Control>

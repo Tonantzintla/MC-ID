@@ -1,12 +1,7 @@
-export type DeveloperApp = {
-  id: string;
-  name: string;
-  website: string;
-  description: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import type { oauthApplication } from "$lib/server/db/schema";
+
+export type SelectOauthApplication = typeof oauthApplication.$inferSelect;
+export type SelectOauthApplicationWithoutSecret = Omit<SelectOauthApplication, "clientSecret">;
 
 export enum AppFormVariant {
   CREATE = "create",

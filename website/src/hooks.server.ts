@@ -1,22 +1,44 @@
 import { building } from "$app/environment";
 import { auth } from "$lib/server/auth"; // path to your auth file
-import { redirect } from "@sveltejs/kit";
+import { redirect, type Handle } from "@sveltejs/kit";
+import { sequence } from "@sveltejs/kit/hooks";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 
-export const handle = async ({ event, resolve }) => {
-  if (event.route.id?.includes("(protected)")) {
-    const session = await auth.api.getSession({
-      headers: event.request.headers
-    });
+const protectedRouteGroupName = "(protected)";
+const signInPath = "/login";
 
-    if (session) {
-      event.locals.session = session?.session;
-      event.locals.user = session?.user;
-    } else {
-      redirect(307, "/login");
+const betterAuthHandler = (async ({ event, resolve }) => {
+  return svelteKitHandler({
+    event,
+    resolve,
+    auth,
+    building
+  });
+}) satisfies Handle;
+
+const betterAuthSessionHandler = (async ({ event, resolve }) => {
+  const session = await auth.api.getSession({
+    headers: event.request.headers
+  });
+
+  event.locals.session = session?.session;
+  event.locals.user = session?.user;
+
+  return resolve(event);
+}) satisfies Handle;
+
+const protectedHandler = (async ({ event, resolve }) => {
+  const { locals, route } = event;
+  if (!locals.user) {
+    if (route.id?.includes(protectedRouteGroupName) || event.isRemoteRequest) {
+      redirect(307, signInPath);
     }
   }
-  const response = await svelteKitHandler({ event, resolve, auth, building });
+  return resolve(event);
+}) satisfies Handle;
+
+const headersHandler = (async ({ event, resolve }) => {
+  const response = await resolve(event);
 
   // Security headers
   response.headers.set("X-Frame-Options", "SAMEORIGIN");
@@ -34,4 +56,6 @@ export const handle = async ({ event, resolve }) => {
   response.headers.set("X-XSS-Protection", "1; mode=block");
 
   return response;
-};
+}) satisfies Handle;
+
+export const handle = sequence(betterAuthHandler, betterAuthSessionHandler, protectedHandler, headersHandler) satisfies Handle;

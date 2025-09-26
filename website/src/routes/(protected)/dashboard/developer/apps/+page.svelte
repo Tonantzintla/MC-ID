@@ -9,7 +9,7 @@
   import { onMount } from "svelte";
   import type { PageProps } from "./$types";
   import AppForm from "./app-form.svelte";
-  import { AppFormVariant, type DeveloperApp } from "./types.d";
+  import { AppFormVariant, type SelectOauthApplicationWithoutSecret } from "./types.d";
 
   const { data }: PageProps = $props();
   const { appsData: apps } = data;
@@ -43,17 +43,18 @@
   </Card.Root>
 </div>
 
-{#snippet appCard(app: DeveloperApp)}
+{#snippet appCard(app: SelectOauthApplicationWithoutSecret)}
   {@const avatar = createAvatar(botttsNeutral, {
     size: 128,
     seed: app.id ?? "default-avatar"
   })}
-  <Button href="apps/{app.id}" class="contents cursor-pointer">
+  {@const metadata = app.metadata ? JSON.parse(app.metadata) : {}}
+  <Button href="apps/{app.clientId}" class="contents cursor-pointer">
     <Card.Root class="gap-0 space-y-2 truncate p-0 pb-2">
       <div class="bg-(--bgColor,transparent)" style="--bgColor: {avatar.toJson().extra.primaryBackgroundColor}">
         <Avatar.Root class="pointer-events-none mx-auto flex size-40 flex-shrink-0 justify-center rounded-none select-none">
           <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full" />
-          <Avatar.Fallback>{app.name.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+          <Avatar.Fallback>{app.name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
         </Avatar.Root>
       </div>
       <Card.Header class="my-0 items-center justify-center px-6 py-0 text-center">
@@ -61,13 +62,15 @@
       </Card.Header>
 
       <Card.Description class="w-full truncate px-6 text-center">
-        {app.description || "No description provided."} Lorem ipsum dolor, sit amet consectetur adipisicing elit. Iusto commodi eos et fugiat quidem ullam, accusantium provident vel eveniet fugit illum dolor dolorem, error, corporis culpa nesciunt laudantium reiciendis. Dolore.
+        {metadata?.description || "No description provided."}
       </Card.Description>
 
-      <Card.Footer>
-        {@const isSameTime = new Date(app.createdAt).getTime() === new Date(app.updatedAt).getTime()}
-        <Card.Description class="mx-auto text-xs">{isSameTime ? "Created" : "Updated"} {formatDistanceStrict(isSameTime ? app.createdAt : app.updatedAt, currentTime, { addSuffix: true, in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })}</Card.Description>
-      </Card.Footer>
+      {#if app.createdAt && app.updatedAt}
+        <Card.Footer>
+          {@const isSameTime = new Date(app.createdAt).getTime() === new Date(app.updatedAt).getTime()}
+          <Card.Description class="mx-auto text-xs">{isSameTime ? "Created" : "Updated"} {formatDistanceStrict(isSameTime ? app.createdAt : app.updatedAt, currentTime, { addSuffix: true, in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })}</Card.Description>
+        </Card.Footer>
+      {/if}
     </Card.Root>
   </Button>
 {/snippet}

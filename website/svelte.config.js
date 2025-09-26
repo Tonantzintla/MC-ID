@@ -37,7 +37,8 @@ const config = {
       $lib: "./src/lib",
       $params: "./src/params",
       $content: "./src/content",
-      $css: "./src/app.css"
+      $css: "./src/app.css",
+      $api: "./src/api"
     }
   }
 };

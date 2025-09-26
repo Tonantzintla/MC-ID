@@ -1,5 +1,6 @@
 <script lang="ts">
   import { browser } from "$app/environment";
+  import { page } from "$app/state";
   import * as skinview3d from "skinview3d";
   import { untrack } from "svelte";
   import type { LayoutProps } from "./$types";
@@ -10,6 +11,8 @@
   let minecraftAvatarContainer = $state<HTMLDivElement>(null!);
   let minecraftAvatar = $state<HTMLCanvasElement>(null!);
   let canvasIsLoading = $state<boolean>(true);
+  const disabledRoutes = new Set(["/dashboard/connections/discord"]);
+  const shouldShow3DAvatar = $derived<boolean>(!disabledRoutes.has(page.url.pathname));
 
   $effect.pre(() => {
     if (!browser || !data.user || !minecraftAvatarContainer) return;
@@ -46,7 +49,7 @@
 </script>
 
 <div class="mx-auto mb-8 flex max-w-xl flex-col justify-start gap-8 self-center px-2 md:px-0">
-  {#if browser}
+  {#if browser && shouldShow3DAvatar}
     <div bind:this={minecraftAvatarContainer} class="relative w-full">
       {#if canvasIsLoading}
         <div class="absolute size-full animate-pulse rounded-lg border border-border bg-accent"></div>
