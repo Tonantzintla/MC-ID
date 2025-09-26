@@ -3,6 +3,7 @@ import { getRequestEvent } from "$app/server";
 import { env as privateEnv } from "$env/dynamic/private";
 import { env as publicEnv } from "$env/dynamic/public";
 import { scopes } from "$lib/scopes";
+import { EmailService } from "$lib/server/email-service";
 import { hashOptions } from "$lib/server/hash-options";
 import { generateRandomSecret } from "$lib/server/secret-generator";
 import { hash as argon2Hash, verify as argon2Verify } from "@node-rs/argon2";
@@ -44,6 +45,24 @@ export const auth = betterAuth({
       },
       hash(data) {
         return argon2Hash(data, hashOptions);
+      }
+    },
+    sendResetPassword: async ({ user, url }) => {
+      const result = await EmailService.sendPasswordResetEmail(user.email, url, PUBLIC_BASE_URL);
+
+      if (!result.success) {
+        console.error("Failed to send reset password email:", result.error);
+      }
+    }
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      const result = await EmailService.sendVerificationEmail(user.email, url, PUBLIC_BASE_URL);
+
+      if (!result.success) {
+        console.error("Failed to send verification email:", result.error);
       }
     }
   },
