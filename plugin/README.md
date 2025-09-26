@@ -9,7 +9,7 @@ You can grab the latest release from the [releases page](https://github.com/Tona
 
 ## Plugin
 
-This plugin is designed to be used with the [MC-ID API](../api) and sends requests to the API to get the 6-digit code and display it to the user. The user can then use this code to log in the app they are using.
+This plugin is designed to be used with the [MC-ID Website](../website) and sends requests to the API to get the 6-digit code and display it to the user. The user can then use this code to log in the app they are using.
 
 ## Installation
 

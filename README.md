@@ -10,7 +10,6 @@ It provides a simple and secure way to authorize, identify, and/or verify users 
 ## Projects
 
 - [MC-ID Website](website): The main website for the MC-ID project, accessible at [mc-id.com](https://mc-id.com).
-- [MC-ID API](api): The backend API for the MC-ID project, accessible at [api.mc-id.com](https://api.mc-id.com).
 - [MC-ID Plugin](plugin): A companion plugin for the MC-ID project, designed to be used with the MC-ID API.
 - [MC-ID Docs](docs): The documentation for the MC-ID project, accessible at [docs.mc-id.com](https://docs.mc-id.com).
 
