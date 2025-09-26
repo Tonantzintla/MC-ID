@@ -1,12 +1,9 @@
-import { env } from "$env/dynamic/private";
 import { auth } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 as zod } from "sveltekit-superforms/adapters";
 import type { Actions, PageServerLoad } from "./$types";
 import { loginFormSchema, mcLoginFormSchema, signupFormSchema } from "./schema";
-
-const { APP_ID, APP_SECRET } = env;
 
 export const load = (async () => {
   return {

@@ -2,7 +2,6 @@ import { dev } from "$app/environment";
 import { getRequestEvent } from "$app/server";
 import { env as privateEnv } from "$env/dynamic/private";
 import { env as publicEnv } from "$env/dynamic/public";
-import { APP_ID, APP_SECRET } from "$env/static/private";
 import { scopes } from "$lib/scopes";
 import { hashOptions } from "$lib/server/hash-options";
 import { generateRandomSecret } from "$lib/server/secret-generator";
@@ -102,8 +101,8 @@ export const auth = betterAuth({
       config: [
         {
           providerId: "mc-id",
-          clientId: APP_ID,
-          clientSecret: APP_SECRET,
+          clientId: "MC-ID",
+          clientSecret: "secure-secret-here",
           discoveryUrl: "http://localhost:5173/api/auth/.well-known/openid-configuration"
           // ... other config options
         }
