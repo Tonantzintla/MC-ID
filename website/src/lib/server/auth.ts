@@ -67,6 +67,7 @@ export const auth = betterAuth({
       }
     },
     sendResetPassword: async ({ user, url }) => {
+      if (dev) return; // Skip sending emails in development
       const result = await EmailService.sendPasswordResetEmail(user.email, url, PUBLIC_BASE_URL);
 
       if (!result.success) {
@@ -78,6 +79,7 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
+      if (dev) return; // Skip sending emails in development
       const result = await EmailService.sendVerificationEmail(user.email, url, PUBLIC_BASE_URL);
 
       if (!result.success) {
