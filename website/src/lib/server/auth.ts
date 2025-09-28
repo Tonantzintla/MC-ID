@@ -39,6 +39,9 @@ export const auth = betterAuth({
       await redis.del(key);
     }
   },
+  rateLimit: {
+    storage: "secondary-storage"
+  },
   account: {
     accountLinking: {
       trustedProviders: ["mc-id", "discord"],
