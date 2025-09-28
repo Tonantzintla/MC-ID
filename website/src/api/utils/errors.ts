@@ -1,4 +1,4 @@
-import { error as svelteKitError } from "sveltekit-api";
+import { error } from "sveltekit-api";
 import { logger } from "./logger";
 
 // Standard error response format
@@ -38,7 +38,7 @@ export const ErrorTypes = {
   SERVICE_UNAVAILABLE: { statusCode: 503, error: "Service Unavailable" },
 
   // Custom business logic errors
-  INVALID_CREDENTIALS: { statusCode: 401, error: "Invalid Credentials" },
+  INVALID_API_KEY: { statusCode: 401, error: "Invalid API Key" },
   MINECRAFT_USER_NOT_FOUND: { statusCode: 404, error: "Minecraft User Not Found" },
   CODE_EXPIRED: { statusCode: 410, error: "Code Expired" },
   CODE_ALREADY_USED: { statusCode: 410, error: "Code Already Used" },
@@ -57,17 +57,16 @@ export const createError = {
 
   internal: (message = "An unexpected error occurred") => new APIError(ErrorTypes.INTERNAL_ERROR.statusCode, ErrorTypes.INTERNAL_ERROR.error, message),
 
-  invalidCredentials: (message = "Invalid application credentials") => new APIError(ErrorTypes.INVALID_CREDENTIALS.statusCode, ErrorTypes.INVALID_CREDENTIALS.error, message),
+  invalidApiKey: (message = "Invalid API key") => new APIError(ErrorTypes.INVALID_API_KEY.statusCode, ErrorTypes.INVALID_API_KEY.error, message),
 
-  minecraftUserNotFound: (uuid: string) => new APIError(ErrorTypes.MINECRAFT_USER_NOT_FOUND.statusCode, ErrorTypes.MINECRAFT_USER_NOT_FOUND.error, `Minecraft user with UUID ${uuid} not found`),
+  minecraftUserNotFound: (message = "Minecraft user with given UUID not found") => new APIError(ErrorTypes.MINECRAFT_USER_NOT_FOUND.statusCode, ErrorTypes.MINECRAFT_USER_NOT_FOUND.error, message),
 
   codeExpired: (message = "Verification code has expired") => new APIError(ErrorTypes.CODE_EXPIRED.statusCode, ErrorTypes.CODE_EXPIRED.error, message),
 
   mojangApiError: (message = "Failed to communicate with Mojang API") => new APIError(ErrorTypes.MOJANG_API_ERROR.statusCode, ErrorTypes.MOJANG_API_ERROR.error, message)
 };
 
-// Convert APIError to SvelteKit error
-export function throwAPIError(apiError: APIError): never {
+export function createAPIError(apiError: APIError) {
   const errorResponse: APIErrorResponse = {
     error: apiError.error,
     message: apiError.message,
@@ -77,25 +76,36 @@ export function throwAPIError(apiError: APIError): never {
   };
 
   logger.error("API Error thrown", apiError, {
+    error: apiError.error,
+    message: apiError.message,
     statusCode: apiError.statusCode,
-    error: apiError.error
+    timestamp: errorResponse.timestamp,
+    details: apiError.details
   });
 
-  throw svelteKitError(apiError.statusCode, JSON.stringify(errorResponse));
+  return error(apiError.statusCode, errorResponse.message);
 }
 
-// Handle unexpected errors
-export function handleUnexpectedError(error: unknown, context?: string): never {
+// Handle unexpected errors with JSON response
+export function createHandleUnexpectedError(error: unknown, context?: string) {
   const message = error instanceof Error ? error.message : "Unknown error occurred";
   const apiError = createError.internal(context ? `${context}: ${message}` : message);
 
   logger.error("Unexpected error", error, { context });
 
-  throw throwAPIError(apiError);
+  return createAPIError(apiError);
 }
 
 // Validation error helper
-export function throwValidationError(field: string, issue: string): never {
+export function createValidationError(field: string, issue: string) {
   const apiError = createError.validation(`Validation failed for ${field}: ${issue}`, { field, issue });
-  throw throwAPIError(apiError);
+  throw createAPIError(apiError);
 }
+
+export const CommonErrors = {
+  [ErrorTypes.VALIDATION_ERROR.statusCode]: createAPIError(createError.validation("X-API-Key header is required", { header: "X-API-Key" }))
+};
+
+export const CommonCodeErrors = {
+  [ErrorTypes.MOJANG_API_ERROR.statusCode]: createAPIError(createError.mojangApiError("Mojang API returned an error"))
+};

@@ -1,5 +1,7 @@
 import { CommonResponses, RequestCodeInput, RequestCodeOutput } from "$api/schemas";
-import { createError, generateSixDigitCode, getUsernameFromMcid, handleUnexpectedError, logger, requireAppAuth, throwAPIError } from "$api/utils";
+import { CommonCodeErrors, CommonErrors, createAPIError, createError, createHandleUnexpectedError, defaultPermissions, ErrorTypes, generateSixDigitCode, getUsernameFromMcid, logger, requireApiKey } from "$api/utils";
+import { resolve } from "$app/paths";
+import { getRequestEvent } from "$app/server";
 import { db } from "$lib/server/db";
 import { mcuser, verificationCodes } from "$lib/server/db/schema";
 import { eq } from "drizzle-orm";
@@ -29,12 +31,8 @@ Generate a new 6-digit verification code for a Minecraft player to authenticate 
         }
       }
     },
-    400: CommonResponses[400],
-    401: CommonResponses[401],
-    403: CommonResponses[403],
-    404: CommonResponses[404],
-    500: CommonResponses[500],
-    502: CommonResponses[502]
+    ...Object.fromEntries(Object.entries(c.responses).filter(([status]) => status !== "200")),
+    ...CommonResponses
   };
   return c;
 };
@@ -42,19 +40,29 @@ Generate a new 6-digit verification code for a Minecraft player to authenticate 
 export const Input = RequestCodeInput;
 export const Output = RequestCodeOutput;
 
+export const Errors = {
+  ...CommonErrors,
+  ...CommonCodeErrors,
+  [ErrorTypes.MINECRAFT_USER_NOT_FOUND.statusCode]: createAPIError(createError.minecraftUserNotFound())
+};
+
 export default new Endpoint({ Input, Output, Modifier }).handle(async (body) => {
   const startTime = Date.now();
-
+  const resolved = resolve("/api/v1/codes/request");
   try {
-    logger.apiRequest("/codes/request", "POST", { appId: body.appId, uuid: body.uuid });
+    logger.apiRequest(resolved, "POST", { uuid: body.uuid });
 
-    // Validate app credentials first
-    const { clientId } = await requireAppAuth(body.appId, body.appSecret);
+    const { request } = getRequestEvent();
+    const { headers } = request;
+    const xApiKey = headers.get("x-api-key");
+
+    const { key: apiKey } = await requireApiKey(xApiKey, defaultPermissions);
 
     // Check if the Minecraft user exists
     const username = await getUsernameFromMcid(body.uuid);
     if (!username) {
-      throw throwAPIError(createError.minecraftUserNotFound(body.uuid));
+      logger.error("User UUID no longer valid in Mojang API", null, { uuid: body.uuid });
+      throw Errors[ErrorTypes.MINECRAFT_USER_NOT_FOUND.statusCode];
     }
 
     // Find or create MC user
@@ -66,7 +74,7 @@ export default new Endpoint({ Input, Output, Modifier }).handle(async (body) => 
       logger.userAction("create", body.uuid, { reason: "First time user" });
       user = (await db.insert(mcuser).values({ id: body.uuid }).returning())[0];
       if (!user) {
-        throw handleUnexpectedError(new Error(`Failed to create user with ID: ${body.uuid}`), "Database insert failed");
+        throw createHandleUnexpectedError(new Error(`Failed to create user with ID: ${body.uuid}`), "Database insert failed");
       }
       logger.info("Successfully created new user", { userId: user.id });
     }
@@ -79,13 +87,13 @@ export default new Endpoint({ Input, Output, Modifier }).handle(async (body) => 
     await db
       .insert(verificationCodes)
       .values({
-        appClientId: clientId, // Use the validated app's client ID
+        appApiKeyId: apiKey.id,
         mcuserId: user.id,
         code,
         expiration
       })
       .onConflictDoUpdate({
-        target: [verificationCodes.appClientId, verificationCodes.mcuserId],
+        target: [verificationCodes.appApiKeyId, verificationCodes.mcuserId],
         set: {
           code,
           expiration
@@ -93,8 +101,7 @@ export default new Endpoint({ Input, Output, Modifier }).handle(async (body) => 
       });
 
     const duration = Date.now() - startTime;
-    logger.apiResponse("/codes/request", "POST", 200, duration, {
-      appId: body.appId,
+    logger.apiResponse(resolved, "POST", 200, duration, {
       uuid: body.uuid,
       username
     });
@@ -103,14 +110,14 @@ export default new Endpoint({ Input, Output, Modifier }).handle(async (body) => 
       message: "Successfully generated the code.",
       userId: user.id
     };
-  } catch (error) {
+  } catch (err) {
     const duration = Date.now() - startTime;
-    logger.apiError("/codes/request", "POST", error, { appId: body.appId, uuid: body.uuid, duration });
+    logger.apiError(resolved, "POST", err, { uuid: body.uuid, duration });
 
-    if (error instanceof Error && error.name === "APIError") {
-      throw error;
+    if (err instanceof Error && err.name === "APIError") {
+      throw err;
     }
 
-    throw handleUnexpectedError(error, "Code request failed");
+    throw createHandleUnexpectedError(err, "Code request failed");
   }
 });

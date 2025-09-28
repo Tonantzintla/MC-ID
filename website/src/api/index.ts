@@ -2,7 +2,7 @@
 import { dev } from "$app/environment";
 import { API } from "sveltekit-api";
 // Import all schemas to register them as components
-import { AppCredentialsSchema, BaseErrorResponse, ExpiredErrorResponse, ForbiddenErrorResponse, InternalErrorResponse, MinecraftUUIDSchema, NotFoundErrorResponse, PluginCodeOutput, PluginCodeParams, RequestCodeInput, RequestCodeOutput, ServiceUnavailableErrorResponse, UnauthorizedErrorResponse, ValidationErrorResponse, VerificationCodeSchema, VerifyCodeInput, VerifyCodeOutput } from "$api/schemas";
+import { CommonResponses, MinecraftUUIDSchema, PluginCodeOutput, PluginCodeParams, RequestCodeInput, RequestCodeOutput, VerificationCodeSchema, VerifyCodeInput, VerifyCodeOutput } from "$api/schemas";
 
 const servers = [
   {
@@ -19,7 +19,7 @@ const servers = [
 ];
 
 if (dev) {
-  servers.push({
+  servers.unshift({
     url: "http://localhost:5173",
     description: "Development server",
     variables: {
@@ -92,32 +92,29 @@ MC-ID allows developers to authenticate Minecraft players in their applications 
     externalDocs: {
       description: "MC-ID Documentation",
       url: "https://docs.mc-id.com"
-    }
+    },
+    security: [{ "API Key": [] }]
   },
   "/api",
   (registry) => {
     // Security schemes
-    registry.registerComponent("securitySchemes", "BearerAuth", {
-      type: "http",
-      scheme: "bearer",
-      bearerFormat: "JWT",
-      description: "Plugin key specified in the environment variable PLUGIN_KEY"
+
+    // API Key in header
+    registry.registerComponent("securitySchemes", "API Key", {
+      type: "apiKey",
+      in: "header",
+      name: "X-API-Key",
+      description: "Your application API key. Obtain one from https://mc-id.com/dashboard/developer/keys."
     });
 
     // Register schemas as components
-    // Error Response Models
-    registry.register("BaseErrorResponse", BaseErrorResponse);
-    registry.register("ValidationErrorResponse", ValidationErrorResponse);
-    registry.register("UnauthorizedErrorResponse", UnauthorizedErrorResponse);
-    registry.register("ForbiddenErrorResponse", ForbiddenErrorResponse);
-    registry.register("NotFoundErrorResponse", NotFoundErrorResponse);
-    registry.register("ExpiredErrorResponse", ExpiredErrorResponse);
-    registry.register("InternalErrorResponse", InternalErrorResponse);
-    registry.register("ServiceUnavailableErrorResponse", ServiceUnavailableErrorResponse);
+    //  Error Response Models
+    Object.entries(CommonResponses).forEach(([key, response]) => {
+      registry.registerComponent("responses", key, response);
+    });
 
     // Data Type Models
     registry.register("MinecraftUUID", MinecraftUUIDSchema);
-    registry.register("AppCredentials", AppCredentialsSchema);
     registry.register("VerificationCode", VerificationCodeSchema);
 
     // Request/Response Models

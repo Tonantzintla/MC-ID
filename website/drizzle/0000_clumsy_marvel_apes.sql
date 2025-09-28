@@ -148,7 +148,7 @@ CREATE TABLE "verification_codes" (
 	"code" char(6) NOT NULL,
 	"expiration" timestamp NOT NULL,
 	"mcuser_id" text NOT NULL,
-	"app_client_id" text NOT NULL,
+	"app_api_key_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -171,5 +171,5 @@ ALTER TABLE "oauth_consent" ADD CONSTRAINT "oauth_consent_user_id_user_id_fk" FO
 ALTER TABLE "passkey" ADD CONSTRAINT "passkey_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "verification_codes" ADD CONSTRAINT "verification_codes_mcuser_id_mcuser_mcid_fk" FOREIGN KEY ("mcuser_id") REFERENCES "public"."mcuser"("mcid") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "verification_codes" ADD CONSTRAINT "verification_codes_app_client_id_oauth_application_client_id_fk" FOREIGN KEY ("app_client_id") REFERENCES "public"."oauth_application"("client_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "mc_user_app_idx" ON "verification_codes" USING btree ("app_client_id","mcuser_id");
+ALTER TABLE "verification_codes" ADD CONSTRAINT "verification_codes_app_api_key_id_apikey_id_fk" FOREIGN KEY ("app_api_key_id") REFERENCES "public"."apikey"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "mc_user_app_idx" ON "verification_codes" USING btree ("app_api_key_id","mcuser_id");

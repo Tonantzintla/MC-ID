@@ -1,11 +1,10 @@
 import crypto from "crypto";
 import ky, { HTTPError } from "ky";
-import { createError, throwAPIError } from "./utils/errors";
+import { CommonCodeErrors, createAPIError, createError, ErrorTypes } from "./utils/errors";
 import { logger } from "./utils/logger";
 
 // Re-export utilities
 export * from "./utils/auth";
-export * from "./utils/cleanup";
 export * from "./utils/errors";
 export * from "./utils/logger";
 
@@ -13,6 +12,14 @@ interface MojangProfileResponse {
   id: string;
   name: string;
 }
+
+export type Permissions = {
+  [resourceType: string]: string[];
+};
+
+export const defaultPermissions: Permissions = {
+  codes: ["request", "verify"]
+} as const;
 
 export async function getUsernameFromMcid(uuid: string): Promise<string | null> {
   const startTime = Date.now();
@@ -40,11 +47,11 @@ export async function getUsernameFromMcid(uuid: string): Promise<string | null> 
         return null;
       }
       logger.error("Mojang API HTTP error", error, { uuid, duration, status: error.response.status });
-      throw throwAPIError(createError.mojangApiError(`Mojang API returned ${error.response.status}`));
+      throw CommonCodeErrors[ErrorTypes.MOJANG_API_ERROR.statusCode];
     }
 
     logger.error("Unexpected error calling Mojang API", error, { uuid, duration });
-    throw throwAPIError(createError.mojangApiError("Failed to communicate with Mojang API"));
+    throw CommonCodeErrors[ErrorTypes.MOJANG_API_ERROR.statusCode];
   }
 }
 
@@ -74,11 +81,11 @@ export async function getMcidFromUsername(username: string): Promise<string | nu
         return null;
       }
       logger.error("Mojang API HTTP error", error, { username, duration, status: error.response.status });
-      throw throwAPIError(createError.mojangApiError(`Mojang API returned ${error.response.status}`));
+      throw CommonCodeErrors[ErrorTypes.MOJANG_API_ERROR.statusCode];
     }
 
     logger.error("Unexpected error calling Mojang API", error, { username, duration });
-    throw throwAPIError(createError.mojangApiError("Failed to communicate with Mojang API"));
+    throw CommonCodeErrors[ErrorTypes.MOJANG_API_ERROR.statusCode];
   }
 }
 
@@ -87,7 +94,7 @@ export async function generateSixDigitCode(): Promise<string> {
     crypto.randomInt(100000, 999999, (err, n) => {
       if (err) {
         logger.error("Failed to generate secure random number", err);
-        reject(throwAPIError(createError.internal("Failed to generate verification code securely")));
+        reject(createAPIError(createError.internal("Failed to generate verification code securely")));
         return;
       }
       logger.debug("Generated new verification code");

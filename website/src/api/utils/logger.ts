@@ -1,4 +1,5 @@
 import { dev } from "$app/environment";
+import pino from "pino";
 
 export enum LogLevel {
   ERROR = 0,
@@ -9,7 +10,7 @@ export enum LogLevel {
 
 interface LogContext {
   userId?: string;
-  appId?: string;
+  apiKey?: string;
   endpoint?: string;
   ip?: string;
   userAgent?: string;
@@ -19,73 +20,124 @@ interface LogContext {
 }
 
 class Logger {
-  private logLevel: LogLevel;
+  private pino: pino.Logger;
 
   constructor() {
-    // In development, log everything. In production, log INFO and above
-    this.logLevel = dev ? LogLevel.DEBUG : LogLevel.INFO;
-  }
-
-  private formatMessage(level: string, message: string, context?: LogContext): string {
-    const timestamp = new Date().toISOString();
-    const contextStr = context ? ` | Context: ${JSON.stringify(context)}` : "";
-    return `[${timestamp}] [${level}] ${message}${contextStr}`;
-  }
-
-  private shouldLog(level: LogLevel): boolean {
-    return level <= this.logLevel;
+    // Configure Pino logger
+    this.pino = pino({
+      level: dev ? "debug" : "info",
+      transport: dev
+        ? {
+            target: "pino-pretty",
+            options: {
+              colorize: true,
+              translateTime: "SYS:standard",
+              ignore: "hostname,pid",
+              singleLine: false,
+              errorLikeObjectKeys: ["err", "error", "stack"],
+              messageFormat: "{msg}"
+            }
+          }
+        : undefined,
+      base: {
+        env: dev ? "development" : "production"
+      }
+    });
   }
 
   error(message: string, error?: Error | unknown, context?: LogContext): void {
-    if (!this.shouldLog(LogLevel.ERROR)) return;
-
-    const errorDetails = error instanceof Error ? { name: error.name, message: error.message, stack: error.stack } : { error };
-
-    const fullContext = { ...context, ...errorDetails };
-    console.error(this.formatMessage("ERROR", message, fullContext));
+    if (error instanceof Error) {
+      // Use Pino's built-in error handling for proper stack trace formatting
+      this.pino.error({ ...context, err: error }, message);
+    } else if (error) {
+      this.pino.error({ ...context, error }, message);
+    } else {
+      this.pino.error(context || {}, message);
+    }
   }
 
   warn(message: string, context?: LogContext): void {
-    if (!this.shouldLog(LogLevel.WARN)) return;
-    console.warn(this.formatMessage("WARN", message, context));
+    this.pino.warn(context || {}, message);
   }
 
   info(message: string, context?: LogContext): void {
-    if (!this.shouldLog(LogLevel.INFO)) return;
-    console.info(this.formatMessage("INFO", message, context));
+    this.pino.info(context || {}, message);
   }
 
   debug(message: string, context?: LogContext): void {
-    if (!this.shouldLog(LogLevel.DEBUG)) return;
-    console.debug(this.formatMessage("DEBUG", message, context));
+    this.pino.debug(context || {}, message);
   }
 
   // Specific logging methods for API endpoints
   apiRequest(endpoint: string, method: string, context?: LogContext): void {
-    this.info(`${method} ${endpoint} - Request started`, context);
+    this.pino.info({ ...context, endpoint, method, type: "api_request" }, `${method} ${endpoint} - Request started`);
   }
 
   apiResponse(endpoint: string, method: string, statusCode: number, duration: number, context?: LogContext): void {
-    const level = statusCode >= 400 ? "error" : statusCode >= 300 ? "warn" : "info";
-    this[level](`${method} ${endpoint} - Response ${statusCode}`, {
+    const logData = {
       ...context,
+      endpoint,
+      method,
       statusCode,
-      duration
-    });
+      duration,
+      type: "api_response"
+    };
+
+    const message = `${method} ${endpoint} - Response ${statusCode}`;
+
+    if (statusCode >= 400) {
+      this.pino.error(logData, message);
+    } else if (statusCode >= 300) {
+      this.pino.warn(logData, message);
+    } else {
+      this.pino.info(logData, message);
+    }
   }
 
   apiError(endpoint: string, method: string, error: Error | unknown, context?: LogContext): void {
-    this.error(`${method} ${endpoint} - Error occurred`, error, context);
+    const logData = {
+      ...context,
+      endpoint,
+      method,
+      type: "api_error"
+    };
+
+    if (error instanceof Error) {
+      // Use Pino's built-in error handling for proper stack trace formatting
+      this.pino.error({ ...logData, err: error }, `${method} ${endpoint} - Error occurred`);
+    } else if (error) {
+      this.pino.error({ ...logData, error }, `${method} ${endpoint} - Error occurred`);
+    } else {
+      this.pino.error(logData, `${method} ${endpoint} - Error occurred`);
+    }
   }
 
-  authAttempt(success: boolean, appId?: string, context?: LogContext): void {
+  authAttempt(success: boolean, identifier?: string, context?: LogContext): void {
     const message = success ? "Authentication successful" : "Authentication failed";
-    const level = success ? "info" : "warn";
-    this[level](message, { ...context, appId, authSuccess: success });
+    const logData = {
+      ...context,
+      identifier,
+      authSuccess: success,
+      type: "auth_attempt"
+    };
+
+    if (success) {
+      this.pino.info(logData, message);
+    } else {
+      this.pino.warn(logData, message);
+    }
   }
 
   userAction(action: string, userId: string, context?: LogContext): void {
-    this.info(`User action: ${action}`, { ...context, userId, action });
+    this.pino.info(
+      {
+        ...context,
+        userId,
+        action,
+        type: "user_action"
+      },
+      `User action: ${action}`
+    );
   }
 }
 

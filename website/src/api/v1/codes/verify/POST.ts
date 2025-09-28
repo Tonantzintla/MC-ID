@@ -1,5 +1,7 @@
 import { CommonResponses, VerifyCodeInput, VerifyCodeOutput } from "$api/schemas";
-import { createError, getUsernameFromMcid, handleUnexpectedError, logger, requireAppAuth, throwAPIError } from "$api/utils";
+import { CommonCodeErrors, CommonErrors, createAPIError, createError, createHandleUnexpectedError, defaultPermissions, ErrorTypes, getUsernameFromMcid, logger, requireApiKey } from "$api/utils";
+import { resolve } from "$app/paths";
+import { getRequestEvent } from "$app/server";
 import { db } from "$lib/server/db";
 import { verificationCodes } from "$lib/server/db/schema";
 import { and, desc, eq, gte } from "drizzle-orm";
@@ -16,7 +18,7 @@ Verify a 6-digit verification code to authenticate a Minecraft player with your 
   `;
   c.tags = ["Codes"];
   c.responses = {
-    200: {
+    201: {
       description: "Code verified successfully",
       content: {
         "application/json": {
@@ -28,13 +30,8 @@ Verify a 6-digit verification code to authenticate a Minecraft player with your 
         }
       }
     },
-    400: CommonResponses[400],
-    401: CommonResponses[401],
-    403: CommonResponses[403],
-    404: CommonResponses[404],
-    410: CommonResponses[410],
-    500: CommonResponses[500],
-    502: CommonResponses[502]
+    ...Object.fromEntries(Object.entries(c.responses).filter(([status]) => status !== "200")),
+    ...CommonResponses
   };
   return c;
 };
@@ -42,44 +39,54 @@ Verify a 6-digit verification code to authenticate a Minecraft player with your 
 export const Input = VerifyCodeInput;
 export const Output = VerifyCodeOutput;
 
-export default new Endpoint({ Input, Output, Modifier }).handle(async (body) => {
+export const Errors = {
+  ...CommonErrors,
+  ...CommonCodeErrors,
+  [ErrorTypes.CODE_EXPIRED.statusCode]: createAPIError(createError.codeExpired("Invalid or expired verification code")),
+  [ErrorTypes.UNAUTHORIZED.statusCode]: createAPIError(createError.unauthorized("Code does not belong to the specified user")),
+  [ErrorTypes.MINECRAFT_USER_NOT_FOUND.statusCode]: createAPIError(createError.minecraftUserNotFound())
+};
+
+export default new Endpoint({ Input, Output, Modifier, Error: Errors }).handle(async (body) => {
   const startTime = Date.now();
+  const resolved = resolve("/api/v1/codes/verify");
 
   try {
-    logger.apiRequest("/codes/verify", "POST", {
-      appId: body.appId,
+    logger.apiRequest(resolved, "POST", {
       uuid: body.uuid,
       codeProvided: !!body.code
     });
 
-    // Validate app credentials first
-    const { clientId } = await requireAppAuth(body.appId, body.appSecret);
+    // Validate API key
+    const { request } = getRequestEvent();
+    const { headers } = request;
+    const xApiKey = headers.get("x-api-key");
+
+    const { key: apiKey } = await requireApiKey(xApiKey, defaultPermissions);
 
     // Find the verification code
     const codeRecord = await db.query.verificationCodes.findFirst({
-      where: (vc) => and(eq(vc.code, body.code), eq(vc.appClientId, clientId), gte(vc.expiration, new Date())),
+      where: (vc) => and(eq(vc.code, body.code), eq(vc.appApiKeyId, apiKey.id), gte(vc.expiration, new Date())),
       with: { user: true },
       orderBy: (vc) => [desc(vc.createdAt)]
     });
 
     if (!codeRecord) {
       logger.warn("Code verification failed - code not found or expired", {
-        appId: body.appId,
         uuid: body.uuid,
         code: body.code
       });
-      throw throwAPIError(createError.codeExpired("Invalid or expired verification code"));
+      throw Errors[ErrorTypes.CODE_EXPIRED.statusCode];
     }
 
     // Verify the user UUID matches
     if (codeRecord.user.id !== body.uuid) {
       logger.warn("Code verification failed - UUID mismatch", {
-        appId: body.appId,
         expectedUuid: body.uuid,
         actualUuid: codeRecord.user.id,
         code: body.code
       });
-      throw throwAPIError(createError.unauthorized("Code does not belong to the specified user"));
+      throw Errors[ErrorTypes.UNAUTHORIZED.statusCode];
     }
 
     // Delete the used code
@@ -89,35 +96,33 @@ export default new Endpoint({ Input, Output, Modifier }).handle(async (body) => 
     const username = await getUsernameFromMcid(body.uuid);
     if (!username) {
       logger.error("User UUID no longer valid in Mojang API", null, { uuid: body.uuid });
-      throw throwAPIError(createError.minecraftUserNotFound(body.uuid));
+      throw Errors[ErrorTypes.MINECRAFT_USER_NOT_FOUND.statusCode];
     }
 
     const duration = Date.now() - startTime;
-    logger.apiResponse("/codes/verify", "POST", 200, duration, {
-      appId: body.appId,
+    logger.apiResponse(resolved, "POST", 200, duration, {
       uuid: body.uuid,
       username,
       codeUsed: true
     });
 
-    logger.userAction("code_verified", body.uuid, { appId: body.appId, username });
+    logger.userAction("code_verified", body.uuid, { username });
 
     return {
       id: codeRecord.user.id,
       username
     };
-  } catch (error) {
+  } catch (err) {
     const duration = Date.now() - startTime;
-    logger.apiError("/codes/verify", "POST", error, {
-      appId: body.appId,
+    logger.apiError(resolved, "POST", err, {
       uuid: body.uuid,
       duration
     });
 
-    if (error instanceof Error && error.name === "APIError") {
-      throw error;
+    if (err instanceof Error && err.name === "APIError") {
+      throw err;
     }
 
-    throw handleUnexpectedError(error, "Code verification failed");
+    throw createHandleUnexpectedError(err, "Code verification failed");
   }
 });

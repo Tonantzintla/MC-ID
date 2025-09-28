@@ -29,15 +29,6 @@ export const GET: RequestHandler = async (evt) => {
       },
       favicon: "/favicon.svg",
       persistAuth: true,
-      authentication: {
-        preferredSecurityScheme: "BearerAuth",
-        securitySchemes: {
-          BearerAuth: {
-            type: "http",
-            scheme: "bearer"
-          }
-        }
-      },
       defaultHttpClient: {
         targetKey: "js",
         clientKey: "fetch"

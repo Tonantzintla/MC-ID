@@ -1,5 +1,5 @@
 {
-  "id": "4ff2d18f-31ee-4aae-9481-5d99d99314ab",
+  "id": "0aadbd9e-865d-499f-a57d-fb59131aaf80",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1012,8 +1012,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "app_client_id": {
-          "name": "app_client_id",
+        "app_api_key_id": {
+          "name": "app_api_key_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -1038,7 +1038,7 @@
           "name": "mc_user_app_idx",
           "columns": [
             {
-              "expression": "app_client_id",
+              "expression": "app_api_key_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1070,17 +1070,17 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "verification_codes_app_client_id_oauth_application_client_id_fk": {
-          "name": "verification_codes_app_client_id_oauth_application_client_id_fk",
+        "verification_codes_app_api_key_id_apikey_id_fk": {
+          "name": "verification_codes_app_api_key_id_apikey_id_fk",
           "tableFrom": "verification_codes",
-          "tableTo": "oauth_application",
+          "tableTo": "apikey",
           "columnsFrom": [
-            "app_client_id"
+            "app_api_key_id"
           ],
           "columnsTo": [
-            "client_id"
+            "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

@@ -1,3 +1,4 @@
+import { defaultPermissions } from "$api/utils";
 import { auth } from "$lib/server/auth";
 import type { Actions } from "@sveltejs/kit";
 import { error, fail, redirect } from "@sveltejs/kit";
@@ -54,9 +55,7 @@ export const actions: Actions = {
             5, // 5 minutes
           // Maximum amount of requests allowed within a window. Once the maxRequests is reached, the request will be rejected until the timeWindow has passed, at which point the timeWindow will be reset. server-only.
           rateLimitMax: 300,
-          permissions: {
-            codes: ["request", "verify"]
-          }
+          permissions: defaultPermissions
         }
       });
 
