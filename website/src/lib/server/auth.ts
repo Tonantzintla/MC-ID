@@ -5,6 +5,7 @@ import { env as publicEnv } from "$env/dynamic/public";
 import { scopes } from "$lib/scopes";
 import { EmailService } from "$lib/server/email-service";
 import { hashOptions } from "$lib/server/hash-options";
+import { redis } from "$lib/server/redis";
 import { generateRandomSecret } from "$lib/server/secret-generator";
 import { hash as argon2Hash, verify as argon2Verify } from "@node-rs/argon2";
 import { betterAuth } from "better-auth";
@@ -23,6 +24,21 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg" // or "mysql", "sqlite"
   }),
+  secondaryStorage: {
+    get: async (key) => {
+      return await redis.get(key);
+    },
+    set: async (key, value, ttl) => {
+      if (ttl) {
+        await redis.set(key, value, { EX: ttl });
+      } else {
+        await redis.set(key, value);
+      }
+    },
+    delete: async (key) => {
+      await redis.del(key);
+    }
+  },
   account: {
     accountLinking: {
       trustedProviders: ["mc-id", "discord"],
