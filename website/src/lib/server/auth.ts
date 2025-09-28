@@ -44,7 +44,7 @@ export const auth = betterAuth({
   },
   account: {
     accountLinking: {
-      trustedProviders: ["mc-id", "discord"],
+      trustedProviders: ["discord"],
       allowDifferentEmails: true
     }
   },
