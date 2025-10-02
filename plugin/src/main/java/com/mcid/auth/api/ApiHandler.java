@@ -25,6 +25,7 @@ public class ApiHandler {
     public ApiHandler(ConfigLoader configLoader, Logger logger){
         this.apiEndpoint=
                 URI.create(configLoader.getConfig().getString("api-endpoint"))
+                    .resolve("api/")
                     .resolve("v1/")
                     .resolve("plugin/");
         this.apiKey=configLoader.getConfig().getString("api-key");
