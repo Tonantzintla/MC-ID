@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { authClient } from "$lib/auth-client";
   import * as Alert from "$lib/components/ui/alert";
   import * as Avatar from "$ui/avatar";
   import { Button } from "$ui/button";
@@ -15,7 +16,9 @@
 
   const { data }: PageProps = $props();
   const { appsData: apps } = data;
-  const emailVerified = data.user!.emailVerified ?? false;
+
+  const session = authClient.useSession();
+  const emailVerified = $derived($session.data?.user?.emailVerified ?? false);
 
   let currentTime = $state(new Date());
 

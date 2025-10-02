@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from "$app/state";
+  import { authClient } from "$lib/auth-client";
   import * as Alert from "$lib/components/ui/alert";
   import { Button } from "$lib/components/ui/button";
   import * as Avatar from "$ui/avatar";
@@ -19,7 +20,9 @@
   import { type ApiKey } from "./types";
 
   const { data }: PageProps = $props();
-  const emailVerified = data.user!.emailVerified ?? false;
+
+  const session = authClient.useSession();
+  const emailVerified = $derived($session.data?.user?.emailVerified ?? false);
   let currentTime = $state(new Date());
   let changingApiKeys = $state<boolean>(false);
 

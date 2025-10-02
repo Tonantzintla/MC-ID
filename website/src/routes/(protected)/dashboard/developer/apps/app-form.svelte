@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from "$app/state";
+  import { authClient } from "$lib/auth-client";
   import * as Accordion from "$lib/components/ui/accordion";
   import { Checkbox } from "$lib/components/ui/checkbox";
   import { Scope, scopes } from "$lib/scopes";
@@ -43,7 +43,10 @@
 
   const isCreate = variant == (AppFormVariant.CREATE as const);
   const isEdit = variant == (AppFormVariant.EDIT as const);
-  const emailVerified = page.data.user?.emailVerified ?? false;
+
+  // Use better-auth's reactive session store for real-time updates
+  const session = authClient.useSession();
+  const emailVerified = $derived($session.data?.user?.emailVerified ?? false);
 
   const language = {
     action: isCreate ? "creating" : "editing",

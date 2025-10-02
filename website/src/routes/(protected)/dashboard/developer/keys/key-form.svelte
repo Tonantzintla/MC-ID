@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from "$app/state";
+  import { authClient } from "$lib/auth-client";
   import * as Form from "$ui/form";
   import { Input } from "$ui/input";
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
@@ -11,7 +12,9 @@
   const { data }: { data: { keyForm: SuperValidated<Infer<KeySchema>>; keyData?: any } } = $props();
 
   let toastLoading = $state<number | string>();
-  const emailVerified = page.data.user?.emailVerified ?? false;
+
+  const session = authClient.useSession();
+  const emailVerified = $derived($session.data?.user?.emailVerified ?? false);
 
   const keyForm = superForm(data.keyForm, {
     validators: zodClient(keySchema),

@@ -32,6 +32,7 @@ export const actions: Actions = {
       auth.api.changeEmail({ body: { newEmail: email }, headers: request.headers });
       if (locals.user) {
         locals.user.email = email;
+        locals.user.emailVerified = false; // Email needs to be re-verified
       }
       return { form, success: true };
     } catch (err) {
