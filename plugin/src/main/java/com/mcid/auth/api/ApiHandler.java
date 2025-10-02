@@ -39,7 +39,7 @@ public class ApiHandler {
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(route)
-                .header("Authorization","Bearer "+apiKey)
+                .header("X-API-Key", apiKey)
                 .GET()
                 .timeout(Duration.ofSeconds(3))
                 .build();
