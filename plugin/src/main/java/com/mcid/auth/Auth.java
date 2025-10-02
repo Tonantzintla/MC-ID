@@ -54,10 +54,9 @@ public class Auth {
         Player player = event.getPlayer();
 
         this.apiHandler.getPlayerCode(player).thenAccept(playerCodeResponse -> {
-            String code = playerCodeResponse.getCode().substring(0, 3) + " " + playerCodeResponse.getCode().substring(3);
-            String appName = playerCodeResponse.getAppName();
+            String code = playerCodeResponse.getCode();
             Component message = Component
-                    .text("Your code for "+appName+" is:\n\n").color(NamedTextColor.GOLD)
+                    .text("Your verification code is:\n\n").color(NamedTextColor.GOLD)
                     .append(Component.text(code).color(NamedTextColor.YELLOW));
 
             player.disconnect(message);
