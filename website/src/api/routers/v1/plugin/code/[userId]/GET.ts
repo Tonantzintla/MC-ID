@@ -3,6 +3,7 @@ import { authMiddleware } from "$api/middlewares/auth";
 import { MinecraftUUIDSchema } from "$api/schemas";
 import { logger } from "$api/utils";
 import { resolve } from "$app/paths";
+import { ORPCError } from "@orpc/server";
 import { and, desc, eq, gte } from "drizzle-orm";
 import { z } from "zod";
 
@@ -116,7 +117,7 @@ export const getCode = base
         duration
       });
 
-      if (err instanceof Error && err.name === "APIError") {
+      if (err instanceof ORPCError) {
         throw err;
       }
 

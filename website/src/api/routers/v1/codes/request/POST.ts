@@ -4,6 +4,7 @@ import { MinecraftUUIDSchema } from "$api/schemas";
 import { defaultPermissions, generateSixDigitCode, getUsernameFromMcid, logger } from "$api/utils";
 import { resolve } from "$app/paths";
 import { mcuser, verificationCodes } from "$lib/server/db/schema";
+import { ORPCError } from "@orpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -133,7 +134,7 @@ export const requestCode = base
       const duration = Date.now() - startTime;
       logger.apiError(resolved, "POST", err, { uuid: input.uuid, duration });
 
-      if (err instanceof Error && err.name === "APIError") {
+      if (err instanceof ORPCError) {
         throw err;
       }
 
