@@ -94,7 +94,7 @@
           {#snippet children({ props })}
             <Form.Label for={props.name}>Email</Form.Label>
             <Form.Description>This is your <span class="font-semibold">MC-ID</span> email.</Form.Description>
-            <Input {...props} bind:value={$formData.email} maxlength={16} type="text" autocomplete="email webauthn" />
+            <Input {...props} bind:value={$formData.email} type="text" autocomplete="email webauthn" />
             <Form.FieldErrors variant="single" />
           {/snippet}
         </Form.Control>
