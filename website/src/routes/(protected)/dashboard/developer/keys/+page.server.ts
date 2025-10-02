@@ -1,5 +1,6 @@
 import { defaultPermissions } from "$api/utils";
 import { auth } from "$lib/server/auth";
+import { db } from "$lib/server/db";
 import type { Actions } from "@sveltejs/kit";
 import { error, fail, redirect } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
@@ -41,8 +42,13 @@ export const actions: Actions = {
         });
       }
 
+      const email = await db.query.user.findFirst({
+        where: (user, { eq }) => eq(user.id, locals.user?.id ?? ""),
+        columns: { emailVerified: true }
+      });
+
       // Check if user's email is verified
-      if (!locals.user?.emailVerified) {
+      if (!email?.emailVerified) {
         return fail(403, {
           form,
           error: "You must verify your email address before creating an API key"
