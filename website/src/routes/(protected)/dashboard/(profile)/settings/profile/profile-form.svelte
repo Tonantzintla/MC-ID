@@ -144,14 +144,14 @@
   class="relative mx-auto flex h-1/2 flex-col justify-center space-y-4 self-center px-4 md:px-0">
   <div class="space-y-2">
     <Label for="username">Minecraft account</Label>
-    <div class="text-muted-foreground text-sm">You can edit your Minecraft account on <Button href="https://www.minecraft.net/profile" target="_blank" variant="link" class="inline h-auto p-0">minecraft.net</Button>.</div>
+    <div class="text-sm text-muted-foreground">You can edit your Minecraft account on <Button href="https://www.minecraft.net/profile" target="_blank" variant="link" class="inline h-auto p-0">minecraft.net</Button>.</div>
     <div class="flex gap-4">
       <Input value={username} disabled readonly maxlength={16} type="text" autocomplete="username" />
       {#if syncDisabled}
         <Tooltip.Root>
           <Tooltip.Trigger>
             {#snippet child({ props })}
-              <div {...props} class={cn("hover:bg-secondary! cursor-not-allowed opacity-50", buttonVariants({ variant: "secondary", size: "default" }))}>
+              <div {...props} class={cn("cursor-not-allowed opacity-50 hover:bg-secondary!", buttonVariants({ variant: "secondary", size: "default" }))}>
                 <RefreshCw class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin" data-syncing={syncingUser} />
                 Sync
               </div>
@@ -211,7 +211,7 @@
         <div class="flex items-center gap-2">
           <Form.Label for={props.name}>Email</Form.Label>
           {#if emailVerified}
-            <span class="bg-primary/20 text-primary inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium">
+            <span class="inline-flex items-center gap-1 rounded-full bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
               <BadgeCheck class="h-3 w-3" />
               Verified
             </span>

@@ -169,7 +169,7 @@
   class="relative mx-auto flex h-1/2 flex-col justify-center space-y-4 self-center px-4 md:px-0">
   {#if isEdit}
     <div class="flex items-center justify-center">
-      <Avatar.Root class="pointer-events-none flex h-16 w-16 select-none items-center justify-center">
+      <Avatar.Root class="pointer-events-none flex h-16 w-16 items-center justify-center select-none">
         <Avatar.Image src={avatar} alt="App Avatar" class="h-16 w-16 rounded-full" />
         <Avatar.Fallback>{$appFormData.name.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
@@ -184,7 +184,7 @@
                 <Form.Label for={props.name}>
                   <Tooltip.Root>
                     <Tooltip.Trigger>
-                      <CircleQuestionMark class="text-muted-foreground size-4" />
+                      <CircleQuestionMark class="size-4 text-muted-foreground" />
                     </Tooltip.Trigger>
                     <Tooltip.Content>
                       <p>Used in API requests and can not be changed.</p>
@@ -204,7 +204,7 @@
           <Label for="secret" class="flex items-center gap-2">
             <Tooltip.Root>
               <Tooltip.Trigger>
-                <CircleQuestionMark class="text-muted-foreground size-4" />
+                <CircleQuestionMark class="size-4 text-muted-foreground" />
               </Tooltip.Trigger>
               <Tooltip.Content>
                 <p>Used in API requests and can not be changed.</p>
@@ -212,7 +212,7 @@
             </Tooltip.Root>
             App Secret
           </Label>
-          <div class="text-muted-foreground text-sm">This is your app's secret key</div>
+          <div class="text-sm text-muted-foreground">This is your app's secret key</div>
 
           <div class="flex gap-2">
             <Password.Root class="w-full">
@@ -306,7 +306,7 @@
                 {#snippet children({ props })}
                   <div class="relative" transition:slide={{ axis: "y", duration: 300 }}>
                     <Input {...props} bind:value={$appFormData.redirectUris[i]} class="relative" placeholder="http://localhost:3000/cb" />
-                    <Button type="button" variant="link" size="sm" class="text-destructive group absolute right-2 top-1/2 h-auto -translate-y-1/2 transform p-0" onclick={() => ($appFormData.redirectUris = $appFormData.redirectUris.filter((_, j) => j !== i))}>
+                    <Button type="button" variant="link" size="sm" class="group absolute top-1/2 right-2 h-auto -translate-y-1/2 transform p-0 text-destructive" onclick={() => ($appFormData.redirectUris = $appFormData.redirectUris.filter((_, j) => j !== i))}>
                       <CircleMinus class="opacity-50 transition-opacity duration-300 group-hover:opacity-100" />
                     </Button>
                   </div>
@@ -323,7 +323,7 @@
               </div>
             {/if}
           {:else}
-            <Form.Description class="text-muted-foreground text-sm">Please fill in all the URIs before adding a new one.</Form.Description>
+            <Form.Description class="text-sm text-muted-foreground">Please fill in all the URIs before adding a new one.</Form.Description>
           {/if}
         </Form.Fieldset>
       </Accordion.Content>
@@ -339,7 +339,7 @@
                 {#snippet children({ props })}
                   <div class="relative" transition:slide={{ axis: "y", duration: 300 }}>
                     <Input {...props} bind:value={$appFormData.contacts[i]} class="relative" placeholder="contact@example.com" />
-                    <Button type="button" variant="link" size="sm" class="text-destructive group absolute right-2 top-1/2 h-auto -translate-y-1/2 transform p-0" onclick={() => ($appFormData.contacts = $appFormData.contacts.filter((_, j) => j !== i))}>
+                    <Button type="button" variant="link" size="sm" class="group absolute top-1/2 right-2 h-auto -translate-y-1/2 transform p-0 text-destructive" onclick={() => ($appFormData.contacts = $appFormData.contacts.filter((_, j) => j !== i))}>
                       <CircleMinus class="opacity-50 transition-opacity duration-300 group-hover:opacity-100" />
                     </Button>
                   </div>
@@ -355,7 +355,7 @@
               </div>
             {/if}
           {:else}
-            <Form.Description class="text-muted-foreground text-sm">Please fill in all the contacts before adding a new one.</Form.Description>
+            <Form.Description class="text-sm text-muted-foreground">Please fill in all the contacts before adding a new one.</Form.Description>
           {/if}
         </Form.Fieldset>
       </Accordion.Content>
@@ -389,7 +389,7 @@
                       <Form.Label class="font-normal">
                         {scope.label}
                       </Form.Label>
-                      <Form.Description class="text-muted-foreground text-sm">
+                      <Form.Description class="text-sm text-muted-foreground">
                         {scope.description}
                       </Form.Description>
                     </div>

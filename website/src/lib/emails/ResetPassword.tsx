@@ -18,27 +18,19 @@ export const ResetPassword = ({ resetUrl, baseUrl }: ResetPasswordProps) => {
             <Section>
               <Img src={`${baseUrl}/assets/images/MC-ID-White.png`} width="52" height="52" alt="MinionAH" className="mx-auto my-0" />
             </Section>
-            <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-[#e6e6e6]">
-              Reset your password
-            </Heading>
+            <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-[#e6e6e6]">Reset your password</Heading>
             <Text className="text-[14px] leading-[24px] text-[#e6e6e6]">Hello,</Text>
-            <Text className="mt-[16px] text-[14px] leading-[24px] text-[#e6e6e6]">
-              We received a request to reset your password for your MC-ID account. If you made this request, please click the button below to reset your password.
-            </Text>
+            <Text className="mt-[16px] text-[14px] leading-[24px] text-[#e6e6e6]">We received a request to reset your password for your MC-ID account. If you made this request, please click the button below to reset your password.</Text>
             <Section className="mt-[16px] text-center">
               <Button className="rounded-md bg-[#00bc7d] px-5 py-3 text-center text-[12px] font-semibold text-[#0d542b] no-underline" href={resetUrl}>
                 Reset Password
               </Button>
             </Section>
-            <Text className="mt-[32px] text-[14px] leading-[24px] text-[#e6e6e6]">
-              If you don't want to change your password or didn't request this, just ignore and delete this message.
-            </Text>
+            <Text className="mt-[32px] text-[14px] leading-[24px] text-[#e6e6e6]">If you don't want to change your password or didn't request this, just ignore and delete this message.</Text>
             <Hr className="my-[32px] border-t border-solid !border-t-[#ffffff1a]" />
-            <Text className="mt-[32px] text-[14px] leading-[24px] text-[#e6e6e6]">
-              If the button above does not work, copy and paste the following link into your web browser:
-            </Text>
+            <Text className="mt-[32px] text-[14px] leading-[24px] text-[#e6e6e6]">If the button above does not work, copy and paste the following link into your web browser:</Text>
             <Section className="text-center">
-              <Link href={resetUrl} className="break-all text-[14px] leading-[24px] text-[#00bc7d]" target="_blank" rel="noopener noreferrer">
+              <Link href={resetUrl} className="text-[14px] leading-[24px] break-all text-[#00bc7d]" target="_blank" rel="noopener noreferrer">
                 {resetUrl}
               </Link>
             </Section>
@@ -51,7 +43,7 @@ export const ResetPassword = ({ resetUrl, baseUrl }: ResetPasswordProps) => {
 
 ResetPassword.PreviewProps = {
   resetUrl: "https://example.com/reset?token=abc123",
-  baseUrl: "http://localhost:5173",
+  baseUrl: "http://localhost:5173"
 } as ResetPasswordProps;
 
 export default ResetPassword;

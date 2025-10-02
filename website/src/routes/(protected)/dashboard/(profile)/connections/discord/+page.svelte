@@ -13,19 +13,19 @@
 </script>
 
 {#if account}
-  <div class="bg-card relative isolate flex w-full flex-col overflow-clip rounded-lg border-2">
+  <div class="relative isolate flex w-full flex-col overflow-clip rounded-lg border-2 bg-card">
     <div class="relative">
       <Avatar.Root class="relative z-20 aspect-video size-full max-h-64 overflow-clip rounded-none">
-        <Avatar.Image class="pointer-events-none size-full select-none object-cover" src="https://cdn.discordapp.com/banners/{account.user.id}/{account.data?.banner}.webp?size=1024&animated=true" alt="{account.user?.name}'s Banner" />
-        <Avatar.Fallback class="bg-muted/20 size-full">
+        <Avatar.Image class="pointer-events-none size-full object-cover select-none" src="https://cdn.discordapp.com/banners/{account.user.id}/{account.data?.banner}.webp?size=1024&animated=true" alt="{account.user?.name}'s Banner" />
+        <Avatar.Fallback class="size-full bg-muted/20">
           {#snippet child({ props })}
             <div {...props}></div>
           {/snippet}
         </Avatar.Fallback>
       </Avatar.Root>
-      <Avatar.Root class="bg-card pointer-events-none absolute bottom-0 left-4 z-30 size-44 translate-y-16 select-none overflow-hidden rounded-full p-2">
+      <Avatar.Root class="pointer-events-none absolute bottom-0 left-4 z-30 size-44 translate-y-16 overflow-hidden rounded-full bg-card p-2 select-none">
         <Avatar.Image loading="lazy" class="rounded-full" src={account.data?.image_url} alt="User's Discord Avatar" />
-        <Avatar.Fallback class="flex select-none items-center justify-center rounded-full bg-black bg-blend-darken">
+        <Avatar.Fallback class="flex items-center justify-center rounded-full bg-black bg-blend-darken select-none">
           <UserRound />
         </Avatar.Fallback>
       </Avatar.Root>
@@ -35,8 +35,8 @@
         <p class="text-2xl font-semibold">{account.user?.name}</p>
         <span class="text-sm">{account.data?.username}</span>
         <div class="flex flex-row items-center gap-1">
-          <p class="text-muted-foreground text-sm">{account.user.id}</p>
-          <CopyButton text={account.user.id.toString()} variant="ghost" size="sm" class="text-muted-foreground hover:text-foreground -my-2" />
+          <p class="text-sm text-muted-foreground">{account.user.id}</p>
+          <CopyButton text={account.user.id.toString()} variant="ghost" size="sm" class="-my-2 text-muted-foreground hover:text-foreground" />
         </div>
         <Button
           onclick={() =>

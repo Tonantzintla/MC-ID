@@ -7,7 +7,7 @@
   const { data }: { data: LayoutServerData } = $props();
 </script>
 
-<Card.Root class="bg-background w-full">
+<Card.Root class="w-full bg-background">
   <Card.Header>
     <Card.Title>Settings</Card.Title>
     <Card.Description>You can change your settings here</Card.Description>

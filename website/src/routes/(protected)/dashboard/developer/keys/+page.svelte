@@ -49,7 +49,7 @@
     <Alert.Description class="mb-2">API keys are for when you want to access our API directly, aka Headless mode.</Alert.Description>
     <Alert.Description>Headless mode is not recommended for most users. <br /> Check our documentation for the differences between Headless and our standard mode.</Alert.Description>
   </Alert.Root>
-  <Card.Root class="bg-background w-full data-[disabled=true]:pointer-events-none data-[disabled=true]:select-none data-[disabled=true]:opacity-50" data-disabled={!emailVerified}>
+  <Card.Root class="w-full bg-background data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[disabled=true]:select-none" data-disabled={!emailVerified}>
     <Card.Header>
       <Card.Title>API Keys</Card.Title>
       <Card.Description>Manage your API Keys</Card.Description>
@@ -67,7 +67,7 @@
         {#each (await getApiKeys()).filter((apiKey) => !page.form?.createdKey || apiKey.id !== page.form.createdKey.id) as apiKey (apiKey.id)}
           {@render keyCard(apiKey)}
           {#if (await getApiKeys()).length === 0 && !page.form.createdKey}
-            <div class="text-muted-foreground text-center text-sm">You have no API keys yet. Create one to get started!</div>
+            <div class="text-center text-sm text-muted-foreground">You have no API keys yet. Create one to get started!</div>
           {/if}
         {/each}
 
@@ -91,7 +91,7 @@
       type="button"
       variant="secondary"
       size="sm"
-      class="group absolute right-2 top-2 aspect-square h-auto"
+      class="group absolute top-2 right-2 aspect-square h-auto"
       disabled={changingApiKeys}
       onclick={() => {
         if (!apiKey.id) {
@@ -117,10 +117,10 @@
         );
       }}
       aria-label="Delete API Key">
-      <Trash2 class="hover:text-destructive opacity-50 transition-opacity duration-300 group-hover:opacity-100" />
+      <Trash2 class="opacity-50 transition-opacity duration-300 group-hover:opacity-100 hover:text-destructive" />
     </Button>
     <div class="bg-(--bgColor,transparent)" style="--bgColor: {avatar.toJson().extra.primaryBackgroundColor}">
-      <Avatar.Root class="pointer-events-none mx-auto flex size-40 flex-shrink-0 select-none justify-center rounded-none">
+      <Avatar.Root class="pointer-events-none mx-auto flex size-40 flex-shrink-0 justify-center rounded-none select-none">
         <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full" />
         <Avatar.Fallback>{apiKey.name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
