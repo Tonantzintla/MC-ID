@@ -11,6 +11,7 @@
   const { data }: { data: { keyForm: SuperValidated<Infer<KeySchema>>; keyData?: any } } = $props();
 
   let toastLoading = $state<number | string>();
+  const emailVerified = page.data.user?.emailVerified ?? false;
 
   const keyForm = superForm(data.keyForm, {
     validators: zodClient(keySchema),
@@ -35,6 +36,7 @@
 <form
   method="POST"
   action="?/createKey"
+  data-disabled={!emailVerified}
   use:keyEnhance={{
     onSubmit: async () => {
       toastLoading = toast.loading("Creating your key...");
@@ -64,7 +66,7 @@
     </Form.Control>
   </Form.Field>
 
-  <Form.Button disabled={!keyIsTainted($keyTainted) || $keySubmitting} class="capitalize transition-all duration-300" variant={!keyIsTainted($keyTainted) || $keySubmitting ? "secondary" : "default"}>
+  <Form.Button disabled={!keyIsTainted($keyTainted) || $keySubmitting || !emailVerified} class="capitalize transition-all duration-300" variant={!keyIsTainted($keyTainted) || $keySubmitting || !emailVerified ? "secondary" : "default"}>
     {#if !$keySubmitting}
       Create Key
     {:else}

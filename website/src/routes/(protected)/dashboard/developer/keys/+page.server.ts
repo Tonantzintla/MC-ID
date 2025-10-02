@@ -41,6 +41,14 @@ export const actions: Actions = {
         });
       }
 
+      // Check if user's email is verified
+      if (!locals.user?.emailVerified) {
+        return fail(403, {
+          form,
+          error: "You must verify your email address before creating an API key"
+        });
+      }
+
       const createdKey = await auth.api.createApiKey({
         headers: request.headers,
         body: {

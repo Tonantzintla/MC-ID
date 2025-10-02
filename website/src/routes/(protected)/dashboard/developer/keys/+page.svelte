@@ -19,6 +19,7 @@
   import { type ApiKey } from "./types";
 
   const { data }: PageProps = $props();
+  const emailVerified = data.user!.emailVerified ?? false;
   let currentTime = $state(new Date());
   let changingApiKeys = $state<boolean>(false);
 
@@ -32,13 +33,20 @@
 </script>
 
 <div class="@container mx-auto flex max-w-xl flex-col justify-start gap-8 self-center px-2 py-6 md:px-0">
+  {#if !emailVerified}
+    <Alert.Root>
+      <AlertCircle class="h-4 w-4" />
+      <Alert.Title>Email Verification Required</Alert.Title>
+      <Alert.Description>You must verify your email address before you can create API keys. Please check your inbox for a verification email.</Alert.Description>
+    </Alert.Root>
+  {/if}
   <Alert.Root>
     <AlertCircle class="h-4 w-4" />
     <Alert.Title>Heads up!</Alert.Title>
     <Alert.Description class="mb-2">API keys are for when you want to access our API directly, aka Headless mode.</Alert.Description>
     <Alert.Description>Headless mode is not recommended for most users. <br /> Check our documentation for the differences between Headless and our standard mode.</Alert.Description>
   </Alert.Root>
-  <Card.Root class="bg-background w-full">
+  <Card.Root class="bg-background w-full data-[disabled=true]:pointer-events-none data-[disabled=true]:select-none data-[disabled=true]:opacity-50" data-disabled={!emailVerified}>
     <Card.Header>
       <Card.Title>API Keys</Card.Title>
       <Card.Description>Manage your API Keys</Card.Description>

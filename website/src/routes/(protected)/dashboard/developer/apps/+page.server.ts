@@ -33,7 +33,7 @@ export const load = (async (event) => {
 
 export const actions: Actions = {
   createApp: async (event) => {
-    const { request } = event;
+    const { request, locals } = event;
     const form = await superValidate(event, zod(appSchema));
 
     let createdApp;
@@ -41,6 +41,14 @@ export const actions: Actions = {
       if (!form.valid) {
         return fail(400, {
           form
+        });
+      }
+
+      // Check if user's email is verified
+      if (!locals.user?.emailVerified) {
+        return fail(403, {
+          form,
+          error: "You must verify your email address before creating an OAuth application"
         });
       }
 
