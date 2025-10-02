@@ -150,7 +150,8 @@ CREATE TABLE "verification_codes" (
 	"mcuser_id" text NOT NULL,
 	"app_api_key_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "verification_codes_app_user_unique" UNIQUE("app_api_key_id","mcuser_id")
 );
 --> statement-breakpoint
 CREATE TABLE "mcuser" (

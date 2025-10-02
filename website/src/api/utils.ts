@@ -1,11 +1,9 @@
+import { ORPCError } from "@orpc/server";
 import crypto from "crypto";
 import ky, { HTTPError } from "ky";
-import { CommonCodeErrors, createAPIError, createError, ErrorTypes } from "./utils/errors";
 import { logger } from "./utils/logger";
 
 // Re-export utilities
-export * from "./utils/auth";
-export * from "./utils/errors";
 export * from "./utils/logger";
 
 interface MojangProfileResponse {
@@ -47,11 +45,21 @@ export async function getUsernameFromMcid(uuid: string): Promise<string | null> 
         return null;
       }
       logger.error("Mojang API HTTP error", error, { uuid, duration, status: error.response.status });
-      throw CommonCodeErrors[ErrorTypes.MOJANG_API_ERROR.statusCode];
+
+      throw new ORPCError("MOJANG_API_ERROR", {
+        message: "Error fetching data from Mojang API",
+        status: 502,
+        cause: error
+      });
     }
 
     logger.error("Unexpected error calling Mojang API", error, { uuid, duration });
-    throw CommonCodeErrors[ErrorTypes.MOJANG_API_ERROR.statusCode];
+
+    throw new ORPCError("MOJANG_API_ERROR", {
+      message: "Error fetching data from Mojang API",
+      status: 502,
+      cause: error instanceof Error ? error : undefined
+    });
   }
 }
 
@@ -81,11 +89,21 @@ export async function getMcidFromUsername(username: string): Promise<string | nu
         return null;
       }
       logger.error("Mojang API HTTP error", error, { username, duration, status: error.response.status });
-      throw CommonCodeErrors[ErrorTypes.MOJANG_API_ERROR.statusCode];
+
+      throw new ORPCError("MOJANG_API_ERROR", {
+        message: "Error fetching data from Mojang API",
+        status: 502,
+        cause: error
+      });
     }
 
     logger.error("Unexpected error calling Mojang API", error, { username, duration });
-    throw CommonCodeErrors[ErrorTypes.MOJANG_API_ERROR.statusCode];
+
+    throw new ORPCError("MOJANG_API_ERROR", {
+      message: "Error fetching data from Mojang API",
+      status: 502,
+      cause: error instanceof Error ? error : undefined
+    });
   }
 }
 
@@ -94,7 +112,7 @@ export async function generateSixDigitCode(): Promise<string> {
     crypto.randomInt(100000, 999999, (err, n) => {
       if (err) {
         logger.error("Failed to generate secure random number", err);
-        reject(createAPIError(createError.internal("Failed to generate verification code securely")));
+        reject(err);
         return;
       }
       logger.debug("Generated new verification code");

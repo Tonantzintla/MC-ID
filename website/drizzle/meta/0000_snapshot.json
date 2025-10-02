@@ -1,5 +1,5 @@
 {
-  "id": "0aadbd9e-865d-499f-a57d-fb59131aaf80",
+  "id": "d7a7d3b5-0bd0-457d-a321-312b4acaf966",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1085,7 +1085,16 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "verification_codes_app_user_unique": {
+          "name": "verification_codes_app_user_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "app_api_key_id",
+            "mcuser_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
