@@ -141,7 +141,13 @@ jobs:
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
           # Generate release notes
-          RELEASE_NOTES=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s" | head -20)
+          if git rev-parse "${LATEST_TAG}" >/dev/null 2>&1; then
+            # Tag exists, get commits since tag
+            RELEASE_NOTES=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s" | head -20)
+          else
+            # No tag exists, get all commits
+            RELEASE_NOTES=$(git log --pretty=format:"- %s" | head -20)
+          fi
           echo "new_release_notes<<EOF" >> $GITHUB_OUTPUT
           echo "## Changes" >> $GITHUB_OUTPUT
           echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
