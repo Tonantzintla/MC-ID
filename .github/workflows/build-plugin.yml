@@ -96,18 +96,27 @@ jobs:
             exit 0
           fi
 
-          # Get the latest tag, default to v1.0.0 if none exists
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
-          echo "Latest tag: $LATEST_TAG"
+          # Get the latest tag, or detect if no tags exist
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          if [[ -z "$LATEST_TAG" ]]; then
+            echo "No tags found in repository"
+            LATEST_TAG="v1.0.0"
+            # For first release, check all commits
+            COMMITS=$(git log --oneline)
+            echo "All commits (no previous tags):"
+            echo "$COMMITS"
+          else
+            echo "Latest tag: $LATEST_TAG"
+            # Check commit messages since last tag for version bump type
+            COMMITS=$(git log ${LATEST_TAG}..HEAD --oneline)
+            echo "Commits since $LATEST_TAG:"
+            echo "$COMMITS"
+          fi
 
           # Remove 'v' prefix and increment patch version
           VERSION_NUM=$(echo $LATEST_TAG | sed 's/v//')
           IFS='.' read -r major minor patch <<< "$VERSION_NUM"
-
-          # Check commit messages since last tag for version bump type
-          COMMITS=$(git log ${LATEST_TAG}..HEAD --oneline)
-          echo "Commits since $LATEST_TAG:"
-          echo "$COMMITS"
 
           if echo "$COMMITS" | grep -q "^[a-f0-9]* feat!:"; then
             # Breaking change - major version bump
@@ -170,3 +179,5 @@ jobs:
             plugin/build/libs/mc-id-auth-latest.jar
           draft: false
           prerelease: false
+          make_latest: true
+          fail_on_unmatched_files: false
