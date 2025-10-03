@@ -39,23 +39,60 @@ jobs:
           path: plugin/build/libs/mc-id-auth-*-all.jar
           compression-level: 0
 
-  dependency-submission:
+  release:
     runs-on: ubuntu-latest
+    needs: build
     permissions:
       contents: write
-    # Only run on pushes to main, not on PRs
-    if: github.event_name == 'push'
+    # Only create releases on pushes to main, not on PRs
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # Needed for semantic release
 
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           java-version: 17
           distribution: temurin
 
-      - name: Generate and submit dependency graph
-        uses: gradle/actions/dependency-submission@v5
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Determine next version
+        id: version
+        uses: cycjimmy/semantic-release-action@v5
         with:
-          build-root-directory: plugin
+          dry_run: true
+          semantic_version: 23
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build with new version
+        if: steps.version.outputs.new_release_published == 'true'
+        working-directory: plugin
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.new_release_version }}
+        run: ./gradlew build
+
+      - name: Copy JAR with generic name
+        if: steps.version.outputs.new_release_published == 'true'
+        working-directory: plugin
+        run: |
+          cp build/libs/mc-id-auth-*-all.jar build/libs/mc-id-auth-latest.jar
+          ls -la build/libs/
+
+      - name: Create Release
+        if: steps.version.outputs.new_release_published == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.new_release_version }}
+          name: Plugin Release v${{ steps.version.outputs.new_release_version }}
+          body: ${{ steps.version.outputs.new_release_notes }}
+          files: |
+            plugin/build/libs/mc-id-auth-*-all.jar
+            plugin/build/libs/mc-id-auth-latest.jar
+          draft: false
+          prerelease: false
