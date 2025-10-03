@@ -12,12 +12,12 @@ on:
   workflow_dispatch:
     inputs:
       force_release:
-        description: 'Force create a release (ignores conventional commit checks)'
+        description: "Force create a release (ignores conventional commit checks)"
         required: false
         type: boolean
         default: false
       release_type:
-        description: 'Type of release to create (if force_release is true)'
+        description: "Type of release to create (if force_release is true)"
         required: false
         type: choice
         options:
@@ -49,6 +49,45 @@ jobs:
       - name: Determine version and release status
         id: version
         run: |
+          # Handle manual workflow dispatch
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "Manual workflow trigger detected"
+            
+            # Get the latest tag, default to v1.0.0 if none exists
+            LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+            echo "Latest tag: $LATEST_TAG"
+            
+            if [[ "${{ github.event.inputs.force_release }}" == "true" ]]; then
+              # Force release with specified type
+              VERSION_NUM=$(echo $LATEST_TAG | sed 's/v//')
+              IFS='.' read -r major minor patch <<< "$VERSION_NUM"
+              
+              case "${{ github.event.inputs.release_type }}" in
+                "major")
+                  NEW_VERSION="$((major + 1)).0.0"
+                  ;;
+                "minor")
+                  NEW_VERSION="$major.$((minor + 1)).0"
+                  ;;
+                "patch")
+                  NEW_VERSION="$major.$minor.$((patch + 1))"
+                  ;;
+              esac
+              
+              echo "Forced release: v$NEW_VERSION"
+              echo "new_release_published=true" >> $GITHUB_OUTPUT
+              echo "new_release_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+              echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+              echo "new_release_notes=Manual release triggered" >> $GITHUB_OUTPUT
+            else
+              # Manual build without release
+              echo "Manual build without release"
+              echo "new_release_published=false" >> $GITHUB_OUTPUT
+              echo "version=MANUAL-SNAPSHOT" >> $GITHUB_OUTPUT
+            fi
+            exit 0
+          fi
+
           # Only check for release on main branch pushes
           if [[ "${{ github.event_name }}" != "push" ]] || [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
             echo "Not a main branch push - building for testing only"
