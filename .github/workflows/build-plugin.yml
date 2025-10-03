@@ -39,7 +39,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0 # Needed for version determination
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -177,14 +177,17 @@ jobs:
           cp build/libs/mc-id-auth-*-all.jar build/libs/mc-id-auth-latest.jar
           ls -la build/libs/
 
-      - name: Create and push tag using PAT
+      - name: Create and push tag using GITHUB_TOKEN
         if: steps.version.outputs.new_release_published == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "v${{ steps.version.outputs.new_release_version }}" -m "Release v${{ steps.version.outputs.new_release_version }}"
-          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git "v${{ steps.version.outputs.new_release_version }}"
-
+          # Push using the "origin" remote set by checkout, authorized via the token in env
+          git push origin "v${{ steps.version.outputs.new_release_version }}"
+        env:
+          # Use the built-in token for authorization
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
         if: steps.version.outputs.new_release_published == 'true'
         uses: softprops/action-gh-release@v2
@@ -199,4 +202,4 @@ jobs:
           prerelease: false
           make_latest: true
           fail_on_unmatched_files: false
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
