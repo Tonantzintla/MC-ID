@@ -20,9 +20,10 @@ Software Requirements:
 
 1. Fork the repository
 2. Clone your forked repository to your local machine
-3. Run `gradle` to set up the project and download dependencies
-4. Run `./gradlew build` to compile the plugin and create a `.jar` file in the `build/libs` directory.
-5. Test the plugin on your local Velocity server to ensure it works as expected.
+3. `cd` into the plugin directory
+4. Run `gradle` to set up the project and download dependencies
+5. Run `./gradlew build` to compile the plugin and create a `.jar` file in the `build/libs` directory.
+6. Test the plugin on your local Velocity server to ensure it works as expected.
 
 You will need the `*-all.jar` file from the `build/libs` directory to run the plugin on your Velocity server.
 
