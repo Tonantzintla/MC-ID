@@ -20,9 +20,10 @@ This plugin is designed to be used with the [MC-ID Website](../website) and send
 5. Configure the plugin by editing the `config.yml` file in the `plugins/MC-ID` folder.
 
 - Leave the `file-version` as it is to ensure compatibility with future updates.
-- Set the `api-endpoint` to the URL of your MC-ID API instance.
-- Set the `api-key` to the same value as `PLUGIN_KEY` in your MC-ID API instance.
-  - This must match the key used in the MC-ID API.
+- Set the `api-endpoint` to the URL of your MC-ID website.
+- Set the `api-key` to the same value as the one created in the MC-ID website.
+  - This must match the key generated in the MC-ID website.
+  - This must have the `plugin:read` permission.
   - This is used by the plugin to authenticate requests to the API.
 
 6. Restart your Velocity server to apply the changes.
