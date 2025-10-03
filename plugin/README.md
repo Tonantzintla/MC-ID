@@ -1,5 +1,5 @@
 <p align="center">
-    <img alt="MC-ID" height="128px" src="public/assets/MC-ID.png">
+  <img alt="MC-ID" height="128px" src="public/assets/MC-ID.png">
 </p>
 <h1 align="center">MC-ID Plugin</h1>
 
