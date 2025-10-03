@@ -9,6 +9,22 @@ on:
     branches: [main]
     paths:
       - "plugin/**"
+  workflow_dispatch:
+    inputs:
+      force_release:
+        description: 'Force create a release (ignores conventional commit checks)'
+        required: false
+        type: boolean
+        default: false
+      release_type:
+        description: 'Type of release to create (if force_release is true)'
+        required: false
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: patch
 
 jobs:
   build-and-release:
