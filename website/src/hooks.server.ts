@@ -49,6 +49,11 @@ const protectedHandler = (async ({ event, resolve }) => {
       redirect(307, signInPath);
     }
   }
+  if (locals.user && locals.session) {
+    if (route.id?.startsWith(signInPath)) {
+      redirect(307, "/dashboard");
+    }
+  }
   return resolve(event);
 }) satisfies Handle;
 
