@@ -1,8 +1,23 @@
 import { building } from "$app/environment";
 import { auth } from "$lib/server/auth"; // path to your auth file
-import { redirect, type Handle } from "@sveltejs/kit";
+import { cleanupDbCron } from "$lib/server/crons/cleanup-db";
+import { redirect, type Handle, type ServerInit } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 import { svelteKitHandler } from "better-auth/svelte-kit";
+
+export const init: ServerInit = async () => {
+  if (!building) {
+    cleanupDbCron.execute();
+    cleanupDbCron.start();
+    console.info("[Cron] Database cleanup cron job executed and started");
+    process.on("sveltekit:shutdown", async (reason) => {
+      console.info(`[Shutdown] SvelteKit is shutting down: ${reason}`);
+      cleanupDbCron.stop();
+      cleanupDbCron.destroy();
+      console.info("[Shutdown] Cleanup cron job stopped and destroyed");
+    });
+  }
+};
 
 const protectedRouteGroupName = "(protected)";
 const signInPath = "/login";
