@@ -9,7 +9,7 @@
 
   let { data }: PageProps = $props();
 
-  let value = $state<"login" | "sign-up" | "mclogin">("login");
+  let value = $state<"login" | "sign-up">("login");
 
   const tabs = [
     { title: "Login", value: "login" },
@@ -24,10 +24,6 @@
     value = "login";
   };
 
-  const handleMcSignInButtonClick = () => {
-    value = "mclogin";
-  };
-
   const [send, receive] = crossfade({
     duration: 300,
     easing: cubicOut
@@ -37,12 +33,12 @@
 <Header menuItems={[{ name: "Home", href: "/" }]} showLoginButtons={false} />
 
 <Tabs.Root bind:value class="mx-auto w-full max-w-md px-4 pt-24 md:pt-36">
-  <Tabs.List class="grid w-full grid-cols-2 gap-4 bg-background">
+  <Tabs.List class="bg-background grid w-full grid-cols-2 gap-4">
     {#each tabs as tab (tab.value)}
-      {@const isActive = value === tab.value || (value === "mclogin" && tab.value === "login")}
+      {@const isActive = value === tab.value}
       <Tabs.Trigger value={tab.value} class="relative border-none data-[state=active]:bg-transparent dark:data-[state=active]:bg-transparent" data-sveltekit-noscroll data-state={isActive ? "active" : "inactive"}>
         {#if isActive}
-          <div class="absolute inset-0 rounded-md bg-primary" in:send={{ key: "active-tab" }} out:receive={{ key: "active-tab" }}></div>
+          <div class="bg-primary absolute inset-0 rounded-md" in:send={{ key: "active-tab" }} out:receive={{ key: "active-tab" }}></div>
         {/if}
         <div class="relative">
           {tab.title}
@@ -51,11 +47,7 @@
     {/each}
   </Tabs.List>
   <Tabs.Content value="login">
-    <LoginForm {data} {handleSignUpButtonClick} {handleMcSignInButtonClick} />
-  </Tabs.Content>
-  <Tabs.Content value="mclogin">
-    Nothing here yet
-    <!-- <McLoginForm data={data.mcLoginForm} on:signup={handleSignUpButtonClick} on:login={handleSignInButtonClick} /> -->
+    <LoginForm {data} {handleSignUpButtonClick} />
   </Tabs.Content>
   <Tabs.Content value="sign-up">
     <SignupForm {data} {handleSignInButtonClick} />

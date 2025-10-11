@@ -14,7 +14,7 @@
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
   import { loginFormSchema, type LoginFormSchema } from "./schema";
 
-  const { data, handleSignUpButtonClick, handleMcSignInButtonClick }: { data: { loginForm: SuperValidated<Infer<LoginFormSchema>> }; handleSignUpButtonClick: () => void; handleMcSignInButtonClick: () => void } = $props();
+  const { data, handleSignUpButtonClick }: { data: { loginForm: SuperValidated<Infer<LoginFormSchema>> }; handleSignUpButtonClick: () => void } = $props();
 
   const form = superForm(data.loginForm, {
     validators: zodClient(loginFormSchema),
@@ -129,12 +129,8 @@
     <div class="flex flex-col items-center justify-center gap-y-2">
       <span class="w-full text-center text-sm opacity-50">Or</span>
       <Button class="w-full" variant="outline" data-disabled={$submitting} data-sveltekit-preload-data="tap" onclick={async () => await signInWithPasskey()}>
-        <Key class="pointer-events-none h-6 w-auto transition-opacity duration-300 select-none group-hover:opacity-70" />
+        <Key class="pointer-events-none h-6 w-auto select-none transition-opacity duration-300 group-hover:opacity-70" />
         Login with Passkey
-      </Button>
-      <Button class="w-full" variant="outline" data-disabled={$submitting} data-sveltekit-preload-data="tap" onclick={handleMcSignInButtonClick}>
-        <enhanced:img src="$lib/assets/MC-ID-White.svg" class="pointer-events-none h-4 w-auto transition-opacity duration-300 select-none group-hover:opacity-70" alt="MC-ID" />
-        Login with MC-ID
       </Button>
     </div>
   </Card.Content>

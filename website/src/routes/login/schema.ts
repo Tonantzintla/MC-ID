@@ -21,11 +21,6 @@ export const loginFormSchema = z.object({
   "current-password": z.string().min(8, "Passwords are at least 8 characters")
 });
 
-export const mcLoginFormSchema = z.object({
-  mcloginusername: username,
-  logincode: code
-});
-
 export const signupFormSchema = z
   .object({
     email: z.email("Invalid email address"),
@@ -38,5 +33,4 @@ export const signupFormSchema = z
   });
 
 export type LoginFormSchema = typeof loginFormSchema;
-export type McLoginFormSchema = typeof mcLoginFormSchema;
 export type SignupFormSchema = typeof signupFormSchema;
