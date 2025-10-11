@@ -1,6 +1,8 @@
 <script lang="ts">
   import favicon from "$lib/assets/favicon.svg";
+  import { IsHover } from "$lib/hooks/is-hover.svelte";
   import * as Tooltip from "$ui/tooltip";
+  import { setContext } from "svelte";
   import { Toaster, type ToasterProps } from "svelte-sonner";
   import "../app.css";
 
@@ -8,6 +10,9 @@
 
   let position = $state<ToasterProps["position"]>("bottom-right");
   let closeButton = $state<ToasterProps["closeButton"]>(true);
+  let isHover = $state(new IsHover());
+
+  setContext("isHover", isHover);
 </script>
 
 <svelte:window

@@ -2,15 +2,16 @@ import { dev } from "$app/environment";
 import { getRequestEvent } from "$app/server";
 import { env as privateEnv } from "$env/dynamic/private";
 import { env as publicEnv } from "$env/dynamic/public";
-import { scopes } from "$lib/scopes";
+import { Scope, scopes } from "$lib/scopes";
 import { EmailService } from "$lib/server/email-service";
+import { getAdditionalUserInfo } from "$lib/server/getAdditionalUserInfo";
 import { hashOptions } from "$lib/server/hash-options";
 import { redis } from "$lib/server/redis";
 import { generateRandomSecret } from "$lib/server/secret-generator";
 import { hash as argon2Hash, verify as argon2Verify } from "@node-rs/argon2";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { apiKey, genericOAuth, jwt, oidcProvider, openAPI } from "better-auth/plugins";
+import { apiKey, jwt, oidcProvider, openAPI } from "better-auth/plugins";
 import { passkey } from "better-auth/plugins/passkey";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { db } from "./db"; // your drizzle instance
@@ -95,7 +96,8 @@ export const auth = betterAuth({
       disableSignUp: true,
       disableDefaultScope: true,
       disableImplicitSignUp: true,
-      enabled: true
+      enabled: true,
+      prompt: "consent"
     }
   },
   disabledPaths: ["/token"],
@@ -115,39 +117,25 @@ export const auth = betterAuth({
     oidcProvider({
       useJWTPlugin: true, // Enable JWT plugin integration
       loginPage: "/login",
-      storeClientSecret: {
-        hash(clientSecret) {
-          return argon2Hash(clientSecret, hashOptions);
-        }
-      },
+      storeClientSecret: "plain",
+      // storeClientSecret: {
+      //   hash(clientSecret) {
+      //     return argon2Hash(clientSecret, hashOptions);
+      //   }
+      // },
       generateClientSecret() {
         return generateRandomSecret();
       },
       scopes: scopes.map((s) => s.value),
-      trustedClients: [
-        {
-          clientId: "MC-ID",
-          clientSecret: "secure-secret-here",
-          name: "MC-ID",
-          type: "web",
-          redirectURLs: ["https://localhost:5173", "https://mc-id.com/auth/callback"],
-          disabled: false,
-          skipConsent: true, // Skip consent for this trusted client
-          metadata: { internal: true }
-        }
-      ]
-    }),
-    genericOAuth({
-      config: [
-        {
-          providerId: "mc-id",
-          clientId: "MC-ID",
-          clientSecret: "secure-secret-here",
-          discoveryUrl: "http://localhost:5173/api/auth/.well-known/openid-configuration"
-          // ... other config options
-        }
-        // Add more providers as needed
-      ]
+      metadata: {
+        scopes_supported: scopes.map((s) => s.value),
+        claims_supported: ["sub", "email", "accounts", "connections"]
+      },
+      defaultScope: Scope.PROFILE,
+      getAdditionalUserInfoClaim: async (user, scopes, client) => {
+        return await getAdditionalUserInfo(user, scopes, client);
+      },
+      consentPage: "/dashboard/oauth/authorize"
     }),
     apiKey()
   ],
