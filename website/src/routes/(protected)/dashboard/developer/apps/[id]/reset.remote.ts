@@ -1,9 +1,7 @@
 import { getRequestEvent, query } from "$app/server";
 import { db } from "$lib/server/db";
 import { oauthApplication } from "$lib/server/db/schema";
-import { hashOptions } from "$lib/server/hash-options";
 import { generateRandomSecret } from "$lib/server/secret-generator";
-import { hash as argon2Hash } from "@node-rs/argon2";
 import { error } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod/v4-mini";
@@ -17,7 +15,7 @@ export const resetSecret = query(z.string(), async (appId) => {
     await db
       .update(oauthApplication)
       .set({
-        clientSecret: await argon2Hash(newSecret, hashOptions)
+        clientSecret: newSecret
       })
       .where(and(eq(oauthApplication.clientId, appId), eq(oauthApplication.userId, locals.user.id)));
 
