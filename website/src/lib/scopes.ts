@@ -5,9 +5,9 @@ enum Scope {
 }
 
 const scopes = [
-  { label: cap(Scope.PROFILE), value: Scope.PROFILE, description: "Access to basic profile information (required)" },
-  { label: cap(Scope.EMAIL), value: Scope.EMAIL, description: "Access to email addresses" },
-  { label: cap(Scope.CONNECTIONS), value: Scope.CONNECTIONS, description: "Access to connections; e.g. Discord, Hypixel" }
+  { label: cap(Scope.PROFILE), value: Scope.PROFILE, description: "Access to basic Minecraft profile information (required)", consentDescription: "Know which Minecraft accounts you own" },
+  { label: cap(Scope.EMAIL), value: Scope.EMAIL, description: "Access to email addresses", consentDescription: "Access your email address" },
+  { label: cap(Scope.CONNECTIONS), value: Scope.CONNECTIONS, description: "Access to connections; e.g. Discord", consentDescription: "Access your linked connections, e.g. Discord" }
 ] as const;
 
 function cap(text: string) {
