@@ -126,7 +126,9 @@ export const oauthConsent = pgTable("oauth_consent", {
 });
 
 export const minecraftAccount = pgTable("minecraft_account", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .$default(() => crypto.randomUUID()),
   uuid: text("uuid").notNull().unique(),
   username: text("username").notNull(),
   primary: boolean("primary").notNull().default(false),
