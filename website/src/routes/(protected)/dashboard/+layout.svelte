@@ -1,11 +1,13 @@
 <script lang="ts">
   import { page } from "$app/state";
   import AppSidebar from "$components/app-sidebar.svelte";
+  import type { PrimaryMcAccount } from "$lib/types/global";
   import * as Breadcrumb from "$ui/breadcrumb";
   import { Separator } from "$ui/separator";
   import * as Sidebar from "$ui/sidebar";
   import type { LayoutProps } from "./$types";
 
+  const primaryMcAccount = $derived<PrimaryMcAccount | undefined>(page.data?.primaryMcAccount);
   let { children }: LayoutProps = $props();
 
   function generateBreadcrumbs(path: string): { label: string; href: string | null }[] {
@@ -35,12 +37,16 @@
 </script>
 
 <Sidebar.Provider>
-  <AppSidebar />
+  {#if primaryMcAccount}
+    <AppSidebar />
+  {/if}
   <Sidebar.Inset>
-    <header class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+    <header class="group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear">
       <div class="flex items-center gap-2 px-4">
-        <Sidebar.Trigger class="-ml-1" />
-        <Separator orientation="vertical" class="mr-2 data-[orientation=vertical]:h-4" />
+        {#if primaryMcAccount}
+          <Sidebar.Trigger class="-ml-1" />
+          <Separator orientation="vertical" class="mr-2 data-[orientation=vertical]:h-4" />
+        {/if}
         <Breadcrumb.Root>
           <Breadcrumb.List>
             {#each generateBreadcrumbs(page.url.pathname) as breadcrumb, index (index)}

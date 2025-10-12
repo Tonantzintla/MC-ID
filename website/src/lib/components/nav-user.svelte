@@ -4,10 +4,12 @@
   import * as DropdownMenu from "$components/ui/dropdown-menu/index.js";
   import * as Sidebar from "$components/ui/sidebar/index.js";
   import { useSidebar } from "$components/ui/sidebar/index.js";
+  import type { PrimaryMcAccount } from "$lib/types/global";
   import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
   import LogOutIcon from "@lucide/svelte/icons/log-out";
   import type { User } from "better-auth";
 
+  const primaryMcAccount = $derived<PrimaryMcAccount | undefined>(page.data?.primaryMcAccount);
   const user = $derived<User>(page.data?.user);
   const sidebar = useSidebar();
 </script>
@@ -19,13 +21,16 @@
         {#snippet child({ props })}
           <Sidebar.MenuButton size="lg" class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" {...props}>
             <Avatar.Root class="size-8 rounded-none">
-              <Avatar.Image src="https://nmsr.nickac.dev/face/{user.id}" alt={user.name} />
-              <Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+              <Avatar.Image src="https://nmsr.nickac.dev/face/{primaryMcAccount?.uuid}" alt={primaryMcAccount?.username} />
+              <Avatar.Fallback class="rounded-lg">
+                {primaryMcAccount?.username.slice(0, 2).toUpperCase() || "TON"}
+              </Avatar.Fallback>
             </Avatar.Root>
             <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{user.name}</span>
-              <span class="truncate text-xs">{user.email}</span>
+              <span class="truncate font-medium">{primaryMcAccount?.username}</span>
+              <span class="truncate text-xs">{user?.email}</span>
             </div>
+
             <ChevronsUpDownIcon class="ml-auto size-4" />
           </Sidebar.MenuButton>
         {/snippet}
@@ -34,12 +39,14 @@
         <DropdownMenu.Label class="p-0 font-normal">
           <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar.Root class="size-8 rounded-none">
-              <Avatar.Image src="https://nmsr.nickac.dev/face/{user.id}" alt={user.name} />
-              <Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+              <Avatar.Image src="https://nmsr.nickac.dev/face/{primaryMcAccount?.uuid}" alt={primaryMcAccount?.username} />
+              <Avatar.Fallback class="rounded-lg">
+                {primaryMcAccount?.username.slice(0, 2).toUpperCase() || "TON"}
+              </Avatar.Fallback>
             </Avatar.Root>
             <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{user.name}</span>
-              <span class="truncate text-xs">{user.email}</span>
+              <span class="truncate font-medium">{primaryMcAccount?.username}</span>
+              <span class="truncate text-xs">{user?.email}</span>
             </div>
           </div>
         </DropdownMenu.Label>

@@ -1,4 +1,5 @@
 import type { Session, User } from "$lib/server/auth";
+import type { PrimaryMcAccount } from "$lib/types/global";
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 declare global {
@@ -11,6 +12,7 @@ declare global {
     interface Locals {
       session?: Session;
       user?: User;
+      primaryMcAccount?: PrimaryMcAccount;
     }
     // interface PageData {}
     // interface PageState {}

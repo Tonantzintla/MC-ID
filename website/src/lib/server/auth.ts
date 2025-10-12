@@ -6,12 +6,11 @@ import { Scope, scopes } from "$lib/scopes";
 import { EmailService } from "$lib/server/email-service";
 import { getAdditionalUserInfo } from "$lib/server/getAdditionalUserInfo";
 import { hashOptions } from "$lib/server/hash-options";
-import { redis } from "$lib/server/redis";
 import { generateRandomSecret } from "$lib/server/secret-generator";
 import { hash as argon2Hash, verify as argon2Verify } from "@node-rs/argon2";
-import { betterAuth } from "better-auth";
+import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { apiKey, jwt, oidcProvider, openAPI } from "better-auth/plugins";
+import { apiKey, customSession, jwt, oidcProvider, openAPI } from "better-auth/plugins";
 import { passkey } from "better-auth/plugins/passkey";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { db } from "./db"; // your drizzle instance
@@ -19,30 +18,30 @@ import { db } from "./db"; // your drizzle instance
 const { PUBLIC_BASE_URL } = publicEnv;
 const { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, ADDRESS_HEADER } = privateEnv;
 
-export const auth = betterAuth({
+const options = {
   appName: "MC-ID",
   baseURL: PUBLIC_BASE_URL,
   database: drizzleAdapter(db, {
     provider: "pg" // or "mysql", "sqlite"
   }),
-  secondaryStorage: {
-    get: async (key) => {
-      return await redis.get(key);
-    },
-    set: async (key, value, ttl) => {
-      if (ttl) {
-        await redis.set(key, value, { EX: ttl });
-      } else {
-        await redis.set(key, value);
-      }
-    },
-    delete: async (key) => {
-      await redis.del(key);
-    }
-  },
-  rateLimit: {
-    storage: "secondary-storage"
-  },
+  // secondaryStorage: {
+  //   get: async (key) => {
+  //     return await redis.get(key);
+  //   },
+  //   set: async (key, value, ttl) => {
+  //     if (ttl) {
+  //       await redis.set(key, value, { EX: ttl });
+  //     } else {
+  //       await redis.set(key, value);
+  //     }
+  //   },
+  //   delete: async (key) => {
+  //     await redis.del(key);
+  //   }
+  // },
+  // rateLimit: {
+  //   storage: "secondary-storage"
+  // },
   account: {
     accountLinking: {
       trustedProviders: ["discord"],
@@ -145,6 +144,30 @@ export const auth = betterAuth({
     },
     useSecureCookies: !dev
   }
+} satisfies BetterAuthOptions;
+
+export const auth = betterAuth({
+  ...options,
+  plugins: [
+    ...(options.plugins ?? []),
+    customSession(async ({ user, session }) => {
+      const primaryMcAccount = await db.query.minecraftAccount.findFirst({
+        where: (mc, { eq, and }) => and(eq(mc.userId, user.id), eq(mc.primary, true)),
+        orderBy: (mc, { desc }) => [desc(mc.primary), desc(mc.createdAt)],
+        columns: {
+          uuid: true,
+          username: true
+        }
+      });
+      return {
+        primaryMcAccount,
+        user: {
+          ...user
+        },
+        session
+      };
+    }, options)
+  ]
 });
 
 export type Session = typeof auth.$Infer.Session.session;
