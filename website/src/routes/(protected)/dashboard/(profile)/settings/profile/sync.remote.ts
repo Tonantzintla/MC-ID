@@ -25,9 +25,7 @@ export const syncUser = query(z.string(), async (uuid) => {
     await auth.api.updateUser({
       headers: request.headers,
       body: {
-        displayUsername: userData.name,
-        name: userData.name,
-        username: userData.name
+        name: userData.name
       }
     });
 
