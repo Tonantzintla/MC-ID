@@ -14,6 +14,9 @@ importers:
       drizzle-orm:
         specifier: ^0.44.6
         version: 0.44.6(kysely@0.28.8)(postgres@3.4.7)
+      node-cron:
+        specifier: ^4.2.1
+        version: 4.2.1
       postgres:
         specifier: ^3.4.7
         version: 3.4.7
@@ -132,9 +135,6 @@ importers:
       ky:
         specifier: ^1.11.0
         version: 1.11.0
-      node-cron:
-        specifier: ^4.2.1
-        version: 4.2.1
       ogl:
         specifier: ^1.0.11
         version: 1.0.11
