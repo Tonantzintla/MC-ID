@@ -15,6 +15,7 @@ export const init: ServerInit = async () => {
       cleanupDbCron.stop();
       cleanupDbCron.destroy();
       console.info("[Shutdown] Cleanup cron job stopped and destroyed");
+      process.exit(0);
     });
   }
 };
