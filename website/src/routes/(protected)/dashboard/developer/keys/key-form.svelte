@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/state";
   import { authClient } from "$lib/auth-client";
   import * as Form from "$ui/form";
   import { Input } from "$ui/input";
@@ -25,6 +24,8 @@
 
   const { form: keyFormData, enhance: keyEnhance, tainted: keyTainted, isTainted: keyIsTainted, submitting: keySubmitting, timeout: keyTimeout, errors: keyErrors } = keyForm;
 
+  const buttonDisabled = $derived(!keyIsTainted($keyTainted) || $keySubmitting || !emailVerified || ($keyErrors.name?.length ?? 0) > 0);
+
   keyTimeout.subscribe((value) => {
     if (value) {
       toast.loading("It's taking longer than expected to create your key...", {
@@ -32,8 +33,6 @@
       });
     }
   });
-
-  $inspect(page.form.createdKey);
 </script>
 
 <form
@@ -48,6 +47,7 @@
       setTimeout(() => toast.dismiss(toastLoading), 300);
     },
     onUpdate: async ({ result }) => {
+      console.log(result);
       if (result.type === "success") {
         toast.success("Key created successfully!");
       } else {
@@ -65,11 +65,12 @@
         <Form.Label for={props.name}>Key Name</Form.Label>
         <Form.Description>This is the name of your API key. It will be displayed in the dashboard.</Form.Description>
         <Input {...props} bind:value={$keyFormData.name} maxlength={32} type="text" autocomplete="off" />
+        <Form.FieldErrors variant="single" />
       {/snippet}
     </Form.Control>
   </Form.Field>
 
-  <Form.Button disabled={!keyIsTainted($keyTainted) || $keySubmitting || !emailVerified} class="capitalize transition-all duration-300" variant={!keyIsTainted($keyTainted) || $keySubmitting || !emailVerified ? "secondary" : "default"}>
+  <Form.Button disabled={buttonDisabled} class="capitalize transition-all duration-300" variant={buttonDisabled ? "secondary" : "default"}>
     {#if !$keySubmitting}
       Create Key
     {:else}

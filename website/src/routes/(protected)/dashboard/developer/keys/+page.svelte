@@ -3,6 +3,7 @@
   import { authClient } from "$lib/auth-client";
   import * as Alert from "$lib/components/ui/alert";
   import { Button } from "$lib/components/ui/button";
+  import { Spinner } from "$lib/components/ui/spinner";
   import * as Avatar from "$ui/avatar";
   import * as Card from "$ui/card";
   import * as Password from "$ui/extras/password";
@@ -23,6 +24,8 @@
 
   const session = authClient.useSession();
   const emailVerified = $derived($session.data?.user?.emailVerified ?? false);
+
+  const allApiKeys = getApiKeys();
   let currentTime = $state(new Date());
   let changingApiKeys = $state<boolean>(false);
 
@@ -49,7 +52,7 @@
     <Alert.Description class="mb-2">API keys are for when you want to access our API directly, aka Headless mode.</Alert.Description>
     <Alert.Description>Headless mode is not recommended for most users. <br /> Check our documentation for the differences between Headless and our standard mode.</Alert.Description>
   </Alert.Root>
-  <Card.Root class="w-full bg-background data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[disabled=true]:select-none" data-disabled={!emailVerified}>
+  <Card.Root class="bg-background w-full data-[disabled=true]:pointer-events-none data-[disabled=true]:select-none data-[disabled=true]:opacity-50" data-disabled={!emailVerified}>
     <Card.Header>
       <Card.Title>API Keys</Card.Title>
       <Card.Description>Manage your API Keys</Card.Description>
@@ -59,25 +62,29 @@
       <KeyForm {data} />
     </Card.Content>
 
-    <div class="grid grid-cols-1 gap-4 px-6 py-6">
-      {#if page.form?.createdKey}
-        {@render keyCard(page.form.createdKey)}
+    <svelte:boundary>
+      {#if allApiKeys.loading}
+        <div class="flex w-full items-center justify-center py-10">
+          <Spinner />
+        </div>
       {/if}
-      <svelte:boundary>
-        {#each (await getApiKeys()).filter((apiKey) => !page.form?.createdKey || apiKey.id !== page.form.createdKey.id) as apiKey (apiKey.id)}
-          {@render keyCard(apiKey)}
-          {#if (await getApiKeys()).length === 0 && !page.form.createdKey}
-            <div class="text-center text-sm text-muted-foreground">You have no API keys yet. Create one to get started!</div>
+      {#if (allApiKeys.current?.length !== 0 || page.form?.createdKey) && !allApiKeys.loading}
+        <div class="grid grid-cols-1 gap-4 px-6 py-6">
+          {#if page.form?.createdKey}
+            {@render keyCard(page.form.createdKey)}
           {/if}
-        {/each}
+          {#each allApiKeys.current?.filter((apiKey) => !page.form?.createdKey || apiKey.id !== page.form.createdKey.id) as apiKey (apiKey.id)}
+            {@render keyCard(apiKey)}
+          {/each}
 
-        {#snippet pending()}{/snippet}
+          {#snippet pending()}{/snippet}
 
-        {#snippet failed()}
-          <div class="text-destructive">Failed to load your API keys. Please try again later.</div>
-        {/snippet}
-      </svelte:boundary>
-    </div>
+          {#snippet failed()}
+            <div class="text-destructive">Failed to load your API keys. Please try again later.</div>
+          {/snippet}
+        </div>
+      {/if}
+    </svelte:boundary>
   </Card.Root>
 </div>
 
@@ -91,7 +98,7 @@
       type="button"
       variant="secondary"
       size="sm"
-      class="group absolute top-2 right-2 aspect-square h-auto"
+      class="group absolute right-2 top-2 aspect-square h-auto"
       disabled={changingApiKeys}
       onclick={() => {
         if (!apiKey.id) {
@@ -117,10 +124,10 @@
         );
       }}
       aria-label="Delete API Key">
-      <Trash2 class="opacity-50 transition-opacity duration-300 group-hover:opacity-100 hover:text-destructive" />
+      <Trash2 class="hover:text-destructive opacity-50 transition-opacity duration-300 group-hover:opacity-100" />
     </Button>
     <div class="bg-(--bgColor,transparent)" style="--bgColor: {avatar.toJson().extra.primaryBackgroundColor}">
-      <Avatar.Root class="pointer-events-none mx-auto flex size-40 flex-shrink-0 justify-center rounded-none select-none">
+      <Avatar.Root class="pointer-events-none mx-auto flex size-40 flex-shrink-0 select-none justify-center rounded-none">
         <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full" />
         <Avatar.Fallback>{apiKey.name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>

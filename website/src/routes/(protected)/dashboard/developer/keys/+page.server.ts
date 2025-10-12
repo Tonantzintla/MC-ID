@@ -32,7 +32,7 @@ export const load = (async (event) => {
 
 export const actions: Actions = {
   createKey: async (event) => {
-    const { request, locals } = event;
+    const { locals } = event;
     const form = await superValidate(event, zod(keySchema));
 
     try {
@@ -56,7 +56,6 @@ export const actions: Actions = {
       }
 
       const createdKey = await auth.api.createApiKey({
-        headers: request.headers,
         body: {
           userId: locals.user!.id,
           name: form.data.name,
