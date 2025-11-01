@@ -68,6 +68,9 @@
           <Spinner />
         </div>
       {/if}
+      {#if allApiKeys.error}
+        <div class="text-destructive">Failed to load your API keys. Please try again later.</div>
+      {/if}
       {#if (allApiKeys.current?.length !== 0 || page.form?.createdKey) && !allApiKeys.loading}
         <div class="grid grid-cols-1 gap-4 px-6 py-6">
           {#if page.form?.createdKey}
@@ -76,12 +79,6 @@
           {#each allApiKeys.current?.filter((apiKey) => !page.form?.createdKey || apiKey.id !== page.form.createdKey.id) as apiKey (apiKey.id)}
             {@render keyCard(apiKey)}
           {/each}
-
-          {#snippet pending()}{/snippet}
-
-          {#snippet failed()}
-            <div class="text-destructive">Failed to load your API keys. Please try again later.</div>
-          {/snippet}
         </div>
       {/if}
     </svelte:boundary>

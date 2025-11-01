@@ -21,7 +21,7 @@ export const actions: Actions = {
     const { locals } = event;
     const form = await superValidate(event, zod(verifyCodeFormSchema));
     if (!form.valid) {
-      console.log("Form invalid:", form.errors);
+      console.error("Form invalid:", form.errors);
       return fail(400, {
         form
       });
@@ -94,5 +94,5 @@ async function saveMinecraftAccount(userId: string, uuid: string, username: stri
     username,
     primary: hasPrimary === 0
   });
-  console.log("Inserted account:");
+  console.info("Inserted account:");
 }

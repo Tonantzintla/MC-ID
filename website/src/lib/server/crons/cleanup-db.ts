@@ -9,7 +9,7 @@ export const cleanupDbCron = cron.createTask(
   async (ctx) => {
     const triggerTime = ctx.triggeredAt; // Use scheduled trigger time for all cleanup operations
 
-    console.log(`[Cleanup] Starting database cleanup at ${triggerTime.toISOString()}`);
+    console.info(`[Cleanup] Starting database cleanup at ${triggerTime.toISOString()}`);
     console.time("[Cleanup] Duration");
 
     try {
@@ -43,7 +43,7 @@ export const cleanupDbCron = cron.createTask(
         db.delete(apikey).where(and(isNotNull(apikey.expiresAt), lt(apikey.expiresAt, triggerTime)))
       ]);
 
-      console.log(`[Cleanup] Completed cleanup of all tables`);
+      console.info(`[Cleanup] Completed cleanup of all tables`);
     } catch (error) {
       console.error("[Cleanup] Error during database cleanup:", error);
     }

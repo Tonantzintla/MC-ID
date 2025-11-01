@@ -8,7 +8,7 @@
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
   import { keySchema, type KeySchema } from "./schema";
 
-  const { data }: { data: { keyForm: SuperValidated<Infer<KeySchema>>; keyData?: any } } = $props();
+  const { data }: { data: { keyForm: SuperValidated<Infer<KeySchema>> } } = $props();
 
   let toastLoading = $state<number | string>();
 
@@ -47,7 +47,7 @@
       setTimeout(() => toast.dismiss(toastLoading), 300);
     },
     onUpdate: async ({ result }) => {
-      console.log(result);
+      console.info(result);
       if (result.type === "success") {
         toast.success("Key created successfully!");
       } else {

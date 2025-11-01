@@ -31,7 +31,7 @@ export class EmailService {
           text
         });
 
-        console.log(`Email sent successfully to ${to} (attempt ${attempt}):`, result);
+        console.info(`Email sent successfully to ${to} (attempt ${attempt}):`, result);
         return { success: true };
       } catch (err) {
         lastError = err instanceof Error ? err : new Error(String(err));

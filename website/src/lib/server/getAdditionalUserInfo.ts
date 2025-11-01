@@ -56,7 +56,7 @@ export async function getAdditionalUserInfo(user: User, scopes: string[], client
   }
 
   const data: UserInfoSuccess = {};
-  console.log("Getting additional user info claim for user:", user.id, "scopes:", scopes, "client:", client.clientId);
+  console.info("Getting additional user info claim for user:", user.id, "scopes:", scopes, "client:", client.clientId);
   if (scopes.includes(Scope.PROFILE)) {
     const mcAccounts = await db.query.minecraftAccount.findMany({
       where: (mc, { eq }) => eq(mc.userId, user.id),

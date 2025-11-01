@@ -64,6 +64,7 @@
       }
     } catch (error) {
       console.error(error);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const errorMessage = error instanceof Error ? error.message : ((error as any)?.body?.message ?? "An unknown error occurred while requesting the verification code.");
       toast.error(errorMessage);
       loadingRequest = false;
@@ -82,6 +83,7 @@
       }
     } catch (error) {
       console.error(error);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const errorMessage = error instanceof Error ? error.message : ((error as any)?.body?.message ?? "An unknown error occurred while requesting the verification code.");
       toast.error(errorMessage);
       loadingRequest = false;
@@ -101,6 +103,7 @@
       }
     } catch (error) {
       console.error(error);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const errorMessage = error instanceof Error ? error.message : ((error as any)?.body?.message ?? "An unknown error occurred while requesting the verification code.");
       toast.error(errorMessage);
       loadingRequest = false;
@@ -161,7 +164,7 @@
               setTimeout(() => toast.dismiss(toastLoading), 300);
             },
             onUpdate: async ({ result }) => {
-              console.log(result);
+              console.info(result);
               if (result.type === "success") {
                 // Refresh the accounts list after adding a new one
                 minecraftAccounts().refresh();
@@ -181,13 +184,13 @@
                 <InputOTP.Root maxlength={6} pattern={REGEXP_ONLY_DIGITS} bind:value={$formData.code} {...props} class="my-6 justify-center">
                   {#snippet children({ cells })}
                     <InputOTP.Group>
-                      {#each cells.slice(0, 3) as cell}
+                      {#each cells.slice(0, 3) as cell, index (index)}
                         <InputOTP.Slot class="size-12 text-2xl sm:size-16 sm:text-4xl" {cell} />
                       {/each}
                     </InputOTP.Group>
                     <InputOTP.Separator class="opacity-50">-</InputOTP.Separator>
                     <InputOTP.Group>
-                      {#each cells.slice(3, 6) as cell}
+                      {#each cells.slice(3, 6) as cell, index (index)}
                         <InputOTP.Slot class="size-12 text-2xl sm:size-16 sm:text-4xl" {cell} />
                       {/each}
                     </InputOTP.Group>

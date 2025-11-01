@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { Button } from "$lib/components/ui/button";
   import { cn } from "$lib/utils";
   import Menu from "@lucide/svelte/icons/menu";
@@ -24,7 +25,7 @@
     <div class={cn(["mx-auto mt-0 max-w-6xl rounded-2xl border border-transparent px-6 transition-all duration-300 lg:px-12", isScrolled && "mt-2 max-w-4xl rounded-2xl border border-border bg-background/50 backdrop-blur-lg lg:px-5"])}>
       <div class="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
         <div class="flex w-full justify-between lg:w-auto">
-          <a href="/" aria-label="home" class="flex items-center space-x-2">
+          <a href={resolve("/")} aria-label="home" class="flex items-center space-x-2">
             <enhanced:img src="$lib/assets/MC-ID-White.svg" class="pointer-events-none h-5.5 w-auto select-none group-hover/header:animate-spin" alt="MC-ID"></enhanced:img>
           </a>
 
@@ -38,7 +39,8 @@
           <ul class="flex gap-8 text-sm">
             {#each menuItems as item, index (index)}
               <li>
-                <a href={item.href} class="block text-muted-foreground duration-150 hover:text-accent-foreground">
+                <!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
+                <a href={resolve(item.href as any)} class="block text-muted-foreground duration-150 hover:text-accent-foreground">
                   <span>{item.name}</span>
                 </a>
               </li>

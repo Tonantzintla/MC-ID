@@ -40,7 +40,7 @@ export default defineConfig(
           ignoreRestSiblings: true
         }
       ],
-      "no-console": ["error", { allow: ["info", "warn", "dir", "timeLog", "assert", "clear", "count", "countReset", "group", "groupEnd", "table", "dirxml", "error", "groupCollapsed", "Console", "profile", "profileEnd", "timeStamp", "context"] }]
+      "no-console": ["error", { allow: ["info", "warn", "dir", "timeLog", "assert", "clear", "count", "countReset", "group", "groupEnd", "table", "dirxml", "error", "groupCollapsed", "Console", "profile", "profileEnd", "timeStamp", "context", "time", "timeEnd"] }]
     }
   },
   {
@@ -65,5 +65,5 @@ export default defineConfig(
       "svelte/no-useless-mustaches": "off"
     }
   },
-  { ignores: ["**/.DS_Store", "**/node_modules/", "**/build/", "**/.svelte-kit/", "**/package/", "**/.env", "**/.env.*", "**/pnpm-lock.yaml", "**/package-lock.json", "**/yarn.lock", "**/static/"] }
+  { ignores: ["**/.DS_Store", "**/node_modules/", "**/build/", "**/.svelte-kit/", "**/package/", "**/.env", "**/.env.*", "**/pnpm-lock.yaml", "**/package-lock.json", "**/yarn.lock", "**/static/", "**/lib/components/{ui,blocks,reactbits}/**/*.svelte"] }
 );

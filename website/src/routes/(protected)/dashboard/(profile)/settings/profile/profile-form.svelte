@@ -89,8 +89,10 @@
     sendingVerification = true;
 
     try {
+      if (!$session.data?.user?.email) throw new Error("No email associated with the user.");
+
       await authClient.sendVerificationEmail({
-        email: $session.data?.user?.email!,
+        email: $session.data.user.email,
         callbackURL: "/dashboard/settings/profile" // The redirect URL after verification
       });
       toast.success("Verification email sent!", {

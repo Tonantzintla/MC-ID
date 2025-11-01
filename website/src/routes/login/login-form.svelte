@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
+  import { resolve } from "$app/paths";
   import { authClient } from "$lib/auth-client";
   import { Button } from "$ui/button";
   import * as Card from "$ui/card";
@@ -32,7 +33,7 @@
       autoFill,
       fetchOptions: {
         onSuccess: (_context) => {
-          goto("/dashboard");
+          goto(resolve("/dashboard"));
         },
         onError: (error) => {
           console.error("Failed to login with passkey", error);

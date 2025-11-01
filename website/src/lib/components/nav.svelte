@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { page } from "$app/state";
   import type { NavItem } from "$components/app-sidebar.svelte";
   import * as Sidebar from "$components/ui/sidebar/index.js";
@@ -38,7 +39,8 @@
                   <Sidebar.MenuItem>
                     <Sidebar.MenuButton isActive={page.url.pathname.endsWith(item.url)} tooltipContent={item.name}>
                       {#snippet child({ props })}
-                        <a href={item.url} {...props} target={item.target}>
+                        <!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
+                        <a href={resolve(item.url as any)} {...props} target={item.target}>
                           <item.icon />
                           <span>{item.name}</span>
                         </a>
@@ -65,7 +67,8 @@
                               <Sidebar.MenuSubItem>
                                 <Sidebar.MenuSubButton isActive={page.url.pathname.endsWith(subItem.url)}>
                                   {#snippet child({ props })}
-                                    <a href={subItem.url} {...props} target={subItem.target}>
+                                    <!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
+                                    <a href={resolve(subItem.url as any)} {...props} target={subItem.target}>
                                       <subItem.icon />
                                       <span>{subItem.title}</span>
                                     </a>

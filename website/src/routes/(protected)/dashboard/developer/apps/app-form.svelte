@@ -71,7 +71,7 @@
 
   const { form: appFormData, enhance: appEnhance, tainted: appTainted, isTainted: appIsTainted, submitting: appSubmitting, timeout: appTimeout, errors: appErrors } = appForm;
 
-  const { form: deleteAppFormData, enhance: deleteAppEnhance, submitting: deleteAppSubmitting, timeout: deleteAppTimeout } = deleteAppForm;
+  const { form: deleteAppFormData, enhance: deleteAppEnhance, submitting: deleteAppSubmitting } = deleteAppForm;
 
   const avatar = createAvatar(botttsNeutral, {
     size: 128,
@@ -300,7 +300,7 @@
       <Accordion.Content>
         <Form.Fieldset form={appForm} name="redirectUris">
           <Form.Description>These are the URIs that your app can redirect to after a user authorizes it. Make sure to include all the URIs that your app will use.</Form.Description>
-          {#each $appFormData.redirectUris as _, i}
+          {#each $appFormData.redirectUris as _, i (i)}
             <Form.ElementField form={appForm} name="redirectUris[{i}]">
               <Form.Control>
                 {#snippet children({ props })}
@@ -333,7 +333,7 @@
       <Accordion.Content>
         <Form.Fieldset form={appForm} name="contacts">
           <Form.Description>These are the email addresses that we can use to contact you about your app. They will not be shared with users.</Form.Description>
-          {#each $appFormData.contacts as _, i}
+          {#each $appFormData.contacts as _, i (i)}
             <Form.ElementField form={appForm} name="contacts[{i}]">
               <Form.Control>
                 {#snippet children({ props })}

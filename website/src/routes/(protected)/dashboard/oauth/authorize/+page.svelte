@@ -32,7 +32,7 @@
   import { consent } from "./consent.remote";
 
   const { data }: { data: PageServerData } = $props();
-  const { oauthClient, scope: requestedScopes, consent_code, redirectURI, error, error_description, status } = data;
+  const { oauthClient, scope: requestedScopes, consent_code, redirectURI } = data;
   const user = $derived<User>(page.data?.user);
   const isHover = getContext<IsHover>("isHover");
   const appMetadata = $derived(oauthClient?.metadata ? JSON.parse(oauthClient.metadata) : null);
@@ -145,7 +145,9 @@
               IconComponent: Scale,
               description: `The developer of ${oauthClient?.name}${oauthClient?.name?.endsWith("s") ? "'" : "'s"} ${appMetadata?.policyUri ? `<a href="${appMetadata.policyUri}" class="underline" target="_blank" rel="noopener noreferrer">privacy policy</a>` : "privacy policy"} and ${appMetadata?.tosUri ? `<a href="${appMetadata.tosUri}" class="underline" target="_blank" rel="noopener noreferrer">terms of service</a>` : "terms of service"} apply to this application`
             })}
-            {@render additionalItem({ IconComponent: Clock, description: `Active since ${formatDate(new Date(oauthClient?.createdAt!), "MMM d, yyyy", { in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })}` })}
+            {#if oauthClient?.createdAt}
+              {@render additionalItem({ IconComponent: Clock, description: `Active since ${formatDate(new Date(oauthClient?.createdAt), "MMM d, yyyy", { in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })}` })}
+            {/if}
           </div>
 
           <Item.Group class="rounded-lg bg-accent p-4">
