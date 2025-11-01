@@ -162,6 +162,9 @@ importers:
       svelte-persisted-store:
         specifier: ^0.12.0
         version: 0.12.0(svelte@5.43.2)
+      svelte-seo:
+        specifier: 1.6.1
+        version: 1.6.1
       svelte-sonner:
         specifier: ^1.0.5
         version: 1.0.5(svelte@5.43.2)
@@ -3110,6 +3113,9 @@ packages:
   scheduler@0.27.0:
     resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
 
+  schema-dts@1.1.5:
+    resolution: {integrity: sha512-RJr9EaCmsLzBX2NDiO5Z3ux2BVosNZN5jo0gWgsyKvxKIUL5R3swNvoorulAeL9kLB0iTSX7V6aokhla2m7xbg==}
+
   secure-json-parse@4.1.0:
     resolution: {integrity: sha512-l4KnYfEyqYJxDwlNVyRfO2E4NTHfMKAWdUuA8J0yve2Dz/E/PdBepY03RvyJpssIpRFwJoCD55wA+mEDs6ByWA==}
 
@@ -3248,6 +3254,9 @@ packages:
     engines: {node: '>=0.14'}
     peerDependencies:
       svelte: ^3.48.0 || ^4 || ^5
+
+  svelte-seo@1.6.1:
+    resolution: {integrity: sha512-vTKvOA0rl3HVhgbyoMhwz0P1s+18ldOT+lHlTlrQn7Mn0SBx7Ia7MB+llF4O/mYoiV5idmNu8i3xWsam8COsbw==}
 
   svelte-sonner@1.0.5:
     resolution: {integrity: sha512-9dpGPFqKb/QWudYqGnEz93vuY+NgCEvyNvxoCLMVGw6sDN/3oVeKV1xiEirW2E1N3vJEyj5imSBNOGltQHA7mg==}
@@ -6333,6 +6342,8 @@ snapshots:
 
   scheduler@0.27.0: {}
 
+  schema-dts@1.1.5: {}
+
   secure-json-parse@4.1.0: {}
 
   selderee@0.11.0:
@@ -6507,6 +6518,10 @@ snapshots:
   svelte-persisted-store@0.12.0(svelte@5.43.2):
     dependencies:
       svelte: 5.43.2
+
+  svelte-seo@1.6.1:
+    dependencies:
+      schema-dts: 1.1.5
 
   svelte-sonner@1.0.5(svelte@5.43.2):
     dependencies:
