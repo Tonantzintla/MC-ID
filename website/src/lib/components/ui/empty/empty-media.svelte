@@ -18,12 +18,12 @@
 </script>
 
 <script lang="ts">
-  import { cn } from "$lib/utils.js";
+  import { cn, type WithElementRef } from "$lib/utils.js";
   import type { HTMLAttributes } from "svelte/elements";
 
-  let { class: className, children, variant = "default", ...restProps }: HTMLAttributes<HTMLDivElement> & { variant?: EmptyMediaVariant } = $props();
+  let { ref = $bindable(null), class: className, children, variant = "default", ...restProps }: WithElementRef<HTMLAttributes<HTMLDivElement>> & { variant?: EmptyMediaVariant } = $props();
 </script>
 
-<div data-slot="empty-icon" data-variant={variant} class={cn(emptyMediaVariants({ variant }), className)} {...restProps}>
+<div bind:this={ref} data-slot="empty-icon" data-variant={variant} class={cn(emptyMediaVariants({ variant }), className)} {...restProps}>
   {@render children?.()}
 </div>
