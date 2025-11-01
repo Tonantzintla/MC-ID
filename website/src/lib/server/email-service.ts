@@ -1,11 +1,11 @@
-import { render, toPlainText } from "@react-email/render";
-import type { ReactElement } from "react";
+import { renderAsPlainText } from "better-svelte-email";
+import { render } from "svelte/server";
 import { usesend } from "./usesend";
 
 interface EmailOptions {
   to: string;
   subject: string;
-  reactComponent: ReactElement;
+  html: string;
   from?: string;
   retries?: number;
   retryDelay?: number;
@@ -16,19 +16,17 @@ export class EmailService {
   private static readonly DEFAULT_RETRIES = 3;
   private static readonly DEFAULT_RETRY_DELAY = 1000; // 1 second
 
-  static async sendEmail({ to, subject, reactComponent, from = EmailService.DEFAULT_FROM, retries = EmailService.DEFAULT_RETRIES, retryDelay = EmailService.DEFAULT_RETRY_DELAY }: EmailOptions): Promise<{ success: boolean; error?: string }> {
+  static async sendEmail({ to, subject, html, from = EmailService.DEFAULT_FROM, retries = EmailService.DEFAULT_RETRIES, retryDelay = EmailService.DEFAULT_RETRY_DELAY }: EmailOptions): Promise<{ success: boolean; error?: string }> {
     let lastError: Error | null = null;
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        const html = await render(reactComponent);
-        const text = toPlainText(html);
+        const text = renderAsPlainText(html);
 
         const result = await usesend.emails.send({
           to,
           from,
           subject,
-          react: reactComponent,
           html,
           text
         });
@@ -54,22 +52,26 @@ export class EmailService {
   }
 
   static async sendVerificationEmail(email: string, verifyUrl: string, baseUrl: string) {
-    const { VerifyEmail } = await import("$lib/emails/EmailVerify");
+    const { default: VerifyEmail } = await import("$lib/emails/EmailVerify.svelte");
+
+    const rendered = render(VerifyEmail, { props: { baseUrl, verifyUrl } });
 
     return EmailService.sendEmail({
       to: email,
       subject: "Verify your MC-ID email address",
-      reactComponent: VerifyEmail({ verifyUrl, baseUrl })
+      html: rendered.body
     });
   }
 
   static async sendPasswordResetEmail(email: string, resetUrl: string, baseUrl: string) {
-    const { ResetPassword } = await import("$lib/emails/ResetPassword");
+    const { default: ResetPassword } = await import("$lib/emails/ResetPassword.svelte");
+
+    const rendered = render(ResetPassword, { props: { baseUrl, resetUrl } });
 
     return EmailService.sendEmail({
       to: email,
       subject: "Reset your MC-ID password",
-      reactComponent: ResetPassword({ resetUrl, baseUrl })
+      html: rendered.body
     });
   }
 }

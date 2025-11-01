@@ -4,7 +4,7 @@
   "description": "The MC-ID project",
   "author": "Tonantzintla",
   "license": "GPL-3.0-only",
-  "packageManager": "pnpm@10.18.1",
+  "packageManager": "pnpm@10.20.0",
   "pnpm": {
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
