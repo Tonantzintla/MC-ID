@@ -121,7 +121,7 @@
         <Label for="mcUsername">Minecraft Username</Label>
         <Input type="text" name="mcUsername" id="mcUsername" bind:value={mcUsernameInput} />
         {#if mcUsername.error && mcUsernameInput}
-          <p class="text-destructive text-sm">{mcUsername.error.issues[0].message}</p>
+          <p class="text-sm text-destructive">{mcUsername.error.issues[0].message}</p>
         {/if}
       </Card.Content>
       <Card.Footer>
@@ -141,8 +141,8 @@
         <Card.Description class="space-y-1">
           <p>
             Start Minecraft and connect to
-            <CopyButton text="auth.mc-id.com" variant="ghost" size="sm" class="text-muted-foreground hover:text-foreground inline-flex h-auto flex-row-reverse overflow-visible px-0 dark:hover:bg-transparent">
-              <div class="bg-accent rounded-sm p-0.5 font-mono">auth.mc-id.com</div>
+            <CopyButton text="auth.mc-id.com" variant="ghost" size="sm" class="inline-flex h-auto flex-row-reverse overflow-visible px-0 text-muted-foreground hover:text-foreground dark:hover:bg-transparent">
+              <div class="rounded-sm bg-accent p-0.5 font-mono">auth.mc-id.com</div>
             </CopyButton>
           </p>
           <p>You'll get kicked from the server and provided with a code, enter the 6-digit code below to link your Minecraft account.</p>
@@ -261,8 +261,8 @@
         {account.username}
       </Item.Title>
       <Item.Description class="flex flex-row items-center gap-0">
-        <CopyButton text={account.uuid} variant="ghost" size="sm" class="text-muted-foreground hover:text-foreground h-auto flex-row-reverse overflow-visible px-0 dark:hover:bg-transparent">
-          <div class="bg-popover rounded-sm p-0.5 font-mono">{account.uuid}</div>
+        <CopyButton text={account.uuid} variant="ghost" size="sm" class="h-auto flex-row-reverse overflow-visible px-0 text-muted-foreground hover:text-foreground dark:hover:bg-transparent">
+          <div class="rounded-sm bg-popover p-0.5 font-mono">{account.uuid}</div>
         </CopyButton>
       </Item.Description>
     </Item.Content>

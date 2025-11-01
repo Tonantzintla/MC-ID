@@ -33,12 +33,12 @@
 <Header menuItems={[{ name: "Home", href: "/" }]} showLoginButtons={false} />
 
 <Tabs.Root bind:value class="mx-auto w-full max-w-md px-4 pt-24 md:pt-36">
-  <Tabs.List class="bg-background grid w-full grid-cols-2 gap-4">
+  <Tabs.List class="grid w-full grid-cols-2 gap-4 bg-background">
     {#each tabs as tab (tab.value)}
       {@const isActive = value === tab.value}
       <Tabs.Trigger value={tab.value} class="relative border-none data-[state=active]:bg-transparent dark:data-[state=active]:bg-transparent" data-sveltekit-noscroll data-state={isActive ? "active" : "inactive"}>
         {#if isActive}
-          <div class="bg-primary absolute inset-0 rounded-md" in:send={{ key: "active-tab" }} out:receive={{ key: "active-tab" }}></div>
+          <div class="absolute inset-0 rounded-md bg-primary" in:send={{ key: "active-tab" }} out:receive={{ key: "active-tab" }}></div>
         {/if}
         <div class="relative">
           {tab.title}

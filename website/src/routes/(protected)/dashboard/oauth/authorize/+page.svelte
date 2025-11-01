@@ -51,7 +51,7 @@
 
 <div class="@container mx-auto flex max-w-xl flex-col justify-start gap-8 self-center px-2 py-6 md:px-0">
   {#if dataEmpty || data.error}
-    <Empty.Root class="from-muted/50 to-background h-full bg-gradient-to-b from-30%">
+    <Empty.Root class="h-full bg-gradient-to-b from-muted/50 from-30% to-background">
       <Empty.Header>
         <Empty.Media variant="icon">
           <CircleX />
@@ -75,7 +75,7 @@
   {:else}
     <Card.Root>
       <Card.Header>
-        <div class="pointer-events-none flex select-none flex-nowrap items-center justify-center gap-4">
+        <div class="pointer-events-none flex flex-nowrap items-center justify-center gap-4 select-none">
           <Avatar.Root class="pointer-events-none size-16 rounded-none sm:size-24">
             <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full" />
             <Avatar.Fallback class="rounded-none">{oauthClient?.name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
@@ -100,14 +100,14 @@
                   if (!isHover.current) return;
                   showPopover = true;
                 }}>
-                <BadgeCheck class="text-primary pointer-events-none select-none" />
+                <BadgeCheck class="pointer-events-none text-primary select-none" />
               </Popover.Trigger>
               <Popover.Content>
                 <div class="flex items-center gap-2">
-                  <BadgeCheck class="text-primary size-5" />
+                  <BadgeCheck class="size-5 text-primary" />
                   <span class="font-medium">Verified App</span>
                 </div>
-                <p class="text-muted-foreground mt-2 text-sm">This application has been verified by the MC-ID team.</p>
+                <p class="mt-2 text-sm text-muted-foreground">This application has been verified by the MC-ID team.</p>
               </Popover.Content>
             </Popover.Root>
           {/if}
@@ -116,8 +116,8 @@
       </Card.Header>
       <ScrollArea class="h-[30rem] w-full sm:h-full" type="auto">
         <Card.Content class="space-y-2">
-          <Item.Group class="bg-accent rounded-lg p-4">
-            <p class="text-muted-foreground text-sm">
+          <Item.Group class="rounded-lg bg-accent p-4">
+            <p class="text-sm text-muted-foreground">
               This will allow the developer of {oauthClient?.name} to:
             </p>
             {#each scopes as scope (scope.value)}
@@ -126,7 +126,7 @@
           </Item.Group>
 
           {#if appMetadata?.description || appMetadata?.uri}
-            <div class="bg-accent rounded-lg p-4">
+            <div class="rounded-lg bg-accent p-4">
               {#if appMetadata.description}
                 {@render additionalItem({
                   IconComponent: BookText,
@@ -139,7 +139,7 @@
             </div>
           {/if}
 
-          <div class="bg-accent rounded-lg p-4">
+          <div class="rounded-lg bg-accent p-4">
             {@render additionalItem({ IconComponent: ExternalLink, description: `Once you authorize, you will be redirected <strong>outside of MC-ID</strong> to: <strong>${redirectURI}</strong>` })}
             {@render additionalItem({
               IconComponent: Scale,
@@ -148,8 +148,8 @@
             {@render additionalItem({ IconComponent: Clock, description: `Active since ${formatDate(new Date(oauthClient?.createdAt!), "MMM d, yyyy", { in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })}` })}
           </div>
 
-          <Item.Group class="bg-accent rounded-lg p-4">
-            <p class="text-muted-foreground text-sm">
+          <Item.Group class="rounded-lg bg-accent p-4">
+            <p class="text-sm text-muted-foreground">
               Apps can <strong><i>never</i></strong> do the following:
             </p>
             {@render additionalItem({ IconComponent: ChevronRight, description: "Make changes to your MC-ID or Microsoft account (e.g., change your email, password, or other settings) or log into your account" })}
@@ -201,7 +201,7 @@
   <Item.Root variant="default" size="sm" class={cn("py-2", { "opacity-50": !canAccess })}>
     <Item.Media>
       {#if canAccess}
-        <CircleCheck class="text-primary size-5" />
+        <CircleCheck class="size-5 text-primary" />
       {:else}
         <CircleX class="size-5" />
       {/if}

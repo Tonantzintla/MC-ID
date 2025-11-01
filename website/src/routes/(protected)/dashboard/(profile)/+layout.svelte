@@ -56,7 +56,7 @@
   {#if browser && shouldShow3DAvatar}
     <div bind:this={minecraftAvatarContainer} class="relative w-full">
       {#if canvasIsLoading}
-        <div class="border-border bg-accent absolute size-full animate-pulse rounded-lg border"></div>
+        <div class="absolute size-full animate-pulse rounded-lg border border-border bg-accent"></div>
       {/if}
       <canvas bind:this={minecraftAvatar} class="relative size-full translate-y-3 transform-gpu overflow-hidden rounded-lg opacity-0 transition-all duration-[3s] data-[loaded=true]:translate-y-0 data-[loaded=true]:opacity-100" data-loaded={!canvasIsLoading}></canvas>
     </div>

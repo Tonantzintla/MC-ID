@@ -129,7 +129,7 @@
     <div class="flex flex-col items-center justify-center gap-y-2">
       <span class="w-full text-center text-sm opacity-50">Or</span>
       <Button class="w-full" variant="outline" data-disabled={$submitting} data-sveltekit-preload-data="tap" onclick={async () => await signInWithPasskey()}>
-        <Key class="pointer-events-none h-6 w-auto select-none transition-opacity duration-300 group-hover:opacity-70" />
+        <Key class="pointer-events-none h-6 w-auto transition-opacity duration-300 select-none group-hover:opacity-70" />
         Login with Passkey
       </Button>
     </div>
