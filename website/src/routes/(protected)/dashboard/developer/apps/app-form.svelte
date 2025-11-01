@@ -217,7 +217,7 @@
           <div class="flex gap-2">
             <Password.Root class="w-full">
               <Password.Input value={appSecret} readonly autocomplete="off" id="secret">
-                <Password.Copy variant={""} size={""} />
+                <Password.Copy />
                 <Password.ToggleVisibility />
               </Password.Input>
             </Password.Root>

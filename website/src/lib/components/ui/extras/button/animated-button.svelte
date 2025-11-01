@@ -3,7 +3,7 @@
 -->
 
 <script lang="ts">
-  import { cn } from "$components/blocks/lib/utils";
+  import { cn } from "$lib/utils";
   import type { ButtonProps } from "./button.svelte";
 
   let { class: _class, variant = "default", size = "default", ref = $bindable(null), href = undefined, type = "button", children, ...restProps }: ButtonProps = $props();

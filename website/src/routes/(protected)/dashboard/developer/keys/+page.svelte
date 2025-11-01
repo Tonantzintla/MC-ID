@@ -143,7 +143,7 @@
 
         <Password.Root class="w-full">
           <Password.Input value={apiKey.key} readonly autocomplete="off" id="secret">
-            <Password.Copy variant={""} size={""} />
+            <Password.Copy />
             <Password.ToggleVisibility />
           </Password.Input>
         </Password.Root>
