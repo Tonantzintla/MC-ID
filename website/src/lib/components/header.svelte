@@ -25,7 +25,7 @@
       <div class="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
         <div class="flex w-full justify-between lg:w-auto">
           <a href="/" aria-label="home" class="flex items-center space-x-2">
-            <enhanced:img src="$lib/assets/MC-ID-White.svg" class="pointer-events-none h-5.5 w-auto select-none group-hover/header:animate-spin" alt="MC-ID" />
+            <enhanced:img src="$lib/assets/MC-ID-White.svg" class="pointer-events-none h-5.5 w-auto select-none group-hover/header:animate-spin" alt="MC-ID"></enhanced:img>
           </a>
 
           <button onclick={() => (menuState = !menuState)} aria-label={menuState == true ? "Close Menu" : "Open Menu"} class="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden">

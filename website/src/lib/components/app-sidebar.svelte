@@ -117,7 +117,7 @@
 <Sidebar.Root {collapsible} {...restProps}>
   <Sidebar.Header>
     <Button href="/dashboard" class="group/header flex items-center justify-start gap-2" variant="ghost">
-      <enhanced:img src="$lib/assets/MC-ID-White.svg" class="pointer-events-none h-6 w-auto select-none group-hover/header:animate-spin" alt="MC-ID" />
+      <enhanced:img src="$lib/assets/MC-ID-White.svg" class="pointer-events-none h-6 w-auto select-none group-hover/header:animate-spin" alt="MC-ID"></enhanced:img>
       {#if sidebar.open}
         <span class="text-lg">Minecraft ID</span>
       {/if}
