@@ -1,0 +1,24 @@
+{
+  "folders": [
+    {
+      "name": "Root",
+      "path": "."
+    },
+    {
+      "name": "Website",
+      "path": "website"
+    },
+    {
+      "name": "Docs",
+      "path": "docs"
+    },
+    {
+      "name": "Plugin",
+      "path": "plugin"
+    }
+  ],
+  "settings": {
+    // Global workspace settings
+    "git.autofetch": true,
+  }
+}

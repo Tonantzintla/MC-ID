@@ -14,7 +14,7 @@
   "git.autofetch": true,
   "svelte.enable-ts-plugin": true,
   "svelte.plugin.svelte.defaultScriptLanguage": "ts",
-  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "class:list", ".*Class*"],
+  "tailwindCSS.classAttributes": ["class", "class:*", "class:name"],
   "tailwindCSS.classFunctions": ["clsx", "cn"],
   "tailwindCSS.emmetCompletions": true,
   "tailwindCSS.includeLanguages": {
@@ -27,6 +27,7 @@
   "javascript.updateImportsOnFileMove.enabled": "prompt",
   "typescript.updateImportsOnFileMove.enabled": "prompt",
   "eslint.validate": ["javascript", "typescript", "svelte"],
+  "prettier.documentSelectors": ["**/*.svelte"],
   "workbench.editor.customLabels.patterns": {
     // Page
     "**/routes/**/*/+page.svelte": "${dirname} - Page",

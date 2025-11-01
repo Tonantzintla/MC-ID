@@ -5,8 +5,11 @@
   "trailingComma": "none",
   "bracketSameLine": true,
   "printWidth": 999999,
-  "tailwindFunctions": ["clsx", "cn"],
   "plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
   "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }],
-  "tailwindStylesheet": "./src/app.css"
+  "svelteStrictMode": true,
+  "tailwindStylesheet": "./src/app.css",
+  "tailwindAttributes": ["class", "class:*", "class:name"],
+  "tailwindFunctions": ["clsx", "cn"],
+  "tailwindPreserveWhitespace": false
 }
