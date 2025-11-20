@@ -6,7 +6,6 @@
   import * as skinview3d from "skinview3d";
   import { untrack } from "svelte";
   import { innerWidth } from "svelte/reactivity/window";
-  import { scrollToTabs } from "../../../../routes/+page.svelte";
 
   const skinHashes = ["46acd06e8483b176e8ea39fc12fe105eb3a2a4970f5100057e9d84d4b60bdfa7", "6ac6ca262d67bcfb3dbc924ba8215a18195497c780058a5749de674217721892", "fece7017b1bb13926d1158864b283b8b930271f80a90482f174cca6a17e88236", "226c617fde5b1ba569aa08bd2cb6fd84c93337532a872b3eb7bf66bdd5b395f8", "7cb3ba52ddd5cc82c0b050c3f920f87da36add80165846f479079663805433db", "6c160fbd16adbc4bff2409e70180d911002aebcfa811eb6ec3d1040761aea6dd", "d5c4ee5ce20aed9e33e866c66caa37178606234b3721084bf01d13320fb2eb3f", "b66bc80f002b10371e2fa23de6f230dd5e2f3affc2e15786f65bc9be4c6eb71a", "eee522611005acf256dbd152e992c60c0bb7978cb0f3127807700e478ad97664"] as const;
 
@@ -77,8 +76,8 @@
             <p class="mx-auto mt-8 max-w-2xl text-lg text-balance">Most secure way to login with your Minecraft account, built for users and developers in mind.</p>
 
             <div class="mt-12 flex flex-col items-center justify-center gap-2 md:flex-row">
-              <Button onpointerdown={scrollToTabs} size="lg" class="rounded-xl px-5 text-base backdrop-blur-lg">
-                <span class="text-nowrap">For Users</span>
+              <Button href="/dashboard" size="lg" class="rounded-xl px-5 text-base backdrop-blur-lg">
+                <span class="text-nowrap">Get Started</span>
               </Button>
 
               <Button href="#developers" size="lg" variant="ghost" class="rounded-xl px-5 transition-all dark:hover:bg-accent">For Developers</Button>
