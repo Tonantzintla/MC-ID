@@ -485,7 +485,7 @@
 
   <Form.Button disabled={!appIsTainted($appTainted) || urlErrors || contactErrors || $appSubmitting || (isCreate && !emailVerified)} class="capitalize transition-all duration-300" variant={!appIsTainted($appTainted) || urlErrors || contactErrors || $appSubmitting || (isCreate && !emailVerified) ? "secondary" : "default"}>
     {#if !$appSubmitting}
-      {language.normal} App
+      Save
     {:else}
       <LoaderCircle class="h-4 w-4 animate-spin" />
     {/if}
@@ -523,7 +523,7 @@
       </Form.Control>
     </Form.Field>
 
-    <Form.Button disabled={$deleteAppSubmitting} class="capitalize transition-all duration-300" variant="destructive">
+    <Form.Button disabled={$deleteAppSubmitting} class="mt-2 capitalize transition-all duration-300" variant="destructive">
       {#if !$deleteAppSubmitting}
         Delete App
       {:else}
