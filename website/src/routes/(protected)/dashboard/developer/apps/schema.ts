@@ -2,7 +2,7 @@ import { Scope } from "$lib/scopes";
 import { z } from "zod";
 
 const name = z.string().min(3, "The name must be at least 3 characters long").max(32, "The name must be at most 32 characters long");
-const uri = z.url("The website must be a valid URI").min(3);
+const uri = z.url("The website must be a valid URI").min(3, "The website must be at least 3 characters long").max(128, "The website must be at most 128 characters long");
 const description = z.string().min(10, "The description must be at least 10 characters long").max(500, "The description must be at most 500 characters long");
 const id = z.string().optional();
 const redirectUris = z.array(z.string().url("Each redirect URI must be a valid URL")).min(1, "At least one redirect URI is required");

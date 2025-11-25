@@ -279,6 +279,7 @@
         <Form.Label for={props.name}>App Name</Form.Label>
         <Form.Description>This is the name of your app, it will be displayed in the dashboard.</Form.Description>
         <Input {...props} bind:value={$appFormData.name} maxlength={32} type="text" autocomplete="off" />
+        <Form.FieldErrors variant="single" />
       {/snippet}
     </Form.Control>
   </Form.Field>
@@ -310,11 +311,15 @@
                       <CircleMinus class="opacity-50 transition-opacity duration-300 group-hover:opacity-100" />
                     </Button>
                   </div>
+                  <Form.FieldErrors variant="single" />
                 {/snippet}
               </Form.Control>
-              <Form.FieldErrors variant="single" />
             </Form.ElementField>
           {/each}
+
+          {#if $appErrors.redirectUris}
+            <Form.FieldErrors />
+          {/if}
 
           {#if $appFormData.redirectUris && $appFormData.redirectUris.every((url) => url !== "")}
             {#if $appFormData.redirectUris.length === 0 || !urlErrors}
@@ -348,6 +353,11 @@
               <Form.FieldErrors variant="single" />
             </Form.ElementField>
           {/each}
+
+          {#if contactErrors}
+            <Form.FieldErrors />
+          {/if}
+
           {#if $appFormData.contacts && $appFormData.contacts.every((url) => url !== "")}
             {#if $appFormData.contacts.length === 0 || !contactErrors}
               <div transition:slide>
