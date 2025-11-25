@@ -39,8 +39,8 @@
                   <Sidebar.MenuItem>
                     <Sidebar.MenuButton isActive={page.url.pathname.endsWith(item.url)} tooltipContent={item.name}>
                       {#snippet child({ props })}
-                        <!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
-                        <a href={resolve(item.url as any)} {...props} target={item.target}>
+                        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve @typescript-eslint/no-explicit-any -->
+                        <a href={item.target === "_blank" ? item.url : resolve(item.url as any)} {...props} target={item.target}>
                           <item.icon />
                           <span>{item.name}</span>
                         </a>

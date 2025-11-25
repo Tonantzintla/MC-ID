@@ -39,7 +39,7 @@ const config = {
 
     csrf: {
       // Only disable if in development mode
-      trustedOrigins: ["https://mc-id.com", "https://api.mc-id.com", "https://auth.mc-id.com", "https://docs.mc-id.com"]
+      trustedOrigins: ["https://mc-id.com", "https://auth.mc-id.com", "https://docs.mc-id.com"]
     },
 
     alias: {

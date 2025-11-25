@@ -93,7 +93,7 @@
       },
       {
         name: "API Reference",
-        url: "https://api.mc-id.com",
+        url: "https://mc-id.com/api",
         icon: ExternalLink,
         target: "_blank"
       }
@@ -116,8 +116,8 @@
 
 <Sidebar.Root {collapsible} {...restProps}>
   <Sidebar.Header>
-    <Button href="/dashboard" class="group/header flex items-center justify-start gap-2" variant="ghost">
-      <enhanced:img src="$lib/assets/MC-ID-White.svg" class="pointer-events-none h-6 w-auto select-none group-hover/header:animate-spin" alt="MC-ID"></enhanced:img>
+    <Button href="/dashboard" class="flex items-center justify-start gap-2" variant="ghost">
+      <enhanced:img src="$lib/assets/MC-ID-White.svg" class="pointer-events-none h-6 w-auto select-none" alt="MC-ID"></enhanced:img>
       {#if sidebar.open}
         <span class="text-lg">Minecraft ID</span>
       {/if}
