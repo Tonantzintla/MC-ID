@@ -29,7 +29,7 @@ export const load = (async (event) => {
           name: app.name || "",
           uri: appMetadata?.uri,
           description: appMetadata?.description,
-          redirectUris: app.redirectURLs ? app.redirectURLs.split(",") : [],
+          redirectUris: app.redirectUrls ? app.redirectUrls.split(",") : [],
           id: app.clientId || "",
           contacts: appMetadata?.contacts,
           scopes: appMetadata?.scopes,
@@ -72,7 +72,7 @@ export const actions: Actions = {
             tosUri: form.data.tosUri,
             policyUri: form.data.policyUri
           }),
-          redirectURLs: form.data.redirectUris.join(",")
+          redirectUrls: form.data.redirectUris.join(",")
         })
         .where(and(eq(oauthApplication.clientId, form.data.id || ""), eq(oauthApplication.userId, event.locals.user!.id)));
 

@@ -7,11 +7,11 @@ import { EmailService } from "$lib/server/email-service";
 import { getAdditionalUserInfo } from "$lib/server/getAdditionalUserInfo";
 import { hashOptions } from "$lib/server/hash-options";
 import { generateRandomSecret } from "$lib/server/secret-generator";
+import { passkey } from "@better-auth/passkey";
 import { hash as argon2Hash, verify as argon2Verify } from "@node-rs/argon2";
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { apiKey, customSession, jwt, oidcProvider, openAPI } from "better-auth/plugins";
-import { passkey } from "better-auth/plugins/passkey";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { db } from "./db"; // your drizzle instance
 
@@ -24,24 +24,6 @@ const options = {
   database: drizzleAdapter(db, {
     provider: "pg" // or "mysql", "sqlite"
   }),
-  // secondaryStorage: {
-  //   get: async (key) => {
-  //     return await redis.get(key);
-  //   },
-  //   set: async (key, value, ttl) => {
-  //     if (ttl) {
-  //       await redis.set(key, value, { EX: ttl });
-  //     } else {
-  //       await redis.set(key, value);
-  //     }
-  //   },
-  //   delete: async (key) => {
-  //     await redis.del(key);
-  //   }
-  // },
-  // rateLimit: {
-  //   storage: "secondary-storage"
-  // },
   account: {
     accountLinking: {
       trustedProviders: ["discord"],

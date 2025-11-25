@@ -11,7 +11,7 @@ export const load = (async ({ request }) => {
   let discordInfo;
   if (discord) {
     discordInfo = await auth.api.accountInfo({
-      body: { accountId: discord?.accountId },
+      query: { accountId: discord?.accountId },
       headers: request.headers
     });
   }
