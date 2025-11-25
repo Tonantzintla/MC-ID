@@ -37,8 +37,8 @@
   const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
 
   const serverDateResult = $derived(await serverDate());
-  let syncDisabled = $derived($lastSynced && new Date(serverDateResult.data).getTime() - $lastSynced.getTime() < 3 * 24 * 60 * 60 * 1000);
-  let username = $state<string>(page.data.user.name ?? $formData.name);
+  let syncDisabled = $derived(!page.data.primaryMcAccount.username && $lastSynced && new Date(serverDateResult.data).getTime() - $lastSynced.getTime() < 3 * 24 * 60 * 60 * 1000);
+  let username = $state<string>(page.data.primaryMcAccount.username ?? $formData.name);
   let toastLoading = $state<number | string>();
   let syncingUser = $state<boolean>(false);
   let sendingVerification = $state<boolean>(false);
@@ -144,69 +144,71 @@
     }
   }}
   class="relative mx-auto flex h-1/2 flex-col justify-center space-y-4 self-center px-4 md:px-0">
-  <div class="space-y-2">
-    <Label for="username">Minecraft account</Label>
-    <div class="text-sm text-muted-foreground">You can edit your Minecraft account on <Button href="https://www.minecraft.net/profile" target="_blank" variant="link" class="inline h-auto p-0">minecraft.net</Button>.</div>
-    <div class="flex gap-4">
-      <Input value={username} disabled readonly maxlength={16} type="text" autocomplete="username" />
-      {#if syncDisabled}
-        <Tooltip.Root>
-          <Tooltip.Trigger>
-            {#snippet child({ props })}
-              <div {...props} class={cn("cursor-not-allowed opacity-50 hover:bg-secondary!", buttonVariants({ variant: "secondary", size: "default" }))}>
-                <RefreshCw class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin" data-syncing={syncingUser} />
-                Sync
-              </div>
-            {/snippet}
-          </Tooltip.Trigger>
-          <Tooltip.Content>
-            You can sync again
-            {formatDistanceStrict(new Date(new Date(serverDateResult.data).getTime() + 3 * 24 * 60 * 60 * 1000), $lastSynced, { addSuffix: true, in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })}
-          </Tooltip.Content>
-        </Tooltip.Root>
-      {:else}
-        <Button
-          class="group"
-          variant="secondary"
-          type="button"
-          disabled={syncingUser || $submitting}
-          onclick={() => {
-            if (syncDisabled) return;
-            syncingUser = true;
-            toast.promise(
-              new Promise((resolve, reject) => {
-                syncUser(page.data.user.id ?? $formData.uuid)
-                  .then(({ data, success, message }) => {
-                    if (!success) throw new Error(message ?? "Failed to sync user.");
-                    username = data.name;
-                    lastSynced.set(new Date(serverDateResult.data));
-                    resolve(data);
-                  })
-                  .catch(reject)
-                  .finally(() => {
-                    syncingUser = false;
-                  });
-              }),
-              {
-                loading: "Syncing...",
-                success: "Synced successfully!",
-                error: "Something went wrong while syncing.",
-                duration: 3000,
-                onDismiss: () => {
-                  toast.info("Your username has been synced with your Minecraft account.", {
-                    description: "Please wait a few minutes for the skin to update if it has changed.",
-                    duration: 5000
-                  });
+  {#if page.data.primaryMcAccount}
+    <div class="space-y-2">
+      <Label for="username">Minecraft account</Label>
+      <div class="text-sm text-muted-foreground">You can edit your Minecraft account on <Button href="https://www.minecraft.net/profile" target="_blank" variant="link" class="inline h-auto p-0">minecraft.net</Button>.</div>
+      <div class="flex gap-4">
+        <Input value={username} disabled readonly maxlength={16} type="text" autocomplete="username" />
+        {#if syncDisabled}
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              {#snippet child({ props })}
+                <div {...props} class={cn("cursor-not-allowed opacity-50 hover:bg-secondary!", buttonVariants({ variant: "secondary", size: "default" }))}>
+                  <RefreshCw class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin" data-syncing={syncingUser} />
+                  Sync
+                </div>
+              {/snippet}
+            </Tooltip.Trigger>
+            <Tooltip.Content>
+              You can sync again
+              {formatDistanceStrict(new Date(new Date(serverDateResult.data).getTime() + 3 * 24 * 60 * 60 * 1000), $lastSynced, { addSuffix: true, in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })}
+            </Tooltip.Content>
+          </Tooltip.Root>
+        {:else}
+          <Button
+            class="group"
+            variant="secondary"
+            type="button"
+            disabled={syncingUser || $submitting}
+            onclick={() => {
+              if (syncDisabled) return;
+              syncingUser = true;
+              toast.promise(
+                new Promise((resolve, reject) => {
+                  syncUser(page.data.user.id ?? $formData.uuid)
+                    .then(({ data, success, message }) => {
+                      if (!success) throw new Error(message ?? "Failed to sync user.");
+                      username = data.name;
+                      lastSynced.set(new Date(serverDateResult.data));
+                      resolve(data);
+                    })
+                    .catch(reject)
+                    .finally(() => {
+                      syncingUser = false;
+                    });
+                }),
+                {
+                  loading: "Syncing...",
+                  success: "Synced successfully!",
+                  error: "Something went wrong while syncing.",
+                  duration: 3000,
+                  onDismiss: () => {
+                    toast.info("Your username has been synced with your Minecraft account.", {
+                      description: "Please wait a few minutes for the skin to update if it has changed.",
+                      duration: 5000
+                    });
+                  }
                 }
-              }
-            );
-          }}>
-          <RefreshCw class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin" data-syncing={syncingUser} />
-          Sync
-        </Button>
-      {/if}
+              );
+            }}>
+            <RefreshCw class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin" data-syncing={syncingUser} />
+            Sync
+          </Button>
+        {/if}
+      </div>
     </div>
-  </div>
+  {/if}
   <Form.Field {form} name="email">
     <Form.Control>
       {#snippet children({ props })}

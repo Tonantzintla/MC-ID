@@ -59,7 +59,7 @@
         <Form.Label for={props.name}>Current Password</Form.Label>
         <Form.Description>If you want to change your password, you need to enter your current password first.</Form.Description>
         <Password.Root>
-          <Password.Input {...props} bind:value={$formData["current-password"]}>
+          <Password.Input {...props} bind:value={$formData["current-password"]} autocomplete="current-password">
             <Password.ToggleVisibility />
           </Password.Input>
         </Password.Root>
@@ -77,7 +77,7 @@
         <Form.Label for={props.name}>New Password</Form.Label>
         <Form.Description>Your new password must be at least 8 characters long and contain a mix of letters, numbers, and symbols.</Form.Description>
         <Password.Root>
-          <Password.Input {...props} bind:value={$formData["new-password"]}>
+          <Password.Input {...props} bind:value={$formData["new-password"]} autocomplete="new-password">
             <Password.ToggleVisibility />
           </Password.Input>
           <Password.Strength bind:strength />
@@ -97,7 +97,7 @@
         <Form.Label for={props.name}>Confirm Password</Form.Label>
         <Form.Description>Please confirm your new password by entering it again.</Form.Description>
         <Password.Root>
-          <Password.Input {...props} bind:value={$formData["confirm-password"]}>
+          <Password.Input {...props} bind:value={$formData["confirm-password"]} autocomplete="new-password">
             <Password.ToggleVisibility />
           </Password.Input>
         </Password.Root>
