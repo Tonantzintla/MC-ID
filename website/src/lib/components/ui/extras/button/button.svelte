@@ -1,7 +1,3 @@
-<!--
-	Installed from @ieedan/shadcn-svelte-extras
--->
-
 <script lang="ts" module>
   import type { WithChildren, WithoutChildren } from "bits-ui";
   import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
@@ -100,10 +96,8 @@
     }
   }}>
   {#if type !== undefined && loading}
-    <div class="absolute flex size-full place-items-center justify-center bg-inherit">
-      <div class="flex animate-spin place-items-center justify-center">
-        <LoaderCircleIcon class="size-4" />
-      </div>
+    <div class="flex animate-spin place-items-center justify-center">
+      <LoaderCircleIcon class="size-4" />
     </div>
     <span class="sr-only">Loading</span>
   {/if}
