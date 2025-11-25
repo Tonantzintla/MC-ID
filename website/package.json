@@ -48,7 +48,7 @@
     "@zxcvbn-ts/language-common": "^3.0.4",
     "@zxcvbn-ts/language-en": "^3.0.2",
     "better-auth": "^1.3.34",
-    "better-svelte-email": "^0.3.3",
+    "better-svelte-email": "^1.0.1",
     "bits-ui": "^2.14.4",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

@@ -1,5 +1,4 @@
-import { renderAsPlainText } from "better-svelte-email";
-import { render } from "svelte/server";
+import Renderer, { toPlainText } from "better-svelte-email/render";
 import { usesend } from "./usesend";
 
 interface EmailOptions {
@@ -11,6 +10,8 @@ interface EmailOptions {
   retryDelay?: number;
 }
 
+const renderer = new Renderer();
+
 export class EmailService {
   private static readonly DEFAULT_FROM = "MC-ID <no-reply@mc-id.com>";
   private static readonly DEFAULT_RETRIES = 3;
@@ -21,7 +22,7 @@ export class EmailService {
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        const text = renderAsPlainText(html);
+        const text = toPlainText(html);
 
         const result = await usesend.emails.send({
           to,
@@ -54,7 +55,7 @@ export class EmailService {
   static async sendVerificationEmail(email: string, verifyUrl: string, baseUrl: string) {
     const { default: VerifyEmail } = await import("$lib/emails/EmailVerify.svelte");
 
-    const rendered = render(VerifyEmail, { props: { baseUrl, verifyUrl } });
+    const rendered = await renderer.render(VerifyEmail, { props: { baseUrl, verifyUrl } });
 
     return EmailService.sendEmail({
       to: email,
@@ -66,7 +67,7 @@ export class EmailService {
   static async sendPasswordResetEmail(email: string, resetUrl: string, baseUrl: string) {
     const { default: ResetPassword } = await import("$lib/emails/ResetPassword.svelte");
 
-    const rendered = render(ResetPassword, { props: { baseUrl, resetUrl } });
+    const rendered = await renderer.render(ResetPassword, { props: { baseUrl, resetUrl } });
 
     return EmailService.sendEmail({
       to: email,
