@@ -9,8 +9,8 @@ import { hashOptions } from "$lib/server/hash-options";
 import { generateRandomSecret } from "$lib/server/secret-generator";
 import { passkey } from "@better-auth/passkey";
 import { hash as argon2Hash, verify as argon2Verify } from "@node-rs/argon2";
-import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { betterAuth, type BetterAuthOptions } from "better-auth/minimal";
 import { apiKey, customSession, jwt, oidcProvider, openAPI } from "better-auth/plugins";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { db } from "./db"; // your drizzle instance
