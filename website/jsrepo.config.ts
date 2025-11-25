@@ -4,11 +4,10 @@ import { defineConfig } from "jsrepo";
 export default defineConfig({
   registries: ["@ieedan/shadcn-svelte-extras"],
   paths: {
-    "*": "$components/blocks",
     ui: "$components/ui/extras",
-    actions: "$lib/actions/extras",
-    hooks: "$lib/hooks/extras",
-    utils: "$lib/utils",
+    hook: "$lib/hooks/extras",
+    action: "$lib/actions/extras",
+    util: "$lib/utils",
     lib: "$lib"
   },
   transforms: [prettier()]

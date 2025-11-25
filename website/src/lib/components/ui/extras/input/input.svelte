@@ -1,7 +1,3 @@
-<!--
-	Installed from @ieedan/shadcn-svelte-extras
--->
-
 <script lang="ts">
   import { cn, type WithElementRef } from "$lib/utils";
   import type { HTMLInputAttributes, HTMLInputTypeAttribute } from "svelte/elements";

@@ -1,7 +1,3 @@
-/*
-	Installed from @ieedan/shadcn-svelte-extras
-*/
-
 import type { Snippet } from "svelte";
 import type { ButtonPropsWithoutHTML } from "$components/ui/extras/button";
 import type { UseClipboard } from "$lib/hooks/extras/use-clipboard.svelte";

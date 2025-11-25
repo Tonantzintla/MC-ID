@@ -1,7 +1,3 @@
-<!--
-	Installed from @ieedan/shadcn-svelte-extras
--->
-
 <script lang="ts">
   import { Button } from "$components/ui/extras/button";
   import { UseClipboard } from "$lib/hooks/extras/use-clipboard.svelte";

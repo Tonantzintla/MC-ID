@@ -1,7 +1,3 @@
-<!--
-	Installed from @ieedan/shadcn-svelte-extras
--->
-
 <script lang="ts">
   import { CopyButton } from "$components/ui/extras/copy-button";
   import { cn } from "$lib/utils";

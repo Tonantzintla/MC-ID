@@ -1,7 +1,3 @@
-<!--
-	Installed from @ieedan/shadcn-svelte-extras
--->
-
 <script lang="ts" module>
   import { type VariantProps, tv } from "tailwind-variants";
 

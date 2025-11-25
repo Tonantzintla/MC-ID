@@ -1,7 +1,3 @@
-/*
-	Installed from @ieedan/shadcn-svelte-extras
-*/
-
 import type { WithChildren, WithoutChildren, Meter as MeterPrimitive, Toggle as TogglePrimitive } from "bits-ui";
 import type { HTMLAttributes, HTMLInputAttributes } from "svelte/elements";
 import type { CopyButtonProps } from "$components/ui/extras/copy-button/types";

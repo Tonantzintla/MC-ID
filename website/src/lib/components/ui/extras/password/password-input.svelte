@@ -1,7 +1,3 @@
-<!--
-	Installed from @ieedan/shadcn-svelte-extras
--->
-
 <script lang="ts">
   import { Input } from "$components/ui/extras/input";
   import { cn } from "$lib/utils";

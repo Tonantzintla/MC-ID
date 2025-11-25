@@ -1,7 +1,3 @@
-<!--
-	Installed from @ieedan/shadcn-svelte-extras
--->
-
 <script lang="ts">
   import { Toggle } from "$components/ui/extras/toggle";
   import { cn } from "$lib/utils";
