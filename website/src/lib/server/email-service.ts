@@ -60,7 +60,7 @@ export class EmailService {
     return EmailService.sendEmail({
       to: email,
       subject: "Verify your MC-ID email address",
-      html: rendered.body
+      html: rendered
     });
   }
 
@@ -72,7 +72,7 @@ export class EmailService {
     return EmailService.sendEmail({
       to: email,
       subject: "Reset your MC-ID password",
-      html: rendered.body
+      html: rendered
     });
   }
 }
