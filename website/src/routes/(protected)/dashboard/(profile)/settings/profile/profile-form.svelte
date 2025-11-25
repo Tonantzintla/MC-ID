@@ -30,7 +30,7 @@
     validators: zodClient(profileUpdateSchema),
     dataType: "json",
     timeoutMs: 2000,
-    validationMethod: "oninput",
+    validationMethod: "onblur",
     resetForm: false
   });
 

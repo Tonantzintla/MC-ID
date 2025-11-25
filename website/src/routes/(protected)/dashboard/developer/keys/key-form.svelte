@@ -19,7 +19,7 @@
     validators: zodClient(keySchema),
     dataType: "json",
     timeoutMs: 2000,
-    validationMethod: "oninput"
+    validationMethod: "onblur"
   });
 
   const { form: keyFormData, enhance: keyEnhance, tainted: keyTainted, isTainted: keyIsTainted, submitting: keySubmitting, timeout: keyTimeout, errors: keyErrors } = keyForm;

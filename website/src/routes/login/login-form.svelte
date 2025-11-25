@@ -21,7 +21,7 @@
     validators: zodClient(loginFormSchema),
     dataType: "json",
     timeoutMs: 2000,
-    validationMethod: "oninput"
+    validationMethod: "onblur"
   });
 
   const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;

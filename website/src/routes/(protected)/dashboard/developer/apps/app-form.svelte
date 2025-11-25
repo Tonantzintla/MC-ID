@@ -58,7 +58,7 @@
     validators: zodClient(appSchema),
     dataType: "json",
     timeoutMs: 2000,
-    validationMethod: "oninput",
+    validationMethod: "onblur",
     invalidateAll: isEdit ? "pessimistic" : undefined
   });
 
@@ -66,7 +66,7 @@
     validators: zodClient(deleteAppSchema),
     dataType: "json",
     timeoutMs: 2000,
-    validationMethod: "oninput"
+    validationMethod: "onblur"
   });
 
   const { form: appFormData, enhance: appEnhance, tainted: appTainted, isTainted: appIsTainted, submitting: appSubmitting, timeout: appTimeout, errors: appErrors } = appForm;
