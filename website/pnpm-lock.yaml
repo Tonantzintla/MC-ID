@@ -208,7 +208,7 @@ importers:
         specifier: ^1.5.7
         version: 1.5.7(react-dom@19.2.0(react@19.2.0))
       vite:
-        specifier: npm:rolldown-vite@^7.2.8
+        specifier: npm:rolldown-vite@latest
         version: rolldown-vite@7.2.8(@types/node@24.10.1)(esbuild@0.25.12)(jiti@2.6.1)
       vite-plugin-devtools-json:
         specifier: ^1.0.0
