@@ -1,6 +1,14 @@
 # Changelog
 
 
+## v3.0.1
+
+[compare changes](https://github.com/Tonantzintla/MC-ID/compare/v2.2.0...v3.0.1)
+
+### 🩹 Fixes
+
+- Bump project version to 3.0.0 ([39d2f78](https://github.com/Tonantzintla/MC-ID/commit/39d2f78))
+
 ## v2.2.0
 
 
