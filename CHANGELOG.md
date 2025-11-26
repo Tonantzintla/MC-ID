@@ -1,6 +1,27 @@
 # Changelog
 
 
+## v3.1.0
+
+[compare changes](https://github.com/Tonantzintla/MC-ID/compare/v3.0.4...v3.1.0)
+
+### 🚀 Enhancements
+
+- Refactor plugin authentication to use LoginEvent with enhanced code display and update build versioning from package.json. ([e4daf7b](https://github.com/Tonantzintla/MC-ID/commit/e4daf7b))
+- Configure Vite dev server to allow file system access to workspace root and parent directory ([01f04ae](https://github.com/Tonantzintla/MC-ID/commit/01f04ae))
+
+### 🏡 Chore
+
+- Update deps ([9f009cc](https://github.com/Tonantzintla/MC-ID/commit/9f009cc))
+- Update pnpm dependencies ([866b43f](https://github.com/Tonantzintla/MC-ID/commit/866b43f))
+- Update dependencies ([fac9158](https://github.com/Tonantzintla/MC-ID/commit/fac9158))
+
+### 🤖 CI
+
+- Add path filter to release workflow to trigger only on changes in `plugin/`. ([9f02a50](https://github.com/Tonantzintla/MC-ID/commit/9f02a50))
+- **release:** Upload stable artifact ([2396395](https://github.com/Tonantzintla/MC-ID/commit/2396395))
+- Add workflow files to release trigger paths. ([c82d149](https://github.com/Tonantzintla/MC-ID/commit/c82d149))
+
 ## v3.0.4
 
 [compare changes](https://github.com/Tonantzintla/MC-ID/compare/v3.0.3...v3.0.4)
