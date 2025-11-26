@@ -79,14 +79,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract Release Notes
+        if: steps.check_release.outputs.released == 'true'
+        id: extract_notes
+        run: |
+          node -e "
+            const fs = require('fs');
+            const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
+            // Match the first level 2 header (current version) until the next level 2 header or end of file
+            const match = changelog.match(/^## v.*?$(.*?)(?=\n## v|$)/ms);
+            if (match) {
+              fs.writeFileSync('RELEASE_NOTES.md', match[1].trim());
+            } else {
+              console.error('Could not extract release notes');
+              process.exit(1);
+            }
+          "
+
       - name: Create GitHub Release
         if: steps.check_release.outputs.released == 'true'
-        run: pnpm exec changelogen gh release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Artifact
-        if: steps.check_release.outputs.released == 'true'
-        run: gh release upload v${{ steps.version.outputs.version }} plugin/build/libs/*-all.jar
+        run: |
+          gh release create v${{ steps.version.outputs.version }} \
+            plugin/build/libs/*-all.jar \
+            --title "v${{ steps.version.outputs.version }}" \
+            --notes-file RELEASE_NOTES.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
