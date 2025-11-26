@@ -1,6 +1,14 @@
 # Changelog
 
 
+## v3.0.3
+
+[compare changes](https://github.com/Tonantzintla/MC-ID/compare/v3.0.2...v3.0.3)
+
+### 🩹 Fixes
+
+- Improve release notes extraction robustness with error handling and a fallback message for `RELEASE_NOTES.md` generation. ([e11cea0](https://github.com/Tonantzintla/MC-ID/commit/e11cea0))
+
 ## v3.0.2
 
 [compare changes](https://github.com/Tonantzintla/MC-ID/compare/v3.0.1...v3.0.2)
