@@ -1,6 +1,14 @@
 # Changelog
 
 
+## v3.0.4
+
+[compare changes](https://github.com/Tonantzintla/MC-ID/compare/v3.0.3...v3.0.4)
+
+### 💅 Refactors
+
+- Streamline release notes generation by linking to the full changelog instead of parsing it. ([5f000d7](https://github.com/Tonantzintla/MC-ID/commit/5f000d7))
+
 ## v3.0.3
 
 [compare changes](https://github.com/Tonantzintla/MC-ID/compare/v3.0.2...v3.0.3)
