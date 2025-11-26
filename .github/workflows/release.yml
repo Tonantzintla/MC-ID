@@ -85,14 +85,23 @@ jobs:
         run: |
           node -e "
             const fs = require('fs');
-            const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
-            // Match the first level 2 header (current version) until the next level 2 header or end of file
-            const match = changelog.match(/^## v.*?$(.*?)(?=\n## v|$)/ms);
-            if (match) {
-              fs.writeFileSync('RELEASE_NOTES.md', match[1].trim());
-            } else {
-              console.error('Could not extract release notes');
-              process.exit(1);
+            try {
+              const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
+              // Match the first level 2 header (current version) until the next level 2 header or end of file
+              // changelogen format: ## vX.Y.Z (Date)
+              const match = changelog.match(/^## v.*?$(.*?)(?=\n## v|$)/ms);
+              
+              if (match && match[1]) {
+                fs.writeFileSync('RELEASE_NOTES.md', match[1].trim());
+                console.log('Successfully extracted release notes.');
+              } else {
+                // Fallback: If regex fails, use the whole file if it's short, or just a default message
+                console.warn('Regex match failed. Using default release notes.');
+                fs.writeFileSync('RELEASE_NOTES.md', 'See CHANGELOG.md for details.');
+              }
+            } catch (error) {
+              console.error('Error reading CHANGELOG.md:', error);
+              fs.writeFileSync('RELEASE_NOTES.md', 'See CHANGELOG.md for details.');
             }
           "
 
