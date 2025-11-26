@@ -49,8 +49,6 @@ jobs:
       - name: Bump Version & Generate Changelog
         id: changelogen
         run: pnpm run release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check if release created
         id: check_release
