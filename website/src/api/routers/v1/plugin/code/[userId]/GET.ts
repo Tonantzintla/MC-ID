@@ -19,12 +19,12 @@ const PluginCodeParams = z
 
 const PluginCodeOutput = z
   .object({
-    code: z.string().nullable().describe("6-digit verification code formatted with space (e.g., '123 456'), or null if no active code")
+    code: z.string().describe("6-digit verification code formatted with space (e.g., '123 456')")
   })
   .meta({
     title: "Plugin Code Output",
     description: "Response schema for plugin code retrieval",
-    examples: [{ code: "123 456" }, { code: null }]
+    examples: [{ code: "123 456" }]
   });
 
 const description = `
@@ -52,7 +52,7 @@ export const getCode = base
     path: "/plugin/code/{userId}",
     summary: "Retrieve authentication code for Minecraft player",
     tags: ["Plugin"],
-    successDescription: "Returns the latest active verification code or null if none exists",
+    successDescription: "Returns the latest active verification code",
     operationId: "getPluginCode"
   })
   .input(PluginCodeParams)
@@ -101,14 +101,8 @@ export const getCode = base
           code: codeRecord.code
         };
       } else {
-        logger.apiResponse(resolved, "GET", 200, duration, {
-          userId: input.userId,
-          hasCode: false
-        });
-
-        return {
-          code: null
-        };
+        logger.info("Plugin code request - no active code found", { userId: input.userId });
+        throw errors.NOT_FOUND();
       }
     } catch (err) {
       const duration = Date.now() - startTime;

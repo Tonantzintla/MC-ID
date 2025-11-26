@@ -26,7 +26,7 @@ const VerifyCodeInput = z
 
 const VerifyCodeOutput = z
   .object({
-    id: MinecraftUUIDSchema.describe("Minecraft player UUID (32-character hex string)"),
+    userId: MinecraftUUIDSchema.describe("Minecraft player UUID (32-character hex string)"),
     username: z.string().min(1).max(16).describe("Current Minecraft username from Mojang API")
   })
   .meta({
@@ -34,7 +34,7 @@ const VerifyCodeOutput = z
     description: "Successful code verification response with player information",
     examples: [
       {
-        id: "069a79f444e94726a5befca90e38aaf5",
+        userId: "069a79f444e94726a5befca90e38aaf5",
         username: "Notch"
       }
     ]
@@ -53,6 +53,8 @@ export const verifyCode = base
   .errors({
     CODE_EXPIRED: { status: 410, error: "Code Expired" },
     MINECRAFT_USER_NOT_FOUND: { status: 404, error: "Minecraft User Not Found" },
+    MOJANG_API_ERROR: { status: 502, error: "Mojang API Error" },
+    FORBIDDEN: { status: 403, error: "Forbidden" },
     INTERNAL_ERROR: { status: 500, error: "Internal Server Error" }
   })
   .route({
@@ -101,7 +103,12 @@ export const verifyCode = base
           actualUuid: codeRecord.user.id,
           code: input.code
         });
-        throw errors.UNAUTHORIZED();
+        throw errors.FORBIDDEN({
+          message: "The provided code belongs to a different user",
+          data: {
+            reason: "UUID mismatch"
+          }
+        });
       }
 
       // Delete the used code
@@ -124,7 +131,7 @@ export const verifyCode = base
       logger.userAction("code_verified", input.uuid, { username });
 
       return {
-        id: codeRecord.user.id,
+        userId: codeRecord.user.id,
         username
       };
     } catch (err) {

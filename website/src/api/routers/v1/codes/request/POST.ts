@@ -5,7 +5,6 @@ import { defaultPermissions, generateSixDigitCode, getUsernameFromMcid, logger }
 import { resolve } from "$app/paths";
 import { mcuser, verificationCodes } from "$lib/server/db/schema";
 import { ORPCError } from "@orpc/server";
-import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 const RequestCodeInput = z
@@ -53,6 +52,7 @@ export const requestCode = base
   .use(authMiddleware(defaultPermissions))
   .errors({
     MINECRAFT_USER_NOT_FOUND: { status: 404, error: "Minecraft User Not Found" },
+    MOJANG_API_ERROR: { status: 502, error: "Mojang API Error" },
     INTERNAL_ERROR: { status: 500, error: "Internal Server Error" }
   })
   .route({
@@ -83,19 +83,19 @@ export const requestCode = base
       }
 
       // Find or create MC user
-      let user = await db.query.mcuser.findFirst({
-        where: (user) => eq(user.id, input.uuid)
-      });
+      const [user] = await db
+        .insert(mcuser)
+        .values({ id: input.uuid })
+        .onConflictDoUpdate({
+          target: mcuser.id,
+          set: { id: input.uuid }
+        })
+        .returning();
 
       if (!user) {
-        logger.userAction("create", input.uuid, { reason: "First time user" });
-        user = (await db.insert(mcuser).values({ id: input.uuid }).returning())[0];
-        if (!user) {
-          throw errors.INTERNAL_ERROR({
-            message: `Failed to create user with ID: ${input.uuid}`
-          });
-        }
-        logger.info("Successfully created new user", { userId: user.id });
+        throw errors.INTERNAL_ERROR({
+          message: `Failed to find or create user with ID: ${input.uuid}`
+        });
       }
 
       // Generate verification code

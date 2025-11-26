@@ -1,9 +1,13 @@
 import { z } from "zod";
 
 export const MinecraftUUIDSchema = z
-  .string()
-  .length(32, "UUID must be exactly 32 characters")
-  .regex(/^[0-9a-f]{32}$/, "UUID must contain only lowercase hexadecimal characters")
+  .preprocess((val) => (typeof val === "string" ? val.replace(/-/g, "") : val), z.string())
+  .pipe(
+    z
+      .string()
+      .length(32, "UUID must be exactly 32 characters")
+      .regex(/^[0-9a-f]{32}$/, "UUID must contain only lowercase hexadecimal characters")
+  )
   .describe("32-character hexadecimal Minecraft player UUID (without hyphens)")
   .meta({
     title: "Minecraft UUID",

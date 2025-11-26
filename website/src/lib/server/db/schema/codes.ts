@@ -19,5 +19,5 @@ export const verificationCodes = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull()
   },
-  (table) => [index("mc_user_app_idx").on(table.appApiKeyId, table.mcuserId), unique("verification_codes_app_user_unique").on(table.appApiKeyId, table.mcuserId)]
+  (table) => [index("mc_user_app_idx").on(table.appApiKeyId, table.mcuserId), index("code_app_idx").on(table.appApiKeyId, table.code), unique("verification_codes_app_user_unique").on(table.appApiKeyId, table.mcuserId)]
 );
