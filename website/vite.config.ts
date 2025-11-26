@@ -2,10 +2,15 @@ import { enhancedImages } from "@sveltejs/enhanced-img";
 import { sveltekit } from "@sveltejs/kit/vite";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
-import { defineConfig } from "vite";
+import { defineConfig, searchForWorkspaceRoot } from "vite";
 import devtoolsJson from "vite-plugin-devtools-json";
 
 export default defineConfig({
+  server: {
+    fs: {
+      allow: [searchForWorkspaceRoot(process.cwd()), path.resolve("..")]
+    }
+  },
   plugins: [enhancedImages(), tailwindcss(), sveltekit(), devtoolsJson()],
   resolve: {
     alias: {
