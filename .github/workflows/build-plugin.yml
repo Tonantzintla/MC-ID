@@ -1,205 +1,27 @@
-name: Build Plugin
-
-permissions:
-  contents: write
+name: CI Plugin
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "plugin/**"
   pull_request:
     branches: [main]
     paths:
       - "plugin/**"
-  workflow_dispatch:
-    inputs:
-      force_release:
-        description: "Force create a release (ignores conventional commit checks)"
-        required: false
-        type: boolean
-        default: false
-      release_type:
-        description: "Type of release to create (if force_release is true)"
-        required: false
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
-        default: patch
 
 jobs:
-  build-and-release:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0 # Needed for version determination
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
 
       - name: Set up JDK
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: temurin
+          cache: gradle
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v3
 
-      - name: Determine version and release status
-        id: version
-        run: |
-          # Handle manual workflow dispatch
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "Manual workflow trigger detected"
-            
-            # Get the latest tag, default to v1.0.0 if none exists
-            LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
-            echo "Latest tag: $LATEST_TAG"
-            
-            if [[ "${{ github.event.inputs.force_release }}" == "true" ]]; then
-              # Force release with specified type
-              VERSION_NUM=$(echo $LATEST_TAG | sed 's/v//')
-              IFS='.' read -r major minor patch <<< "$VERSION_NUM"
-              
-              case "${{ github.event.inputs.release_type }}" in
-                "major")
-                  NEW_VERSION="$((major + 1)).0.0"
-                  ;;
-                "minor")
-                  NEW_VERSION="$major.$((minor + 1)).0"
-                  ;;
-                "patch")
-                  NEW_VERSION="$major.$minor.$((patch + 1))"
-                  ;;
-              esac
-              
-              echo "Forced release: v$NEW_VERSION"
-              echo "new_release_published=true" >> $GITHUB_OUTPUT
-              echo "new_release_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-              echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-              echo "new_release_notes=Manual release triggered" >> $GITHUB_OUTPUT
-            else
-              # Manual build without release
-              echo "Manual build without release"
-              echo "new_release_published=false" >> $GITHUB_OUTPUT
-              echo "version=MANUAL-SNAPSHOT" >> $GITHUB_OUTPUT
-            fi
-            exit 0
-          fi
-
-          # Only check for release on main branch pushes
-          if [[ "${{ github.event_name }}" != "push" ]] || [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
-            echo "Not a main branch push - building for testing only"
-            echo "new_release_published=false" >> $GITHUB_OUTPUT
-            echo "version=SNAPSHOT" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          # Get the latest tag, or detect if no tags exist
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-
-          if [[ -z "$LATEST_TAG" ]]; then
-            echo "No tags found in repository"
-            LATEST_TAG="v1.0.0"
-            # For first release, check all commits
-            COMMITS=$(git log --oneline)
-            echo "All commits (no previous tags):"
-            echo "$COMMITS"
-          else
-            echo "Latest tag: $LATEST_TAG"
-            # Check commit messages since last tag for version bump type
-            COMMITS=$(git log ${LATEST_TAG}..HEAD --oneline)
-            echo "Commits since $LATEST_TAG:"
-            echo "$COMMITS"
-          fi
-
-          # Remove 'v' prefix and increment patch version
-          VERSION_NUM=$(echo $LATEST_TAG | sed 's/v//')
-          IFS='.' read -r major minor patch <<< "$VERSION_NUM"
-
-          if echo "$COMMITS" | grep -q "^[a-f0-9]* feat!:"; then
-            # Breaking change - major version bump
-            NEW_VERSION="$((major + 1)).0.0"
-          elif echo "$COMMITS" | grep -q "^[a-f0-9]* feat:"; then
-            # New feature - minor version bump
-            NEW_VERSION="$major.$((minor + 1)).0"
-          elif echo "$COMMITS" | grep -q "^[a-f0-9]* fix:"; then
-            # Bug fix - patch version bump
-            NEW_VERSION="$major.$minor.$((patch + 1))"
-          else
-            # No releasable changes
-            echo "No releasable changes found - building with current version"
-            echo "new_release_published=false" >> $GITHUB_OUTPUT
-            echo "version=$VERSION_NUM" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          echo "New version: v$NEW_VERSION"
-          echo "new_release_published=true" >> $GITHUB_OUTPUT
-          echo "new_release_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-
-          # Generate release notes
-          if git rev-parse "${LATEST_TAG}" >/dev/null 2>&1; then
-            # Tag exists, get commits since tag
-            RELEASE_NOTES=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s" | head -20)
-          else
-            # No tag exists, get all commits
-            RELEASE_NOTES=$(git log --pretty=format:"- %s" | head -20)
-          fi
-          echo "new_release_notes<<EOF" >> $GITHUB_OUTPUT
-          echo "## Changes" >> $GITHUB_OUTPUT
-          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Build Plugin
+      - name: Build
         working-directory: plugin
-        env:
-          RELEASE_VERSION: ${{ steps.version.outputs.version }}
         run: ./gradlew build
-
-      - name: Upload Plugin JAR file (for testing/artifacts)
-        uses: actions/upload-artifact@v4
-        with:
-          name: mc-id-plugin
-          path: plugin/build/libs/mc-id-auth-*-all.jar
-          compression-level: 0
-
-      - name: Copy JAR with generic name
-        if: steps.version.outputs.new_release_published == 'true'
-        working-directory: plugin
-        run: |
-          cp build/libs/mc-id-auth-*-all.jar build/libs/mc-id-auth-latest.jar
-          ls -la build/libs/
-
-      - name: Create and push tag using GITHUB_TOKEN
-        if: steps.version.outputs.new_release_published == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v${{ steps.version.outputs.new_release_version }}" -m "Release v${{ steps.version.outputs.new_release_version }}"
-          # Push using the "origin" remote set by checkout, authorized via the token in env
-          git push origin "v${{ steps.version.outputs.new_release_version }}"
-        env:
-          # Use the built-in token for authorization
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create Release
-        if: steps.version.outputs.new_release_published == 'true'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.version.outputs.new_release_version }}
-          name: Plugin Release v${{ steps.version.outputs.new_release_version }}
-          body: ${{ steps.version.outputs.new_release_notes }}
-          files: |
-            plugin/build/libs/mc-id-auth-*-all.jar
-            plugin/build/libs/mc-id-auth-latest.jar
-          draft: false
-          prerelease: false
-          make_latest: true
-          fail_on_unmatched_files: false
-          token: ${{ secrets.GITHUB_TOKEN }}
