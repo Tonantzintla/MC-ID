@@ -1,6 +1,14 @@
 # Changelog
 
 
+## v3.0.2
+
+[compare changes](https://github.com/Tonantzintla/MC-ID/compare/v3.0.1...v3.0.2)
+
+### 🩹 Fixes
+
+- Extract release notes from CHANGELOG.md and use them when creating a GitHub release, replacing `changelogen` and separate artifact upload. ([e5737b6](https://github.com/Tonantzintla/MC-ID/commit/e5737b6))
+
 ## v3.0.1
 
 [compare changes](https://github.com/Tonantzintla/MC-ID/compare/v2.2.0...v3.0.1)
