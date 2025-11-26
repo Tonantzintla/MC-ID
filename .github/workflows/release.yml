@@ -79,31 +79,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Release Notes
+      - name: Generate Release Notes Link
         if: steps.check_release.outputs.released == 'true'
         id: extract_notes
         run: |
-          node -e "
-            const fs = require('fs');
-            try {
-              const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
-              // Match the first level 2 header (current version) until the next level 2 header or end of file
-              // changelogen format: ## vX.Y.Z (Date)
-              const match = changelog.match(/^## v.*?$(.*?)(?=\n## v|$)/ms);
-              
-              if (match && match[1]) {
-                fs.writeFileSync('RELEASE_NOTES.md', match[1].trim());
-                console.log('Successfully extracted release notes.');
-              } else {
-                // Fallback: If regex fails, use the whole file if it's short, or just a default message
-                console.warn('Regex match failed. Using default release notes.');
-                fs.writeFileSync('RELEASE_NOTES.md', 'See CHANGELOG.md for details.');
-              }
-            } catch (error) {
-              console.error('Error reading CHANGELOG.md:', error);
-              fs.writeFileSync('RELEASE_NOTES.md', 'See CHANGELOG.md for details.');
-            }
-          "
+          VERSION="${{ steps.version.outputs.version }}"
+          # Remove dots for the anchor (e.g. v3.0.3 -> v303)
+          ANCHOR="v${VERSION//./}"
+          echo "See full changelog: https://github.com/Tonantzintla/MC-ID/blob/main/CHANGELOG.md#${ANCHOR}" > RELEASE_NOTES.md
 
       - name: Create GitHub Release
         if: steps.check_release.outputs.released == 'true'
