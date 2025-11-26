@@ -23,11 +23,11 @@ public class ApiHandler {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public ApiHandler(ConfigLoader configLoader, Logger logger){
-        this.apiEndpoint=
-                URI.create(configLoader.getConfig().getString("api-endpoint"))
-                    .resolve("api/")
-                    .resolve("v1/")
-                    .resolve("plugin/");
+        String baseUrl = configLoader.getConfig().getString("api-endpoint");
+        if (!baseUrl.endsWith("/")) {
+            baseUrl += "/";
+        }
+        this.apiEndpoint = URI.create(baseUrl + "api/v1/plugin/");
         this.apiKey=configLoader.getConfig().getString("api-key");
         this.logger=logger;
 
@@ -35,8 +35,8 @@ public class ApiHandler {
 
     }
 
-    public CompletableFuture<PlayerCodeResponse> getPlayerCode(Player player)  {
-        URI route = apiEndpoint.resolve("code/").resolve(player.getUniqueId().toString().replace("-",""));
+    public CompletableFuture<PlayerCodeResponse> getPlayerCode(java.util.UUID playerUuid)  {
+        URI route = apiEndpoint.resolve("code/" + playerUuid.toString().replace("-",""));
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(route)

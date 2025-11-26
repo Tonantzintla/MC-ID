@@ -38,7 +38,7 @@ public class ConfigLoader {
         catch (IOException ex){
             finalConfig =null;
             logger.error("Failed to load the config file!\n This plugin is going to be disabled.");
-            Optional<PluginContainer> container = proxy.getPluginManager().getPlugin("user-auth");
+            Optional<PluginContainer> container = proxy.getPluginManager().getPlugin("mc-id-auth");
             container.ifPresent(pluginContainer -> pluginContainer.getExecutorService().shutdown());
         }
         this.config = finalConfig;

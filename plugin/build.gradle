@@ -6,9 +6,12 @@ plugins {
     id("xyz.jpenilla.run-velocity") version "2.3.1"
 }
 
+import groovy.json.JsonSlurper
+
 group = 'com.mcid'
-// Use environment variable for CI builds, fallback to dev version
-version = System.getenv('RELEASE_VERSION') ?: '1-SNAPSHOT'
+// Read version from package.json
+def packageJson = new JsonSlurper().parse(file('../package.json'))
+version = packageJson.version
 
 repositories {
     mavenCentral()
