@@ -39,8 +39,8 @@
           <ul class="flex gap-8 text-sm">
             {#each menuItems as item, index (index)}
               <li>
-                <!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
-                <a href={resolve(item.href as any)} class="block text-muted-foreground duration-150 hover:text-accent-foreground">
+                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+                <a href={item.href} class="block text-muted-foreground duration-150 hover:text-accent-foreground">
                   <span>{item.name}</span>
                 </a>
               </li>
