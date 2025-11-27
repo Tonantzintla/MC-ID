@@ -108,7 +108,7 @@ importers:
         version: 3.10.0
       '@jsrepo/transform-prettier':
         specifier: ^0.0.6
-        version: 0.0.6(jsrepo@3.0.5(svelte@5.45.2))(prettier@3.6.2)
+        version: 0.0.6(jsrepo@3.0.5(svelte@5.45.2))(prettier@3.7.1)
       '@lucide/svelte':
         specifier: ^0.555.0
         version: 0.555.0(svelte@5.45.2)
@@ -209,14 +209,14 @@ importers:
         specifier: ^13.1.2
         version: 13.1.2
       prettier:
-        specifier: ^3.6.2
-        version: 3.6.2
+        specifier: ^3.7.1
+        version: 3.7.1
       prettier-plugin-svelte:
         specifier: ^3.4.0
-        version: 3.4.0(prettier@3.6.2)(svelte@5.45.2)
+        version: 3.4.0(prettier@3.7.1)(svelte@5.45.2)
       prettier-plugin-tailwindcss:
         specifier: ^0.7.1
-        version: 0.7.1(prettier-plugin-astro@0.14.1)(prettier-plugin-svelte@3.4.0(prettier@3.6.2)(svelte@5.45.2))(prettier@3.6.2)
+        version: 0.7.1(prettier-plugin-astro@0.14.1)(prettier-plugin-svelte@3.4.0(prettier@3.7.1)(svelte@5.45.2))(prettier@3.7.1)
       redis:
         specifier: ^5.10.0
         version: 5.10.0
@@ -4512,6 +4512,11 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  prettier@3.7.1:
+    resolution: {integrity: sha512-RWKXE4qB3u5Z6yz7omJkjWwmTfLdcbv44jUVHC5NpfXwFGzvpQM798FGv/6WNK879tc+Cn0AAyherCl1KjbyZQ==}
+    engines: {node: '>=14'}
+    hasBin: true
+
   prismjs@1.30.0:
     resolution: {integrity: sha512-DEvV2ZF2r2/63V+tK8hQvrR2ZGn10srHbXviTlcv7Kpzw8jWiNTqbVgjO3IY8RxrrOUF8VPMQQFysYYYv0YZxw==}
     engines: {node: '>=6'}
@@ -6618,10 +6623,10 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@jsrepo/transform-prettier@0.0.6(jsrepo@3.0.5(svelte@5.45.2))(prettier@3.6.2)':
+  '@jsrepo/transform-prettier@0.0.6(jsrepo@3.0.5(svelte@5.45.2))(prettier@3.7.1)':
     dependencies:
       jsrepo: 3.0.5(svelte@5.45.2)
-      prettier: 3.6.2
+      prettier: 3.7.1
 
   '@levischuck/tiny-cbor@0.2.11': {}
 
@@ -7078,7 +7083,7 @@ snapshots:
   '@react-email/render@1.4.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       html-to-text: 9.0.5
-      prettier: 3.6.2
+      prettier: 3.7.1
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
       react-promise-suspense: 0.3.4
@@ -7941,7 +7946,7 @@ snapshots:
       tailwindcss: 4.1.17
     optionalDependencies:
       '@sveltejs/kit': 2.49.0(@sveltejs/vite-plugin-svelte@6.2.1(rolldown-vite@7.2.8(@types/node@24.10.1)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.45.2))(rolldown-vite@7.2.8(@types/node@24.10.1)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.45.2)
-      prettier: 3.6.2
+      prettier: 3.7.1
       resend: 6.5.2(@react-email/render@1.4.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0))
       shiki: 3.15.0
     transitivePeerDependencies:
@@ -10012,6 +10017,11 @@ snapshots:
       prettier: 3.6.2
       svelte: 5.45.2
 
+  prettier-plugin-svelte@3.4.0(prettier@3.7.1)(svelte@5.45.2):
+    dependencies:
+      prettier: 3.7.1
+      svelte: 5.45.2
+
   prettier-plugin-tailwindcss@0.6.14(prettier-plugin-astro@0.14.1)(prettier-plugin-svelte@3.4.0(prettier@3.6.2)(svelte@5.45.2))(prettier@3.6.2):
     dependencies:
       prettier: 3.6.2
@@ -10019,14 +10029,16 @@ snapshots:
       prettier-plugin-astro: 0.14.1
       prettier-plugin-svelte: 3.4.0(prettier@3.6.2)(svelte@5.45.2)
 
-  prettier-plugin-tailwindcss@0.7.1(prettier-plugin-astro@0.14.1)(prettier-plugin-svelte@3.4.0(prettier@3.6.2)(svelte@5.45.2))(prettier@3.6.2):
+  prettier-plugin-tailwindcss@0.7.1(prettier-plugin-astro@0.14.1)(prettier-plugin-svelte@3.4.0(prettier@3.7.1)(svelte@5.45.2))(prettier@3.7.1):
     dependencies:
-      prettier: 3.6.2
+      prettier: 3.7.1
     optionalDependencies:
       prettier-plugin-astro: 0.14.1
-      prettier-plugin-svelte: 3.4.0(prettier@3.6.2)(svelte@5.45.2)
+      prettier-plugin-svelte: 3.4.0(prettier@3.7.1)(svelte@5.45.2)
 
   prettier@3.6.2: {}
+
+  prettier@3.7.1: {}
 
   prismjs@1.30.0: {}
 

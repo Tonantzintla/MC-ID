@@ -109,7 +109,7 @@
       "sharp"
     ],
     "overrides": {
-      "vite": "npm:rolldown-vite@latest"
+      "vite": "npm:rolldown-vite@7.2.8"
     }
   }
 }
