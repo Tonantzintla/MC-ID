@@ -1,7 +1,7 @@
 import { base } from "$api/base";
 import { authMiddleware } from "$api/middlewares/auth";
 import { MinecraftUUIDSchema } from "$api/schemas";
-import { defaultPermissions, generateSixDigitCode, getUsernameFromMcid, logger } from "$api/utils";
+import { defaultPermissions, getUsernameFromMcid, logger } from "$api/utils";
 import { resolve } from "$app/paths";
 import { mcuser, verificationCodes } from "$lib/server/db/schema";
 import { ORPCError } from "@orpc/server";
@@ -99,7 +99,6 @@ export const requestCode = base
       }
 
       // Generate verification code
-      const code = await generateSixDigitCode();
       const expiration = new Date(Date.now() + 1000 * 60 * 5); // 5 minutes
 
       // Store the code (upsert)
@@ -108,13 +107,12 @@ export const requestCode = base
         .values({
           appApiKeyId: apiKey.id,
           mcuserId: user.id,
-          code,
           expiration
         })
         .onConflictDoUpdate({
           target: [verificationCodes.appApiKeyId, verificationCodes.mcuserId],
           set: {
-            code,
+            code: null,
             expiration
           }
         });

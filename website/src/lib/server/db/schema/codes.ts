@@ -6,7 +6,7 @@ export const verificationCodes = pgTable(
   "verification_codes",
   {
     id: serial("id").primaryKey(),
-    code: char("code", { length: 6 }).notNull(),
+    code: char("code", { length: 6 }),
     expiration: timestamp("expiration").notNull(),
 
     mcuserId: text("mcuser_id")

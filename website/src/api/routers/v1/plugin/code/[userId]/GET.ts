@@ -1,8 +1,9 @@
 import { base } from "$api/base";
 import { authMiddleware } from "$api/middlewares/auth";
 import { MinecraftUUIDSchema } from "$api/schemas";
-import { logger } from "$api/utils";
+import { generateSixDigitCode, logger } from "$api/utils";
 import { resolve } from "$app/paths";
+import { verificationCodes } from "$lib/server/db/schema";
 import { ORPCError } from "@orpc/server";
 import { and, desc, eq, gte } from "drizzle-orm";
 import { z } from "zod";
@@ -91,14 +92,27 @@ export const getCode = base
       const duration = Date.now() - startTime;
 
       if (codeRecord) {
+        let code = codeRecord.code;
+
+        // If the code is null (pending), generate a new one
+        if (!code) {
+          code = await generateSixDigitCode();
+
+          // Update the code in the database
+          await db.update(verificationCodes).set({ code }).where(eq(verificationCodes.id, codeRecord.id));
+
+          logger.info("Generated new code for pending request", { userId: input.userId });
+        }
+
         logger.apiResponse(resolved, "GET", 200, duration, {
           userId: input.userId,
           hasCode: true,
-          appName: codeRecord.apiKey?.name
+          appName: codeRecord.apiKey?.name,
+          generated: !codeRecord.code
         });
 
         return {
-          code: codeRecord.code
+          code
         };
       } else {
         logger.info("Plugin code request - no active code found", { userId: input.userId });
