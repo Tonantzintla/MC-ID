@@ -1,13 +1,19 @@
 import { z } from "zod";
 
+export const MinecraftUUIDStrictSchema = z
+  .string()
+  .length(32, "UUID must be exactly 32 characters")
+  .regex(/^[0-9a-f]{32}$/, "UUID must contain only lowercase hexadecimal characters")
+  .describe("32-character hexadecimal Minecraft player UUID (without hyphens)")
+  .meta({
+    title: "Minecraft UUID (Strict)",
+    description: "Unique identifier for a Minecraft player (no hyphens allowed)",
+    examples: ["069a79f444e94726a5befca90e38aaf5"]
+  });
+
 export const MinecraftUUIDSchema = z
   .preprocess((val) => (typeof val === "string" ? val.replace(/-/g, "") : val), z.string())
-  .pipe(
-    z
-      .string()
-      .length(32, "UUID must be exactly 32 characters")
-      .regex(/^[0-9a-f]{32}$/, "UUID must contain only lowercase hexadecimal characters")
-  )
+  .pipe(MinecraftUUIDStrictSchema)
   .describe("32-character hexadecimal Minecraft player UUID (without hyphens)")
   .meta({
     title: "Minecraft UUID",

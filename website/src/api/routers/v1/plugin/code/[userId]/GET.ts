@@ -1,6 +1,6 @@
 import { base } from "$api/base";
 import { authMiddleware } from "$api/middlewares/auth";
-import { MinecraftUUIDSchema } from "$api/schemas";
+import { MinecraftUUIDStrictSchema } from "$api/schemas";
 import { generateSixDigitCode, logger } from "$api/utils";
 import { resolve } from "$app/paths";
 import { verificationCodes } from "$lib/server/db/schema";
@@ -10,7 +10,7 @@ import { z } from "zod";
 
 const PluginCodeParams = z
   .object({
-    userId: MinecraftUUIDSchema
+    userId: MinecraftUUIDStrictSchema
   })
   .meta({
     title: "Plugin Code Path Parameters",
