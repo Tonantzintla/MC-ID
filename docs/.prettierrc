@@ -11,5 +11,5 @@
     { "files": "*.astro", "options": { "parser": "astro" } },
     { "files": "*.svelte", "options": { "parser": "svelte" } }
   ],
-  "tailwindStylesheet": "./src/app.css"
+  "tailwindStylesheet": "./src/styles/global.css"
 }

@@ -37,7 +37,6 @@ export default defineConfig({
     }),
     sitemap()
   ],
-
   vite: {
     plugins: [tailwindcss()]
   }
