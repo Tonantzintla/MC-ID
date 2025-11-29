@@ -65,7 +65,7 @@
     "ogl": "^1.0.11",
     "pino": "^10.1.0",
     "pino-pretty": "^13.1.2",
-    "prettier": "^3.7.1",
+    "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "redis": "^5.10.0",

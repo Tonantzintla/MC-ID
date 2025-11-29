@@ -148,8 +148,8 @@ importers:
         specifier: ^13.1.2
         version: 13.1.2
       prettier:
-        specifier: ^3.7.1
-        version: 3.7.1
+        specifier: ^3.6.2
+        version: 3.6.2
       prettier-plugin-svelte:
         specifier: ^3.4.0
         version: 3.4.0(prettier@3.7.1)(svelte@5.45.2)
@@ -2987,6 +2987,11 @@ packages:
         optional: true
       prettier-plugin-svelte:
         optional: true
+
+  prettier@3.6.2:
+    resolution: {integrity: sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==}
+    engines: {node: '>=14'}
+    hasBin: true
 
   prettier@3.7.1:
     resolution: {integrity: sha512-RWKXE4qB3u5Z6yz7omJkjWwmTfLdcbv44jUVHC5NpfXwFGzvpQM798FGv/6WNK879tc+Cn0AAyherCl1KjbyZQ==}
@@ -6100,6 +6105,8 @@ snapshots:
       prettier: 3.7.1
     optionalDependencies:
       prettier-plugin-svelte: 3.4.0(prettier@3.7.1)(svelte@5.45.2)
+
+  prettier@3.6.2: {}
 
   prettier@3.7.1: {}
 
