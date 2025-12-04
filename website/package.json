@@ -104,10 +104,6 @@
     "bun": "forbidden, use pnpm instead"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "sharp"
-    ],
     "overrides": {
       "vite": "npm:rolldown-vite@7.2.10"
     }

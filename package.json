@@ -12,7 +12,9 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
-      "esbuild"
+      "esbuild",
+      "workerd",
+      "sharp"
     ]
   },
   "scripts": {

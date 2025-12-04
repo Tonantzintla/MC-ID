@@ -16,16 +16,16 @@
     "@astrojs/starlight": "^0.37.0",
     "@astrojs/starlight-tailwind": "^4.0.2",
     "@tailwindcss/vite": "^4.1.17",
-    "astro": "^5.16.2",
-    "sharp": "^0.34.2",
+    "astro": "^5.16.4",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
-    "wrangler": "^4.51.0"
+    "wrangler": "^4.52.1"
   },
   "devDependencies": {
-    "prettier": "^3.6.2",
+    "prettier": "^3.7.4",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-svelte": "^3.4.0",
-    "prettier-plugin-tailwindcss": "^0.7.1"
+    "prettier-plugin-tailwindcss": "^0.7.2"
   }
 }
