@@ -32,26 +32,28 @@ MC-ID supports the following scopes:
 When using the `connections` scope, the Userinfo endpoint will return additional claims containing other connections.
 
 <Code
-  code={`{
-  "sub": "AaltJ3XUoyDQiqDVk865CILljZBXrjZz",
-  "email": "user@example.com",
-  "name": "",
-  "picture": null,
-  "given_name": "",
-  "email_verified": true,
-  "accounts": [
-    {
-      "uuid": "069a79f444e94726a5befca90e38aaf5",
-      "primary": true,
-      "username": "Notch"
-    }
-  ],
-  "connections": [
-    {
-      "providerId": "discord",
-      "accountId": "123456789012345678"
-    }
-  ]
-}`}
+  code={`
+  {
+    "sub": "AaltJ3XUoyDQiqDVk865CILljZBXrjZz",
+    "email": "user@example.com",
+    "name": "",
+    "picture": null,
+    "given_name": "",
+    "email_verified": true,
+    "accounts": [
+      {
+        "uuid": "069a79f444e94726a5befca90e38aaf5",
+        "primary": true,
+        "username": "Notch"
+      }
+    ],
+    "connections": [
+      {
+        "providerId": "discord",
+        "accountId": "123456789012345678"
+      }
+    ]
+  }
+`}
   lang="json"
 />

@@ -40,10 +40,12 @@ This guide explains how to implement the headless authentication flow using the 
 Call the `codes/request` endpoint with the user's UUID to start the process.
 
 <Code
-  code={`curl -X POST https://mc-id.com/api/v1/codes/request \\
-  -H "Content-Type: application/json" \\
-  -H "X-API-Key: YOUR_API_KEY" \\
-  -d '{"uuid": "069a79f444e94726a5befca90e38aaf5"}'`}
+  code={`
+  curl -X POST https://mc-id.com/api/v1/codes/request \\
+    -H "Content-Type: application/json" \\
+    -H "X-API-Key: YOUR_API_KEY" \\
+    -d '{"uuid": "069a79f444e94726a5befca90e38aaf5"}'
+  `}
   lang="bash"
   mark={["codes/request", "YOUR_API_KEY"]}
 />
@@ -61,10 +63,12 @@ The user will be kicked from the server with a message containing their verifica
 Once the user enters the code in your app, call the `codes/verify` endpoint.
 
 <Code
-  code={`curl -X POST https://mc-id.com/api/v1/codes/verify \\
-  -H "Content-Type: application/json" \\
-  -H "X-API-Key: YOUR_API_KEY" \\
-  -d '{"code": "123456", "uuid": "069a79f444e94726a5befca90e38aaf5"}'`}
+  code={`
+  curl -X POST https://mc-id.com/api/v1/codes/verify \\
+    -H "Content-Type: application/json" \\
+    -H "X-API-Key: YOUR_API_KEY" \\
+    -d '{"code": "123456", "uuid": "069a79f444e94726a5befca90e38aaf5"}'
+  `}
   lang="bash"
   mark={["codes/verify", "YOUR_API_KEY", "code"]}
 />

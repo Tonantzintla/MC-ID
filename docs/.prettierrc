@@ -6,10 +6,7 @@
   "bracketSameLine": true,
   "printWidth": 999999,
   "tailwindFunctions": ["clsx", "cn"],
-  "plugins": ["prettier-plugin-astro", "prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
-  "overrides": [
-    { "files": "*.astro", "options": { "parser": "astro" } },
-    { "files": "*.svelte", "options": { "parser": "svelte" } }
-  ],
+  "plugins": ["prettier-plugin-astro", "prettier-plugin-tailwindcss"],
+  "overrides": [{ "files": "*.astro", "options": { "parser": "astro" } }],
   "tailwindStylesheet": "./src/styles/global.css"
 }
