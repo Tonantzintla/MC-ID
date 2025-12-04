@@ -17,10 +17,10 @@ This guide shows how to implement the MC-ID authentication flow using plain Java
 
 export const authCode = `const clientId = "YOUR_CLIENT_ID";
 const redirectUri = "http://localhost:3000/callback";
-const scope = "openid profile email mcid";
+const scope = "profile email connections";
 const state = "random_state_string"; // For CSRF protection
 
-const authUrl = new URL("https://mc-id.com/dashboard/oauth/authorize");
+const authUrl = new URL("https://mc-id.com/api/auth/oauth2/authorize");
 authUrl.searchParams.append("client_id", clientId);
 authUrl.searchParams.append("redirect_uri", redirectUri);
 authUrl.searchParams.append("response_type", "code");
@@ -34,27 +34,27 @@ export const callbackCode = `const urlParams = new URLSearchParams(window.locati
 const code = urlParams.get("code");
 
 if (code) {
-exchangeCodeForToken(code);
+  exchangeCodeForToken(code);
 }`;
 
 export const tokenCode = `async function exchangeCodeForToken(code) {
-  const tokenEndpoint = "https://mc-id.com/api/v1/oauth/token";
+  const tokenEndpoint = "https://mc-id.com/api/auth/oauth2/token";
   const clientSecret = "YOUR_CLIENT_SECRET";
 
-const response = await fetch(tokenEndpoint, {
-method: "POST",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({
-grant_type: "authorization_code",
-code: code,
-client_id: clientId,
-client_secret: clientSecret,
-redirect_uri: redirectUri
-})
-});
+  const response = await fetch(tokenEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      grant_type: "authorization_code",
+      code: code,
+      client_id: clientId,
+      client_secret: clientSecret,
+      redirect_uri: redirectUri
+    })
+  });
 
-const data = await response.json();
-console.log("Tokens:", data);
+  const data = await response.json();
+  console.log("Tokens:", data);
 }`;
 
 <Steps>
@@ -76,5 +76,47 @@ console.log("Tokens:", data);
     Send a POST request to the token endpoint. **Note:** This should be done on your server to keep your Client Secret secure.
 
     <Code code={tokenCode} lang="javascript" />
+
+4.  **Get User Info**
+
+    Use the `access_token` to retrieve the user's profile information from the UserInfo endpoint.
+
+    ```javascript
+    async function getUserInfo(accessToken) {
+      const response = await fetch("https://mc-id.com/api/auth/oauth2/userinfo", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+      const userProfile = await response.json();
+      console.log("User Profile:", userProfile);
+    }
+    ```
+
+    Example response:
+
+    ```json
+    {
+      "sub": "AaltJ3XUoyDQiqDVk865CILljZBXrjZz",
+      "email": "user@example.com",
+      "name": "",
+      "picture": null,
+      "given_name": "",
+      "email_verified": true,
+      "accounts": [
+        {
+          "uuid": "069a79f444e94726a5befca90e38aaf5",
+          "primary": true,
+          "username": "Notch"
+        }
+      ],
+      "connections": [
+        {
+          "providerId": "discord",
+          "accountId": "123456789012345678"
+        }
+      ]
+    }
+    ```
 
 </Steps>

@@ -14,34 +14,44 @@ If you are self-hosting MC-ID or configuring a client manually, use the followin
 | Endpoint          | Path                         | Description                         |
 | :---------------- | :--------------------------- | :---------------------------------- |
 | **Issuer**        | `https://mc-id.com`          | The OIDC Issuer URL.                |
-| **Authorization** | `/dashboard/oauth/authorize` | URL to redirect users to for login. |
-| **Token**         | `/api/v1/oauth/token`        | URL to exchange code for tokens.    |
-| **Userinfo**      | `/api/v1/oauth/userinfo`     | URL to fetch user claims.           |
-| **JWKS**          | `/api/v1/oauth/jwks`         | URL to fetch public signing keys.   |
+| **Authorization** | `/api/auth/oauth2/authorize` | URL to redirect users to for login. |
+| **Token**         | `/api/auth/oauth2/token`     | URL to exchange code for tokens.    |
+| **Userinfo**      | `/api/auth/oauth2/userinfo`  | URL to fetch user claims.           |
+| **JWKS**          | `/api/auth/oauth2/jwks`      | URL to fetch public signing keys.   |
 
 ## Scopes
 
 MC-ID supports the following scopes:
 
-- `openid`: **(Required)** Signals that the request is an OpenID Connect request.
-- `profile`: Requests access to the user's default profile claims (name, picture, etc.).
+- `profile`: **(Required)** Requests access to the user's default profile claims (name, picture, etc.).
 - `email`: Requests access to the user's email address.
-- `mcid`: Requests access to Minecraft-specific information (UUID, username).
+- `connections`: Requests access to linked accounts (e.g., Discord).
 
 ## User Info Response
 
-When using the `mcid` scope, the ID token and Userinfo endpoint will return additional claims containing the Minecraft profile.
+When using the `connections` scope, the Userinfo endpoint will return additional claims containing other connections.
 
 <Code
   code={`{
-  "sub": "user_1234567890",
-  "name": "Steve",
-  "picture": "https://mc-id.com/avatars/steve.png",
-  "email": "steve@example.com",
-  "minecraft": {
-    "uuid": "069a79f444e94726a5befca90e38aaf5",
-    "username": "Notch"
-  }
+  "sub": "AaltJ3XUoyDQiqDVk865CILljZBXrjZz",
+  "email": "user@example.com",
+  "name": "",
+  "picture": null,
+  "given_name": "",
+  "email_verified": true,
+  "accounts": [
+    {
+      "uuid": "069a79f444e94726a5befca90e38aaf5",
+      "primary": true,
+      "username": "Notch"
+    }
+  ],
+  "connections": [
+    {
+      "providerId": "discord",
+      "accountId": "123456789012345678"
+    }
+  ]
 }`}
   lang="json"
 />
