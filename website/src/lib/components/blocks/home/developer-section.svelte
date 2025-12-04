@@ -3,6 +3,34 @@
   import ArrowRight from "@lucide/svelte/icons/arrow-right";
   import Code from "@lucide/svelte/icons/code";
   import Lock from "@lucide/svelte/icons/lock";
+  import { codeToHtml } from "shiki/bundle/web";
+
+  const code = `import { betterAuth } from "better-auth";
+import { oidc } from "better-auth/plugins";
+
+export const auth = betterAuth({
+    // ...
+    plugins: [
+        oidc({
+            loginPage: "/sign-in",
+            providers: [
+                {
+                    id: "mc-id",
+                    clientId: "...",
+                    clientSecret: "...",
+                    issuer: "https://mc-id.com",
+                }
+            ]
+        })
+    ],
+    // ...
+});`;
+
+  const html = await codeToHtml(code, {
+    lang: "typescript",
+    theme: "github-dark",
+    rootStyle: "background-color: transparent;"
+  });
 </script>
 
 <section id="developers" class="overflow-hidden bg-muted/30 py-16 md:py-24">
@@ -49,39 +77,17 @@
         </div>
       </div>
 
-      <div class="relative">
-        <div class="absolute -inset-4 rounded-3xl bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-50 blur-2xl"></div>
-        <div class="relative overflow-hidden rounded-xl border bg-card shadow-2xl">
-          <div class="flex items-center gap-2 border-b bg-muted/50 px-4 py-3">
-            <div class="flex gap-1.5">
-              <div class="h-3 w-3 rounded-full bg-red-500/80"></div>
-              <div class="h-3 w-3 rounded-full bg-yellow-500/80"></div>
-              <div class="h-3 w-3 rounded-full bg-green-500/80"></div>
-            </div>
-            <div class="ml-2 font-mono text-xs text-muted-foreground">auth.ts</div>
+      <div class="relative overflow-hidden rounded-xl border bg-card shadow-lg">
+        <div class="flex items-center gap-2 border-b bg-muted/50 px-4 py-3">
+          <div class="flex gap-1.5">
+            <div class="h-3 w-3 rounded-full bg-red-500/80"></div>
+            <div class="h-3 w-3 rounded-full bg-yellow-500/80"></div>
+            <div class="h-3 w-3 rounded-full bg-green-500/80"></div>
           </div>
-          <div class="overflow-x-auto p-6">
-            <pre class="font-mono text-sm leading-relaxed">
-<span class="text-pink-500">import</span> <span class="text-foreground">{`{`}</span> betterAuth <span class="text-foreground">{`}`}</span> <span class="text-pink-500">from</span> <span class="text-green-400">"better-auth"</span>;
-<span class="text-pink-500">import</span> <span class="text-foreground">{`{`}</span> oidc <span class="text-foreground">{`}`}</span> <span class="text-pink-500">from</span> <span class="text-green-400">"better-auth/plugins"</span>;
-
-<span class="text-blue-400">export const</span> auth = <span class="text-blue-300">betterAuth</span>(<span class="text-foreground">{`{`}</span>
-    plugins: [
-        <span class="text-blue-300">oidc</span>(<span class="text-foreground">{`{`}</span>
-            loginPage: <span class="text-green-400">"/sign-in"</span>,
-            providers: [
-                <span class="text-foreground">{`{`}</span>
-                    id: <span class="text-green-400">"mc-id"</span>,
-                    clientId: <span class="text-green-400">"..."</span>,
-                    clientSecret: <span class="text-green-400">"..."</span>,
-                    issuer: <span class="text-green-400">"https://mc-id.com"</span>,
-                <span class="text-foreground">{`}`}</span>
-            ]
-        <span class="text-foreground">{`}`}</span>)
-    ]
-<span class="text-foreground">{`}`}</span>);
-</pre>
-          </div>
+          <div class="ml-2 font-mono text-xs text-muted-foreground">auth.ts</div>
+        </div>
+        <div class="overflow-x-auto p-2">
+          {@html html}
         </div>
       </div>
     </div>

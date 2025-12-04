@@ -70,6 +70,7 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "redis": "^5.10.0",
     "runed": "^0.37.0",
+    "shiki": "^3.19.0",
     "skinview3d": "^3.4.1",
     "svelte": "^5.45.5",
     "svelte-check": "^4.3.4",
