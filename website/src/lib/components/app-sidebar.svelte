@@ -125,7 +125,7 @@
   </Sidebar.Header>
   <Sidebar.Content>
     <Nav title="Dashboard" items={data.navMain} />
-    <Nav title="Developer" items={data.navDeveloper} />
+    <Nav title="Developer" items={data.navDeveloper} open={false} />
   </Sidebar.Content>
   <Sidebar.Footer>
     <NavUser />
