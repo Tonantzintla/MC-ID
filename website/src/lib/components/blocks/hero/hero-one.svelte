@@ -80,7 +80,7 @@
                 <span class="text-nowrap">Get Started</span>
               </Button>
 
-              <Button href="#developers" size="lg" variant="ghost" class="rounded-xl px-5 transition-all dark:hover:bg-accent">For Developers</Button>
+              <Button href="#developers" size="lg" variant="outline" class="rounded-xl px-5 transition-all dark:hover:bg-accent">For Developers</Button>
             </div>
           </div>
         </div>
