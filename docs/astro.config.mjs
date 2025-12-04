@@ -18,15 +18,39 @@ export default defineConfig({
       social: [{ icon: "github", label: "GitHub", href: "https://github.com/Tonantzintla/MC-ID" }],
       sidebar: [
         {
+          label: "Getting Started",
+          items: [{ label: "Introduction", slug: "getting-started/introduction" }]
+        },
+        {
           label: "Guides",
           items: [
-            // Each item here is one entry in the navigation menu.
-            { label: "Example Guide", slug: "guides/example" }
+            { label: "Vanilla JS", slug: "guides/vanilla-js" },
+            { label: "Better-Auth", slug: "guides/better-auth" }
           ]
         },
         {
+          label: "Advanced",
+          items: [
+            { label: "Headless Flow", slug: "advanced/headless-flow", badge: { text: "Discouraged", variant: "caution" } },
+            { label: "Manual OIDC", slug: "advanced/manual-oidc" }
+          ],
+          collapsed: true
+        },
+        {
           label: "Reference",
-          autogenerate: { directory: "reference" }
+          items: [
+            {
+              label: "Headless API",
+              link: "https://mc-id.com/api#mc-id-api",
+              attrs: { target: "_blank" }
+            },
+            {
+              label: "OIDC API",
+              link: "https://mc-id.com/api#better-auth-api/tag/oidc",
+              attrs: { target: "_blank" }
+            }
+          ],
+          collapsed: true
         }
       ],
       editLink: {

@@ -1,0 +1,52 @@
+---
+title: Introduction
+description: Getting started with MC-ID.
+---
+
+import { Steps, Card, CardGrid, LinkButton } from "@astrojs/starlight/components";
+
+# Getting Started with MC-ID
+
+MC-ID is an open-source identity provider that allows users to authenticate using their Minecraft accounts, verifying ownership securely and easily.
+
+## How it Works
+
+MC-ID implements the **OpenID Connect (OIDC)** standard. This means it works just like "Login with Google" or "Login with Discord", but for Minecraft.
+
+<Steps>
+
+1.  **User initiates login:** The user clicks "Login with MC-ID" on your application.
+2.  **Redirect:** Your app redirects the user to the MC-ID authorization page.
+3.  **Callback:** MC-ID redirects the user back to your app with an authorization code.
+4.  **Token Exchange:** Your app exchanges the code for an ID token and access token containing the user's Minecraft profile.
+
+</Steps>
+
+## Recommended Integration
+
+We **strongly recommend** using the standard OIDC flow (Normal Mode) for most applications.
+
+<CardGrid>
+  <Card title="Secure" icon="seti:lock">
+    Handles all the complexity of authentication securely.
+  </Card>
+  <Card title="Single Sign-On (SSO)" icon="rocket">
+    Users verify their Minecraft account once and can log in to any MC-ID enabled application without needing to launch Minecraft again.
+  </Card>
+  <Card title="Standardized" icon="document">
+    Compatible with any OIDC client library (e.g., `better-auth`, `next-auth`).
+  </Card>
+  <Card title="Future-Proof" icon="star">
+    Updates to MC-ID won't break your integration.
+  </Card>
+</CardGrid>
+
+<br />
+
+<LinkButton href="/guides/vanilla-js" variant="primary" icon="right-arrow">
+  Get Started with Vanilla JS
+</LinkButton>
+
+## Headless Mode
+
+For advanced use cases where a web redirect is not possible (e.g., CLI tools, desktop apps), MC-ID offers a Headless API. However, this requires you to handle the verification lifecycle manually and is **discouraged** for standard web applications.

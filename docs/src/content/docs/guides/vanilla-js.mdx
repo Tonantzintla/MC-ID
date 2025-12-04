@@ -1,0 +1,80 @@
+---
+title: Vanilla JS
+description: Implementing MC-ID authentication using vanilla JavaScript.
+---
+
+import { Steps, Code } from "@astrojs/starlight/components";
+
+# Vanilla JS Example
+
+This guide shows how to implement the MC-ID authentication flow using plain JavaScript and HTTP requests. This is useful for understanding the underlying OIDC flow or for simple applications without a framework.
+
+## Prerequisites
+
+- **Client ID:** Your application's Client ID.
+- **Client Secret:** Your application's Client Secret.
+- **Redirect URI:** The URL where MC-ID will redirect users after login.
+
+export const authCode = `const clientId = "YOUR_CLIENT_ID";
+const redirectUri = "http://localhost:3000/callback";
+const scope = "openid profile email mcid";
+const state = "random_state_string"; // For CSRF protection
+
+const authUrl = new URL("https://mc-id.com/dashboard/oauth/authorize");
+authUrl.searchParams.append("client_id", clientId);
+authUrl.searchParams.append("redirect_uri", redirectUri);
+authUrl.searchParams.append("response_type", "code");
+authUrl.searchParams.append("scope", scope);
+authUrl.searchParams.append("state", state);
+
+// Redirect the user
+window.location.href = authUrl.toString();`;
+
+export const callbackCode = `const urlParams = new URLSearchParams(window.location.search);
+const code = urlParams.get("code");
+
+if (code) {
+exchangeCodeForToken(code);
+}`;
+
+export const tokenCode = `async function exchangeCodeForToken(code) {
+  const tokenEndpoint = "https://mc-id.com/api/v1/oauth/token";
+  const clientSecret = "YOUR_CLIENT_SECRET";
+
+const response = await fetch(tokenEndpoint, {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({
+grant_type: "authorization_code",
+code: code,
+client_id: clientId,
+client_secret: clientSecret,
+redirect_uri: redirectUri
+})
+});
+
+const data = await response.json();
+console.log("Tokens:", data);
+}`;
+
+<Steps>
+
+1.  **Redirect to Authorization Endpoint**
+
+    Construct the authorization URL and redirect the user.
+
+    <Code code={authCode} lang="javascript" />
+
+2.  **Handle the Callback**
+
+    On your callback page, extract the `code` and exchange it for a token.
+
+    <Code code={callbackCode} lang="javascript" />
+
+3.  **Exchange Code for Token**
+
+    Send a POST request to the token endpoint. **Note:** This should be done on your server to keep your Client Secret secure.
+
+    <Code code={tokenCode} lang="javascript" />
+
+</Steps>

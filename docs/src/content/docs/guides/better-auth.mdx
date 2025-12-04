@@ -1,0 +1,36 @@
+---
+title: Better-Auth
+description: Integrating MC-ID with better-auth.
+---
+
+import { Aside, Code } from "@astrojs/starlight/components";
+
+# Better-Auth Integration
+
+MC-ID is built using `better-auth` and is fully compatible with it.
+
+## Configuration
+
+Use the generic `oidc` provider in your `better-auth` configuration.
+
+<Aside type="tip">Ensure you have the `oidc` plugin installed and configured in your `better-auth` setup.</Aside>
+
+<Code code={`import { betterAuth } from "better-auth";
+import { oidc } from "better-auth/plugins";
+
+export const auth = betterAuth({
+    plugins: [
+        oidc({
+            providers: [
+                {
+                    id: "mc-id",
+                    name: "MC-ID",
+                    clientId: process.env.MCID_CLIENT_ID,
+                    clientSecret: process.env.MCID_CLIENT_SECRET,
+                    issuer: "https://mc-id.com", // Replace with your MC-ID instance URL
+                    scopes: ["openid", "profile", "email", "mcid"],
+                }
+            ]
+        })
+    ]
+});`} lang="typescript" />
