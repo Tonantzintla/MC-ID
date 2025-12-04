@@ -1,5 +1,6 @@
 <script lang="ts">
   import Header from "$components/header.svelte";
+  import ThemeSelector from "$components/theme-selector.svelte";
   import * as Tabs from "$ui/tabs";
   import { cubicOut } from "svelte/easing";
   import { crossfade } from "svelte/transition";
@@ -53,3 +54,7 @@
     <SignupForm {data} {handleSignInButtonClick} />
   </Tabs.Content>
 </Tabs.Root>
+
+<div class="fixed right-4 bottom-4 rounded-md bg-card">
+  <ThemeSelector />
+</div>

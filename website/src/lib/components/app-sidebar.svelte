@@ -1,5 +1,5 @@
 <script lang="ts" module>
-  import type { Icon as IconType } from "@lucide/svelte";
+  import { type Icon as IconType } from "@lucide/svelte";
   import CodeXmlIcon from "@lucide/svelte/icons/code-xml";
   import ExternalLink from "@lucide/svelte/icons/external-link";
   import HouseIcon from "@lucide/svelte/icons/house";
@@ -102,6 +102,7 @@
 </script>
 
 <script lang="ts">
+  import ThemeSelector from "$components/theme-selector.svelte";
   import { Button } from "$ui/button";
   import * as Sidebar from "$ui/sidebar";
   import { useSidebar } from "$ui/sidebar/context.svelte";
@@ -127,8 +128,9 @@
     <Nav title="Dashboard" items={data.navMain} />
     <Nav title="Developer" items={data.navDeveloper} open={false} />
   </Sidebar.Content>
-  <Sidebar.Footer>
+  <Sidebar.Footer class="flex flex-row gap-2">
     <NavUser />
+    <ThemeSelector />
   </Sidebar.Footer>
   <Sidebar.Rail />
 </Sidebar.Root>

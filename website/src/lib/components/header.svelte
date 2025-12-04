@@ -4,6 +4,7 @@
   import { cn } from "$lib/utils";
   import Menu from "@lucide/svelte/icons/menu";
   import X from "@lucide/svelte/icons/x";
+  import { mode } from "mode-watcher";
   import { scrollY } from "svelte/reactivity/window";
 
   type MenuItem = {
@@ -26,7 +27,11 @@
       <div class="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
         <div class="flex w-full justify-between lg:w-auto">
           <a href={resolve("/")} aria-label="home" class="flex items-center space-x-2">
-            <enhanced:img src="$lib/assets/MC-ID-White.svg" class="pointer-events-none h-5.5 w-auto select-none" alt="MC-ID"></enhanced:img>
+            {#if mode.current === "dark"}
+              <enhanced:img src="$lib/assets/MC-ID-White.svg" class="pointer-events-none h-5.5 w-auto select-none" alt="MC-ID"></enhanced:img>
+            {:else}
+              <enhanced:img src="$lib/assets/MC-ID-BG.svg" class="pointer-events-none h-8.5 w-auto select-none" alt="MC-ID"></enhanced:img>
+            {/if}
           </a>
 
           <button onclick={() => (menuState = !menuState)} aria-label={menuState == true ? "Close Menu" : "Open Menu"} class="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden">

@@ -28,7 +28,7 @@ export const auth = betterAuth({
 
   const html = await codeToHtml(code, {
     lang: "typescript",
-    theme: "github-dark",
+    themes: { dark: "github-dark", light: "github-light" },
     rootStyle: "background-color: transparent;"
   });
 </script>

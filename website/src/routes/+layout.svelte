@@ -1,7 +1,9 @@
 <script lang="ts">
   import favicon from "$lib/assets/favicon.svg";
   import { IsHover } from "$lib/hooks/is-hover.svelte";
+  import Spinner from "$ui/spinner/spinner.svelte";
   import * as Tooltip from "$ui/tooltip";
+  import { ModeWatcher, mode } from "mode-watcher";
   import { setContext } from "svelte";
   import SvelteSeo from "svelte-seo";
   import { Toaster, type ToasterProps } from "svelte-sonner";
@@ -66,11 +68,17 @@
     creator: "@DarthGigi"
   }} />
 
-<Toaster theme="dark" {closeButton} {position} />
+<ModeWatcher defaultMode={"dark"} />
+
+<Toaster theme={mode.current} {closeButton} {position} />
 
 <Tooltip.Provider delayDuration={0}>
   <svelte:boundary>
     {@render children?.()}
-    {#snippet pending()}{/snippet}
+    {#snippet pending()}
+      <div class="flex h-screen w-screen items-center justify-center-safe">
+        <Spinner class="size-6" />
+      </div>
+    {/snippet}
   </svelte:boundary>
 </Tooltip.Provider>
