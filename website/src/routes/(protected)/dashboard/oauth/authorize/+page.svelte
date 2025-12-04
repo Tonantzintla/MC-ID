@@ -37,7 +37,7 @@
   const isHover = getContext<IsHover>("isHover");
   const appMetadata = $derived(oauthClient?.metadata ? JSON.parse(oauthClient.metadata) : null);
 
-  const dataEmpty = $derived(oauthClient || requestedScopes || consent_code || redirectURI);
+  const dataEmpty = $derived(!oauthClient || !requestedScopes || !consent_code || !redirectURI);
 
   const avatar = createAvatar(botttsNeutral, {
     size: 128,
