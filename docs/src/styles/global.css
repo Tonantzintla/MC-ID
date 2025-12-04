@@ -14,20 +14,29 @@
   --font-sans--font-feature-settings: "cv01", "cv02", "cv03", "cv04", "cv05", "cv06", "cv07", "cv08", "cv09", "cv10", "cv11", "cv12", "cv13", "alt-1", "alt-3", "open-4", "open-6", "open-9", "lc-l-with-tail", "simplified-u", "alt-double-s", "uc-i-with-serif", "uc-g-with-spur", "single-story-a", "compact-lc-f", "compact-lc-t";
   --font-sans--font-feature-variant: "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "ss07", "ss08", "open-digits", "disambiguation", "disambiguation-except-zero", "round-quotes-and-commas", "square-punctuation", "square-quotes", "circled-characters", "squared-characters";
 
-  /* Generated accent color palettes. */
-  --color-accent-200: #bacfbf;
-  --color-accent-600: #165a31;
-  --color-accent-900: #1e3926;
-  --color-accent-950: #18281c;
-  /* Generated gray color palettes. */
-  --color-gray-100: #f5f5f5;
-  --color-gray-200: #e5e5e5;
-  --color-gray-300: #d4d4d4;
-  --color-gray-400: #a3a3a3;
-  --color-gray-500: #737373;
-  --color-gray-700: #404040;
-  --color-gray-800: #262626;
-  --color-gray-900: #171717;
+  --color-accent-50: var(--color-emerald-50);
+  --color-accent-100: var(--color-emerald-100);
+  --color-accent-200: oklch(0.696 0.17 162.48);
+  --color-accent-300: var(--color-emerald-300);
+  --color-accent-400: var(--color-emerald-400);
+  --color-accent-500: var(--color-emerald-500);
+  --color-accent-600: var(--color-emerald-600);
+  --color-accent-700: var(--color-emerald-700);
+  --color-accent-800: var(--color-emerald-800);
+  --color-accent-900: var(--color-emerald-900);
+  --color-accent-950: oklch(0.393 0.095 152.535);
+
+  --color-gray-50: var(--color-neutral-50);
+  --color-gray-100: var(--color-neutral-100);
+  --color-gray-200: var(--color-neutral-200);
+  --color-gray-300: var(--color-neutral-300);
+  --color-gray-400: var(--color-neutral-400);
+  --color-gray-500: var(--color-neutral-500);
+  --color-gray-600: var(--color-neutral-600);
+  --color-gray-700: var(--color-neutral-700);
+  --color-gray-800: oklch(0.21 0.006 285.885);
+  --color-gray-900: var(--color-neutral-950);
+  --color-gray-950: var(--color-neutral-950);
 }
 
 /*
