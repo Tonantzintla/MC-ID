@@ -54,7 +54,7 @@ export default defineConfig({
         }
       ],
       editLink: {
-        baseUrl: "https://github.com/Tonantzintla/MC-ID/edit/master/docs/"
+        baseUrl: "https://github.com/Tonantzintla/MC-ID/edit/main/docs/"
       },
       customCss: ["./src/styles/global.css"],
       plugins: []
