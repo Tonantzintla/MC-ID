@@ -73,7 +73,7 @@
         <div class="mx-auto max-w-7xl px-6">
           <div class="text-center sm:mx-auto lg:mt-0 lg:mr-auto">
             <h1 class="mt-8 text-6xl font-black text-balance md:text-7xl lg:mt-16 xl:text-[5.25rem]">MC-ID</h1>
-            <p class="mx-auto mt-8 max-w-2xl text-lg text-balance">Most secure way to login with your Minecraft account, built for users and developers in mind.</p>
+            <p class="mx-auto mt-8 max-w-2xl text-lg text-balance">Most secure way to login with your Minecraft account, built with users and developers in mind.</p>
 
             <div class="mt-12 flex flex-col items-center justify-center gap-2 md:flex-row">
               <Button href="/dashboard" size="lg" class="rounded-xl px-5 text-base backdrop-blur-lg">
