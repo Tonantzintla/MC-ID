@@ -85,9 +85,9 @@ const options = {
   plugins: [
     sveltekitCookies(getRequestEvent),
     passkey({
-      rpID: new URL(PUBLIC_BASE_URL).hostname,
+      rpID: new URL(PUBLIC_BASE_URL || "http://localhost:3000").hostname,
       rpName: "MC-ID",
-      origin: PUBLIC_BASE_URL
+      origin: PUBLIC_BASE_URL || "http://localhost:3000"
     }),
     jwt({
       disableSettingJwtHeader: true
