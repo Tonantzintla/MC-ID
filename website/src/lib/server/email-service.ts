@@ -20,6 +20,13 @@ export class EmailService {
   static async sendEmail({ to, subject, html, from = EmailService.DEFAULT_FROM, retries = EmailService.DEFAULT_RETRIES, retryDelay = EmailService.DEFAULT_RETRY_DELAY }: EmailOptions): Promise<{ success: boolean; error?: string }> {
     let lastError: Error | null = null;
 
+    if (!usesend) {
+      return {
+        success: false,
+        error: "Email service is not configured"
+      };
+    }
+
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
         const text = toPlainText(html);

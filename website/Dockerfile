@@ -12,15 +12,6 @@ RUN pnpm install --frozen-lockfile
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Temporary workaround START
-ARG USESEND_API_KEY
-ENV USESEND_API_KEY=$USESEND_API_KEY
-
-ARG USESEND_BASE_URL
-ENV USESEND_BASE_URL=$USESEND_BASE_URL
-# Temporary workaround END
-
 RUN pnpm svelte-kit sync
 RUN pnpm build
 
