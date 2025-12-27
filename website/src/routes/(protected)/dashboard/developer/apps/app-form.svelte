@@ -29,9 +29,9 @@
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
   import { resetSecret } from "./[id]/reset.remote";
   import { appSchema, deleteAppSchema, type AppSchema, type DeleteAppSchema } from "./schema";
-  import { AppFormVariant, type SelectOauthApplicationWithoutSecret } from "./types.d";
+  import { AppFormVariant, type SelectOauthClientWithoutSecret } from "./types.d";
 
-  const { data, variant }: { data: { appForm: SuperValidated<Infer<AppSchema>>; deleteAppForm: SuperValidated<Infer<DeleteAppSchema>>; appData?: SelectOauthApplicationWithoutSecret }; variant: AppFormVariant } = $props();
+  const { data, variant }: { data: { appForm: SuperValidated<Infer<AppSchema>>; deleteAppForm: SuperValidated<Infer<DeleteAppSchema>>; appData?: SelectOauthClientWithoutSecret }; variant: AppFormVariant } = $props();
   const { appData } = data;
 
   let toastLoading = $state<number | string>();

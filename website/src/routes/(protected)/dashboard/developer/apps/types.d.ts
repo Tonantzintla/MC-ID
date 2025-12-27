@@ -1,7 +1,7 @@
-import type { oauthApplication } from "$lib/server/db/schema";
+import type { oauthClient } from "$lib/server/db/schema";
 
-export type SelectOauthApplication = typeof oauthApplication.$inferSelect;
-export type SelectOauthApplicationWithoutSecret = Omit<SelectOauthApplication, "clientSecret">;
+export type SelectOauthClient = typeof oauthClient.$inferSelect;
+export type SelectOauthClientWithoutSecret = Omit<SelectOauthClient, "clientSecret">;
 
 export enum AppFormVariant {
   CREATE = "create",

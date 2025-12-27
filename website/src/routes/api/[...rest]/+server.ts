@@ -2,7 +2,7 @@ import { router } from "$api/router";
 import { ApiErrorSchema, MinecraftUsernameSchema, MinecraftUUIDSchema, VerificationCodeSchema } from "$api/schemas";
 import { dev } from "$app/environment";
 import { auth } from "$lib/server/auth";
-import { experimental_SmartCoercionPlugin as SmartCoercionPlugin } from "@orpc/json-schema";
+import { SmartCoercionPlugin } from "@orpc/json-schema";
 import type { OpenAPIGeneratorGenerateOptions } from "@orpc/openapi";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";

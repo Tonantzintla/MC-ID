@@ -107,7 +107,8 @@ export const actions: Actions = {
 
       const _signupData = await auth.api.signUpEmail({
         body: {
-          name: "",
+          // random name as better auth requires it, user can change it later
+          name: `mcid_user_${Math.random().toString(36).substring(2, 8)}`,
           email: form.data.email,
           password: form.data["new-password"],
           rememberMe: true,

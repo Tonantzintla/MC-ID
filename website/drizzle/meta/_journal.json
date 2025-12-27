@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1759430428114,
-      "tag": "0000_curved_nemesis",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1764090137134,
-      "tag": "0001_striped_gladiator",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1764179601992,
-      "tag": "0002_nappy_sebastian_shaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1764245710103,
-      "tag": "0003_silent_master_chief",
+      "when": 1766870119402,
+      "tag": "0000_married_tomas",
       "breakpoints": true
     }
   ]

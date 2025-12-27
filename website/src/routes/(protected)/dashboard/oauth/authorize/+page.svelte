@@ -32,12 +32,12 @@
   import { consent } from "./consent.remote";
 
   const { data }: { data: PageServerData } = $props();
-  const { oauthClient, scope: requestedScopes, consent_code, redirectURI } = data;
+  const { oauthClient, scope: requestedScopes, oauthQuery } = $derived(data);
   const user = $derived<User>(page.data?.user);
   const isHover = getContext<IsHover>("isHover");
-  const appMetadata = $derived(oauthClient?.metadata ? JSON.parse(oauthClient.metadata) : null);
+  const appMetadata = $derived((oauthClient?.metadata ?? {}) as Record<string, unknown>);
 
-  const dataEmpty = $derived(!oauthClient || !requestedScopes || !consent_code || !redirectURI);
+  const dataEmpty = $derived(!oauthClient || !requestedScopes);
 
   const avatar = createAvatar(botttsNeutral, {
     size: 128,
@@ -93,7 +93,7 @@
         <Card.Title class="mt-4 flex items-center justify-center gap-1.5 text-center text-2xl font-bold sm:text-3xl">
           {oauthClient?.name}
 
-          {#if !appMetadata?.verified}
+          {#if appMetadata?.verified}
             <Popover.Root bind:open={showPopover}>
               <Popover.Trigger
                 onpointerenter={() => {
@@ -130,7 +130,7 @@
               {#if appMetadata.description}
                 {@render additionalItem({
                   IconComponent: BookText,
-                  description: appMetadata.description
+                  description: appMetadata.description as string
                 })}
               {/if}
               {#if appMetadata.uri}
@@ -140,7 +140,7 @@
           {/if}
 
           <div class="rounded-lg bg-accent p-4">
-            {@render additionalItem({ IconComponent: ExternalLink, description: `Once you authorize, you will be redirected <strong>outside of MC-ID</strong> to: <strong>${redirectURI}</strong>` })}
+            {@render additionalItem({ IconComponent: ExternalLink, description: `Once you authorize, you will be redirected <strong>outside of MC-ID</strong>.` })}
             {@render additionalItem({
               IconComponent: Scale,
               description: `The developer of ${oauthClient?.name}${oauthClient?.name?.endsWith("s") ? "'" : "'s"} ${appMetadata?.policyUri ? `<a href="${appMetadata.policyUri}" class="underline" target="_blank" rel="noopener noreferrer">privacy policy</a>` : "privacy policy"} and ${appMetadata?.tosUri ? `<a href="${appMetadata.tosUri}" class="underline" target="_blank" rel="noopener noreferrer">terms of service</a>` : "terms of service"} apply to this application`
@@ -168,7 +168,8 @@
             declinePending = true;
             await consent({
               accept: false,
-              consent_code: consent_code!
+              scope: requestedScopes?.join(" "),
+              oauth_query: oauthQuery || ""
             }).finally(() => {
               declinePending = false;
             });
@@ -184,7 +185,8 @@
             acceptPending = true;
             await consent({
               accept: true,
-              consent_code: consent_code!
+              scope: requestedScopes?.join(" "),
+              oauth_query: oauthQuery || ""
             }).finally(() => {
               acceptPending = false;
             });

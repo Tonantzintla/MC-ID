@@ -5,24 +5,26 @@ import { z } from "zod/v4-mini";
 
 const consentSchema = z.object({
   accept: z.boolean(),
-  consent_code: z.string()
+  scope: z.optional(z.string()),
+  oauth_query: z.string() // The original OAuth query string with signature
 });
 
-export const consent = query(consentSchema, async ({ accept, consent_code }) => {
+export const consent = query(consentSchema, async ({ accept, scope, oauth_query }) => {
   const { locals, request } = getRequestEvent();
-  const { headers } = request;
   if (!locals.user) error(401, "Unauthorized");
   let redirectURI: string;
   try {
-    const response = await auth.api.oAuthConsent({
-      headers,
+    const response = await auth.api.oauth2Consent({
+      headers: request.headers,
+      request,
       body: {
         accept,
-        consent_code
+        scope,
+        oauth_query
       }
     });
 
-    redirectURI = response.redirectURI;
+    redirectURI = response.uri;
   } catch (err) {
     console.error("OAuth Consent Error:", err);
     error(500, "Something went wrong during consent processing.");

@@ -1,1 +1,0 @@
-CREATE INDEX "code_app_idx" ON "verification_codes" USING btree ("app_api_key_id","code");

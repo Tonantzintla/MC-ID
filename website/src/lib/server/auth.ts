@@ -7,11 +7,12 @@ import { EmailService } from "$lib/server/email-service";
 import { getAdditionalUserInfo } from "$lib/server/getAdditionalUserInfo";
 import { hashOptions } from "$lib/server/hash-options";
 import { generateRandomSecret } from "$lib/server/secret-generator";
+import { oauthProvider } from "@better-auth/oauth-provider";
 import { passkey } from "@better-auth/passkey";
 import { hash as argon2Hash, verify as argon2Verify } from "@node-rs/argon2";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth, type BetterAuthOptions } from "better-auth/minimal";
-import { apiKey, customSession, jwt, oidcProvider, openAPI } from "better-auth/plugins";
+import { apiKey, customSession, jwt, openAPI } from "better-auth/plugins";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { db } from "./db"; // your drizzle instance
 
@@ -95,28 +96,22 @@ const options = {
     openAPI({
       disableDefaultReference: true
     }),
-    oidcProvider({
-      useJWTPlugin: true, // Enable JWT plugin integration
+    oauthProvider({
       loginPage: "/login",
-      storeClientSecret: "plain",
-      // storeClientSecret: {
-      //   hash(clientSecret) {
-      //     return argon2Hash(clientSecret, hashOptions);
-      //   }
-      // },
+      consentPage: "/dashboard/oauth/authorize",
+      // Note: Existing plain secrets need to be migrated to hashed format
       generateClientSecret() {
         return generateRandomSecret();
       },
-      scopes: scopes.map((s) => s.value),
-      metadata: {
-        scopes_supported: scopes.map((s) => s.value),
-        claims_supported: ["sub", "email", "accounts", "connections"]
+      scopes: ["openid", ...scopes.map((s) => s.value), "offline_access"],
+      clientRegistrationDefaultScopes: [Scope.PROFILE],
+      advertisedMetadata: {
+        scopes_supported: ["openid", ...scopes.map((s) => s.value), "offline_access"],
+        claims_supported: ["sub", "name", "email", "email_verified", "accounts", "connections"]
       },
-      defaultScope: Scope.PROFILE,
-      getAdditionalUserInfoClaim: async (user, scopes, client) => {
-        return await getAdditionalUserInfo(user, scopes, client);
-      },
-      consentPage: "/dashboard/oauth/authorize"
+      customUserInfoClaims: async ({ user, scopes: requestedScopes }) => {
+        return await getAdditionalUserInfo(user, requestedScopes);
+      }
     }),
     apiKey()
   ],

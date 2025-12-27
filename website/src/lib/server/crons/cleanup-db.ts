@@ -1,6 +1,6 @@
 import { db } from "$lib/server/db";
-import { apikey, oauthAccessToken, session, verification, verificationCodes } from "$lib/server/db/schema";
-import { and, isNotNull, isNull, lt, or } from "drizzle-orm";
+import { apikey, oauthAccessToken, oauthRefreshToken, session, verification, verificationCodes } from "$lib/server/db/schema";
+import { and, isNotNull, lt, or } from "drizzle-orm";
 import cron from "node-cron";
 
 // Every hour, cleanup all expired entries in all tables that have an expiry column
@@ -24,18 +24,16 @@ export const cleanupDbCron = cron.createTask(
         // Cleanup verifications
         db.delete(verification).where(and(isNotNull(verification.expiresAt), lt(verification.expiresAt, triggerTime))),
 
-        // Cleanup OAuth access tokens where BOTH access and refresh tokens are expired
-        // We keep tokens if the refresh token is still valid (can be used to get new access tokens)
-        db.delete(oauthAccessToken).where(
-          and(
-            isNotNull(oauthAccessToken.accessTokenExpiresAt),
-            lt(oauthAccessToken.accessTokenExpiresAt, triggerTime),
-            or(
-              // Either no refresh token expiration exists (no refresh token)
-              isNull(oauthAccessToken.refreshTokenExpiresAt),
-              // Or the refresh token is also expired
-              and(isNotNull(oauthAccessToken.refreshTokenExpiresAt), lt(oauthAccessToken.refreshTokenExpiresAt, triggerTime))
-            )
+        // Cleanup expired OAuth access tokens
+        db.delete(oauthAccessToken).where(and(isNotNull(oauthAccessToken.expiresAt), lt(oauthAccessToken.expiresAt, triggerTime))),
+
+        // Cleanup expired or revoked OAuth refresh tokens
+        db.delete(oauthRefreshToken).where(
+          or(
+            // Expired refresh tokens
+            and(isNotNull(oauthRefreshToken.expiresAt), lt(oauthRefreshToken.expiresAt, triggerTime)),
+            // Revoked refresh tokens (cleanup after some time)
+            and(isNotNull(oauthRefreshToken.revoked), lt(oauthRefreshToken.revoked, triggerTime))
           )
         ),
 

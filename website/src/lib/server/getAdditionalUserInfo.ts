@@ -1,7 +1,6 @@
 import { Scope } from "$lib/scopes";
 import { db } from "$lib/server/db";
 import type { User } from "better-auth";
-import type { Client } from "better-auth/plugins";
 
 type UserInfoSuccess = {
   accounts?: { uuid: string; username: string; primary: boolean }[];
@@ -16,47 +15,10 @@ type UserInfoError = {
 
 type UserInfoResult = UserInfoSuccess | UserInfoError;
 
-const HTTP_BAD_REQUEST = 400;
-
-export async function getAdditionalUserInfo(user: User, scopes: string[], client: Client): Promise<UserInfoResult> {
-  // Parse and validate client metadata
-  let allowedScopes: string[] = [];
-
-  if (!client.metadata) {
-    console.error(`Client ${client.clientId} has no metadata configured`);
-    return {
-      error: "invalid_client",
-      error_description: "Client configuration is missing scope information.",
-      status: HTTP_BAD_REQUEST
-    };
-  }
-
-  try {
-    // Check if metadata is already an object or needs to be parsed
-    const metadata = typeof client.metadata === "string" ? JSON.parse(client.metadata) : client.metadata;
-    allowedScopes = metadata.scopes || [];
-  } catch (error) {
-    console.error(`Failed to parse metadata for client ${client.clientId}:`, error);
-    return {
-      error: "invalid_client",
-      error_description: "Client configuration is malformed.",
-      status: HTTP_BAD_REQUEST
-    };
-  }
-
-  // Validate requested scopes
-  const invalidScopes = scopes.filter((scope) => !allowedScopes.includes(scope));
-  if (invalidScopes.length > 0) {
-    console.warn(`Scope validation failed for client ${client.clientId}:`, { requested: scopes, allowed: allowedScopes, invalid: invalidScopes });
-    return {
-      error: "invalid_scope",
-      error_description: `The following scopes are not allowed: ${invalidScopes.join(", ")}`,
-      status: HTTP_BAD_REQUEST
-    };
-  }
-
+export async function getAdditionalUserInfo(user: User, scopes: string[]): Promise<UserInfoResult> {
   const data: UserInfoSuccess = {};
-  console.info("Getting additional user info claim for user:", user.id, "scopes:", scopes, "client:", client.clientId);
+  console.info("Getting additional user info claim for user:", user.id, "scopes:", scopes);
+
   if (scopes.includes(Scope.PROFILE)) {
     const mcAccounts = await db.query.minecraftAccount.findMany({
       where: (mc, { eq }) => eq(mc.userId, user.id),

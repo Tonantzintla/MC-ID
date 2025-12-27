@@ -12,7 +12,7 @@
   import { onMount } from "svelte";
   import type { PageProps } from "./$types";
   import AppForm from "./app-form.svelte";
-  import { AppFormVariant, type SelectOauthApplicationWithoutSecret } from "./types.d";
+  import { AppFormVariant, type SelectOauthClientWithoutSecret } from "./types.d";
 
   const { data }: PageProps = $props();
   const { appsData: apps } = data;
@@ -56,12 +56,12 @@
   </Card.Root>
 </div>
 
-{#snippet appCard(app: SelectOauthApplicationWithoutSecret)}
+{#snippet appCard(app: SelectOauthClientWithoutSecret)}
   {@const avatar = createAvatar(botttsNeutral, {
     size: 128,
     seed: app.id ?? "default-avatar"
   })}
-  {@const metadata = app.metadata ? JSON.parse(app.metadata) : {}}
+  {@const metadata = (app.metadata ?? {}) as Record<string, unknown>}
   <Button href="apps/{app.clientId}" class="contents cursor-pointer">
     <Card.Root class="gap-0 space-y-2 truncate p-0 pb-2">
       <div class="bg-(--bgColor,transparent)" style="--bgColor: {avatar.toJson().extra.primaryBackgroundColor}">
