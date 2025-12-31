@@ -18,7 +18,7 @@ export const auth = betterAuth({
                     id: "mc-id",
                     clientId: "...",
                     clientSecret: "...",
-                    issuer: "https://mc-id.com",
+                    issuer: "https://mc-id.com/api/auth",
                 }
             ]
         })

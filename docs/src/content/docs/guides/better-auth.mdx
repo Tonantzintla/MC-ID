@@ -28,7 +28,7 @@ export const auth = betterAuth({
           name: "MC-ID",
           clientId: process.env.MCID_CLIENT_ID,
           clientSecret: process.env.MCID_CLIENT_SECRET,
-          issuer: "https://mc-id.com",
+          issuer: "https://mc-id.com/api/auth",
           authorizationUrl: "https://mc-id.com/api/auth/oauth2/authorize",
           tokenUrl: "https://mc-id.com/api/auth/oauth2/token",
           userInfoUrl: "https://mc-id.com/api/auth/oauth2/userinfo",
