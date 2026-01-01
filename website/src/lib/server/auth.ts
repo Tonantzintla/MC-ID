@@ -91,7 +91,10 @@ const options = {
       origin: PUBLIC_BASE_URL || "http://localhost:3000"
     }),
     jwt({
-      disableSettingJwtHeader: true
+      disableSettingJwtHeader: true,
+      jwt: {
+        issuer: PUBLIC_BASE_URL // Sets OAuth issuer to https://mc-id.com instead of /api/auth
+      }
     }),
     openAPI({
       disableDefaultReference: true
