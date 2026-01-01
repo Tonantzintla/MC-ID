@@ -13,8 +13,9 @@
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
       "esbuild",
-      "workerd",
-      "sharp"
+      "sharp",
+      "simple-git-hooks",
+      "workerd"
     ]
   },
   "scripts": {
