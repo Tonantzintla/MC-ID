@@ -68,21 +68,26 @@ const protectedHandler = (async ({ event, resolve }) => {
 const headersHandler = (async ({ event, resolve }) => {
   const response = await resolve(event);
 
-  // Security headers
-  response.headers.set("X-Frame-Options", "SAMEORIGIN");
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set("Permissions-Policy", "accelerometer=(), autoplay=(), camera=(), encrypted-media=(), fullscreen=(), gyroscope=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), xr-spatial-tracking=(), geolocation=()");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
 
-  // Cross-Origin policies
-  response.headers.set("Cross-Origin-Embedder-Policy", "unsafe-none");
-  response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
-  response.headers.set("Cross-Origin-Resource-Policy", "cross-origin");
+  if (event.url.pathname.startsWith("/api")) {
+    // Minimal security headers for API endpoints
+    response.headers.set("Referrer-Policy", "no-referrer");
+  } else {
+    // Security headers for web endpoints
+    response.headers.set("X-Frame-Options", "SAMEORIGIN");
+    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    response.headers.set("Permissions-Policy", "accelerometer=(), autoplay=(), camera=(), encrypted-media=(), fullscreen=(), gyroscope=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), xr-spatial-tracking=(), geolocation=()");
 
-  // Legacy XSS protection
-  response.headers.set("X-XSS-Protection", "1; mode=block");
+    // Cross-Origin policies
+    response.headers.set("Cross-Origin-Embedder-Policy", "unsafe-none");
+    response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
+    response.headers.set("Cross-Origin-Resource-Policy", "cross-origin");
 
+    // Legacy XSS protection
+    response.headers.set("X-XSS-Protection", "1; mode=block");
+  }
   return response;
 }) satisfies Handle;
 
