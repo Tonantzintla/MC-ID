@@ -3,38 +3,86 @@ title: Better-Auth
 description: Integrating MC-ID with better-auth.
 ---
 
-import { Aside, Code } from "@astrojs/starlight/components";
+import { Aside, Code, LinkButton } from "@astrojs/starlight/components";
 
 # Better-Auth Integration
 
-MC-ID is built using `better-auth` and is fully compatible with it.
+MC-ID is built using `better-auth` and is fully compatible with it. This guide shows how to add MC-ID as an identity provider in your better-auth application.
+
+<Aside type="tip">The `genericOAuth` plugin handles PKCE automatically, so you don't need to implement it manually.</Aside>
+
+## Installation
+
+<Code code={`npm install better-auth`} lang="bash" />
 
 ## Configuration
 
-Use the generic `oidc` provider in your `better-auth` configuration.
+Use the `genericOAuth` plugin to add MC-ID as a provider:
 
-<Aside type="tip">Ensure you have the `oidc` plugin installed and configured in your `better-auth` setup.</Aside>
-
-<Code code={`
-import { betterAuth } from "better-auth";
-import { oidc } from "better-auth/plugins";
+<Code code={`import { betterAuth } from "better-auth";
+import { genericOAuth } from "better-auth/plugins";
 
 export const auth = betterAuth({
+  // ... your other config
   plugins: [
-    oidc({
-      providers: [
+    genericOAuth({
+      config: [
         {
-          id: "mc-id",
-          name: "MC-ID",
-          clientId: process.env.MCID_CLIENT_ID,
-          clientSecret: process.env.MCID_CLIENT_SECRET,
-          issuer: "https://mc-id.com",
-          authorizationUrl: "https://mc-id.com/api/auth/oauth2/authorize",
-          tokenUrl: "https://mc-id.com/api/auth/oauth2/token",
-          userInfoUrl: "https://mc-id.com/api/auth/oauth2/userinfo",
-          scopes: ["profile", "email", "connections"],
+          providerId: "mc-id",
+          clientId: process.env.MCID_CLIENT_ID!,
+          clientSecret: process.env.MCID_CLIENT_SECRET!,
+          discoveryUrl: "https://mc-id.com/.well-known/openid-configuration",
+          scopes: ["openid", "profile", "email", "connections"],
         }
       ]
     })
   ]
 });`} lang="typescript" />
+
+<Aside type="note">The `openid` scope is required for OIDC compliance. The plugin uses the discovery URL to automatically configure the authorization, token, and userinfo endpoints.</Aside>
+
+## Available Scopes
+
+<LinkButton href="/advanced/manual-oidc/#scopes" variant="minimal" size="sm" icon="right-arrow" class="underline">
+  See MC-ID Scopes
+</LinkButton>
+
+## Client-Side Usage
+
+Once configured, you can trigger the MC-ID login flow:
+
+<Code code={`
+  import { signIn } from "./auth-client";
+
+// Redirect to MC-ID login
+signIn("mc-id", { callbackURL: "/dashboard" });
+`} lang="typescript" />
+
+## User Data
+
+After authentication, the user object will include the claims from the userinfo endpoint based on the scopes you requested:
+
+<Code
+  code={`
+  {
+    "sub": "AaltJ3XUoyDQiqDVk865CILljZBXrjZz",
+    "name": "Notch",
+    "email": "user@example.com",
+    "email_verified": true,
+    "accounts": [
+      {
+        "uuid": "069a79f444e94726a5befca90e38aaf5",
+        "primary": true,
+        "username": "Notch"
+      }
+    ],
+    "connections": [
+      {
+        "providerId": "discord",
+        "accountId": "123456789012345678"
+      }
+    ]
+  }
+`}
+  lang="json"
+/>

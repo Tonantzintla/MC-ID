@@ -3,7 +3,7 @@ title: Introduction
 description: Getting started with MC-ID.
 ---
 
-import { Steps, Card, CardGrid, LinkButton } from "@astrojs/starlight/components";
+import { Aside, Card, CardGrid, LinkButton, Steps } from "@astrojs/starlight/components";
 
 # Getting Started with MC-ID
 
@@ -11,30 +11,33 @@ MC-ID is an open-source identity provider that allows users to authenticate usin
 
 ## How it Works
 
-MC-ID implements the **OpenID Connect (OIDC)** standard. This means it works just like "Login with Google" or "Login with Discord", but for Minecraft.
+MC-ID implements **OAuth 2.1** with **OpenID Connect (OIDC)**. This means it works just like "Login with Google" or "Login with Discord", but for Minecraft.
 
 <Steps>
 
 1.  **User initiates login:** The user clicks "Login with MC-ID" on your application.
-2.  **Redirect:** Your app redirects the user to the MC-ID authorization page.
-3.  **Callback:** MC-ID redirects the user back to your app with an authorization code.
-4.  **Token Exchange:** Your app exchanges the code for an ID token and access token containing the user's Minecraft profile.
+2.  **Redirect:** Your app redirects the user to the MC-ID authorization page with PKCE parameters.
+3.  **Consent:** The user reviews and approves the requested permissions.
+4.  **Callback:** MC-ID redirects the user back to your app with an authorization code.
+5.  **Token Exchange:** Your app exchanges the code (with the PKCE verifier) for an ID token and access token containing the user's Minecraft profile.
 
 </Steps>
 
+<Aside type="note">**PKCE (Proof Key for Code Exchange)** is mandatory for all authorization requests. This provides additional security by ensuring that only the application that initiated the flow can complete it. Most OIDC libraries handle this automatically.</Aside>
+
 ## Recommended Integration
 
-We **strongly recommend** using the standard OIDC flow (Normal Mode) for most applications.
+We **strongly recommend** using the standard OAuth 2.1/OIDC flow for most applications.
 
 <CardGrid>
   <Card title="Secure" icon="seti:lock">
-    Handles all the complexity of authentication securely.
+    OAuth 2.1 with mandatory PKCE handles all the complexity of authentication securely.
   </Card>
   <Card title="Single Sign-On (SSO)" icon="rocket">
     Users verify their Minecraft account once and can log in to any MC-ID enabled application without needing to launch Minecraft again.
   </Card>
   <Card title="Standardized" icon="document">
-    Compatible with any OIDC client library (e.g., `better-auth`, `next-auth`).
+    Compatible with any OIDC client library (e.g., `better-auth`, `arctic`).
   </Card>
   <Card title="Future-Proof" icon="star">
     Updates to MC-ID won't break your integration.
@@ -47,6 +50,20 @@ We **strongly recommend** using the standard OIDC flow (Normal Mode) for most ap
   Get Started with Vanilla JS
 </LinkButton>
 
+<div class="flex flex-wrap">
+  <LinkButton href="/guides/better-auth" variant="secondary" icon="right-arrow">
+    Integrate with Better-Auth
+  </LinkButton>
+
+  <LinkButton href="/guides/arctic" variant="secondary" icon="right-arrow">
+    Integrate with Arctic
+  </LinkButton>
+</div>
+
 ## Headless Mode
 
-For advanced use cases where a web redirect is not possible (e.g., CLI tools, desktop apps), MC-ID offers a Headless API. However, this requires you to handle the verification lifecycle manually and is **discouraged** for standard web applications.
+For advanced use cases where a web redirect is not possible (e.g., CLI tools, desktop apps, in-game mods), MC-ID offers a Headless API. However, this requires you to handle the verification lifecycle manually and is **discouraged** for standard web applications.
+
+<LinkButton href="/advanced/headless-flow" variant="minimal" icon="right-arrow">
+  Learn about Headless Mode
+</LinkButton>

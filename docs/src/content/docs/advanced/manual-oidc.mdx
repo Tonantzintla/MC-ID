@@ -3,9 +3,30 @@ title: Manual OIDC Configuration
 description: Reference for manually configuring OIDC clients with MC-ID.
 ---
 
-import { Code } from "@astrojs/starlight/components";
+import { Aside, Code } from "@astrojs/starlight/components";
 
 This guide provides the technical details needed to configure a generic OIDC client or to implement the flow manually.
+
+## OAuth 2.1 Compliance
+
+MC-ID implements **OAuth 2.1** with OpenID Connect. This means:
+
+- **PKCE is mandatory** - You must include `code_challenge` and `code_challenge_method=S256` in authorization requests
+- **Only `response_type=code`** - The implicit flow is not supported
+- **State parameter required** - For CSRF protection
+
+<Aside type="caution">Authorization requests without PKCE will be rejected. See the [Vanilla JS guide](/guides/vanilla-js) for a complete implementation example.</Aside>
+
+## Discovery Endpoints
+
+MC-ID provides standard discovery endpoints for automatic client configuration:
+
+| Endpoint                       | Path                                      | Description                                                                        |
+| :----------------------------- | :---------------------------------------- | :--------------------------------------------------------------------------------- |
+| **OpenID Configuration**       | `/.well-known/openid-configuration`       | Standard OIDC discovery document.                                                  |
+| **OAuth Authorization Server** | `/.well-known/oauth-authorization-server` | OAuth 2.0 AS metadata ([RFC 8414](https://datatracker.ietf.org/doc/html/rfc8414)). |
+
+Most OIDC libraries can auto-configure using just the issuer URL (`https://mc-id.com`).
 
 ## Endpoints
 
@@ -23,22 +44,53 @@ If you are self-hosting MC-ID or configuring a client manually, use the followin
 
 MC-ID supports the following scopes:
 
-- `profile`: **(Required)** Requests access to the user's default profile claims (name, picture, etc.).
-- `email`: Requests access to the user's email address.
-- `connections`: Requests access to linked accounts (e.g., Discord).
+| Scope            | Required | Description                                                         |
+| :--------------- | :------- | :------------------------------------------------------------------ |
+| `openid`         | Yes      | Required for OIDC. Returns the `sub` claim.                         |
+| `profile`        | Yes      | Access to MC-ID account details (`name`, `accounts`).               |
+| `email`          | No       | Access to email address (`email`, `email_verified`).                |
+| `connections`    | No       | Access to linked accounts, e.g. Minecraft, Discord (`connections`). |
+| `offline_access` | No       | Enables refresh tokens for long-lived sessions.                     |
+
+<Aside type="tip">The `openid` scope is automatically included if omitted. For refresh tokens, you must explicitly request `offline_access`.</Aside>
+
+## Authorization Request Parameters
+
+When redirecting users to the authorization endpoint, include these parameters:
+
+| Parameter               | Description                                             |
+| :---------------------- | :------------------------------------------------------ |
+| `client_id`             | Your application's Client ID.                           |
+| `redirect_uri`          | Must exactly match a registered redirect URI.           |
+| `response_type`         | Must be `code`.                                         |
+| `scope`                 | Space-separated list of scopes (must include `openid`). |
+| `state`                 | Random string for CSRF protection.                      |
+| `code_challenge`        | Base64url-encoded SHA-256 hash of the code verifier.    |
+| `code_challenge_method` | Must be `S256` (case-sensitive).                        |
+
+## Token Request Parameters
+
+When exchanging the authorization code for tokens:
+
+| Parameter       | Description                                                     |
+| :-------------- | :-------------------------------------------------------------- |
+| `grant_type`    | Must be `authorization_code`.                                   |
+| `code`          | The authorization code from the callback.                       |
+| `redirect_uri`  | Must match the authorization request.                           |
+| `client_id`     | Your application's Client ID.                                   |
+| `client_secret` | Your application's Client Secret.                               |
+| `code_verifier` | The original random string used to generate the code challenge. |
 
 ## User Info Response
 
-When using the `connections` scope, the Userinfo endpoint will return additional claims containing other connections.
+The Userinfo endpoint returns claims based on the scopes you requested.
 
 <Code
   code={`
   {
     "sub": "AaltJ3XUoyDQiqDVk865CILljZBXrjZz",
     "email": "user@example.com",
-    "name": "",
-    "picture": null,
-    "given_name": "",
+    "name": "Notch",
     "email_verified": true,
     "accounts": [
       {
@@ -57,3 +109,12 @@ When using the `connections` scope, the Userinfo endpoint will return additional
 `}
   lang="json"
 />
+
+### Claims by Scope
+
+| Scope         | Claims Returned           |
+| :------------ | :------------------------ |
+| `openid`      | `sub`                     |
+| `profile`     | `name`, `accounts`        |
+| `email`       | `email`, `email_verified` |
+| `connections` | `connections`             |
