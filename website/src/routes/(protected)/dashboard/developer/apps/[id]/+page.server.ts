@@ -1,47 +1,44 @@
 import { Scope } from "$lib/scopes";
-import { db } from "$lib/server/db";
-import { oauthClient } from "$lib/server/db/schema";
+import { auth } from "$lib/server/auth";
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
-import { and, eq } from "drizzle-orm";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 as zod } from "sveltekit-superforms/adapters";
 import { appSchema, deleteAppSchema } from "../schema";
-import type { SelectOauthClientWithoutSecret } from "../types";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async (event) => {
-  const { locals, params } = event;
+  const { locals, params, request } = event;
   if (!locals.user) error(401, "Unauthorized");
   try {
-    const app: SelectOauthClientWithoutSecret | undefined = await db.query.oauthClient.findFirst({
-      where: (app, { eq, and }) => and(eq(app.clientId, params.id), eq(app.userId, locals.user!.id)),
-      columns: {
-        clientSecret: false
-      }
+    const app = await auth.api.getOAuthClient({
+      query: {
+        client_id: params.id // required
+      },
+      // This endpoint requires session cookies.
+      headers: request.headers,
+      request
     });
 
     if (!app) error(404, "App not found");
 
-    const appMetadata = (app.metadata ?? {}) as Record<string, unknown>;
-
     return {
       appForm: await superValidate(zod(appSchema), {
         defaults: {
-          name: app.name || "",
-          uri: app.uri || "",
-          description: (appMetadata?.description as string) || "",
-          redirectUris: app.redirectUris ?? [],
-          id: app.clientId || "",
+          name: app.client_name || "",
+          uri: app.client_uri,
+          description: (app.metadata as { description?: string })?.description || "",
+          redirectUris: app.redirect_uris ?? [],
+          id: app.client_id,
           contacts: app.contacts ?? [],
-          scopes: (app.scopes ?? []) as Scope[],
-          tosUri: app.tos || "",
-          policyUri: app.policy || ""
+          tosUri: app.tos_uri,
+          policyUri: app.policy_uri,
+          scopes: (app.scope?.split(" ") as Scope[]) || [Scope.OPENID, Scope.OFFLINE_ACCESS]
         }
       }),
       appData: app,
       deleteAppForm: await superValidate(zod(deleteAppSchema), {
         defaults: {
-          id: app.clientId || ""
+          id: app.client_id
         }
       })
     };
@@ -53,6 +50,7 @@ export const load = (async (event) => {
 
 export const actions: Actions = {
   editApp: async (event) => {
+    const { request } = event;
     const form = await superValidate(event, zod(appSchema));
     try {
       if (!form.valid) {
@@ -62,22 +60,35 @@ export const actions: Actions = {
       }
 
       // Always include openid and offline_access scopes for OIDC compatibility
-      const clientScopes = ["openid", ...form.data.scopes, "offline_access"];
-      await db
-        .update(oauthClient)
-        .set({
-          name: form.data.name,
-          uri: form.data.uri,
-          redirectUris: form.data.redirectUris,
-          contacts: form.data.contacts,
-          scopes: clientScopes,
-          tos: form.data.tosUri,
-          policy: form.data.policyUri,
-          metadata: {
-            description: form.data.description
+      const clientScopes = [Scope.OPENID, ...form.data.scopes, Scope.OFFLINE_ACCESS];
+
+      if (!form.data.id) {
+        return fail(400, {
+          form,
+          error: "App ID is required for editing"
+        });
+      }
+
+      await auth.api.adminUpdateOAuthClient({
+        body: {
+          client_id: form.data.id, // required
+          update: {
+            client_name: form.data.name,
+            client_uri: form.data.uri,
+            redirect_uris: form.data.redirectUris,
+            scope: Array.from(new Set(clientScopes)).join(" "),
+            contacts: form.data.contacts,
+            tos_uri: form.data.tosUri,
+            policy_uri: form.data.policyUri
+            // metadata: {
+            //   description: form.data.description
+            // }
           }
-        })
-        .where(and(eq(oauthClient.clientId, form.data.id || ""), eq(oauthClient.userId, event.locals.user!.id)));
+        },
+        // This endpoint requires session cookies.
+        headers: request.headers,
+        request
+      });
 
       return {
         form
@@ -91,6 +102,7 @@ export const actions: Actions = {
     }
   },
   deleteApp: async (event) => {
+    const { request } = event;
     const form = await superValidate(event, zod(deleteAppSchema));
 
     try {
@@ -100,7 +112,14 @@ export const actions: Actions = {
         });
       }
 
-      await db.delete(oauthClient).where(and(eq(oauthClient.clientId, form.data.id || ""), eq(oauthClient.userId, event.locals.user!.id)));
+      await auth.api.deleteOAuthClient({
+        body: {
+          client_id: form.data.id // required
+        },
+        // This endpoint requires session cookies.
+        headers: request.headers,
+        request
+      });
     } catch (err) {
       console.error("Error during app deletion:", err);
       return fail(500, {

@@ -14,6 +14,7 @@
   import { Label } from "$ui/label";
   import { Textarea } from "$ui/textarea";
   import * as Tooltip from "$ui/tooltip";
+  import type { OAuthClient } from "@better-auth/oauth-provider";
   import { botttsNeutral } from "@dicebear/collection";
   import { createAvatar } from "@dicebear/core";
   import CircleMinus from "@lucide/svelte/icons/circle-minus";
@@ -29,10 +30,10 @@
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
   import { resetSecret } from "./[id]/reset.remote";
   import { appSchema, deleteAppSchema, type AppSchema, type DeleteAppSchema } from "./schema";
-  import { AppFormVariant, type SelectOauthClientWithoutSecret } from "./types.d";
+  import { AppFormVariant } from "./types.d";
 
-  const { data, variant }: { data: { appForm: SuperValidated<Infer<AppSchema>>; deleteAppForm: SuperValidated<Infer<DeleteAppSchema>>; appData?: SelectOauthClientWithoutSecret }; variant: AppFormVariant } = $props();
-  const { appData } = data;
+  const { data, variant }: { data: { appForm: SuperValidated<Infer<AppSchema>>; deleteAppForm: SuperValidated<Infer<DeleteAppSchema>>; appData?: OAuthClient }; variant: AppFormVariant } = $props();
+  const { appData } = $derived(data);
 
   let toastLoading = $state<number | string>();
   let textAreaEl = $state<HTMLTextAreaElement>(null!);
@@ -41,25 +42,25 @@
   let urlErrors = $state<boolean>(false);
   let contactErrors = $state<boolean>(false);
 
-  const isCreate = variant == (AppFormVariant.CREATE as const);
-  const isEdit = variant == (AppFormVariant.EDIT as const);
+  const isCreate = $derived(variant == (AppFormVariant.CREATE as const));
+  const isEdit = $derived(variant == (AppFormVariant.EDIT as const));
 
   // Use better-auth's reactive session store for real-time updates
   const session = authClient.useSession();
   const emailVerified = $derived($session.data?.user?.emailVerified ?? false);
 
-  const language = {
+  const language = $derived({
     action: isCreate ? "creating" : "editing",
     success: isCreate ? "created" : "updated",
     normal: isCreate ? "create" : "edit"
-  } as const;
+  } as const);
 
+  // svelte-ignore state_referenced_locally
   const appForm = superForm(data.appForm, {
     validators: zodClient(appSchema),
     dataType: "json",
     timeoutMs: 2000,
-    validationMethod: "onblur",
-    invalidateAll: isEdit ? "pessimistic" : undefined
+    validationMethod: "oninput"
   });
 
   const deleteAppForm = superForm(data.deleteAppForm, {
@@ -69,28 +70,16 @@
     validationMethod: "onblur"
   });
 
-  const { form: appFormData, enhance: appEnhance, tainted: appTainted, isTainted: appIsTainted, submitting: appSubmitting, timeout: appTimeout, errors: appErrors } = appForm;
+  const { form: appFormData, enhance: appEnhance, tainted: appTainted, isTainted: appIsTainted, submitting: appSubmitting, timeout: appTimeout, errors: appErrors } = $derived(appForm);
 
-  const { form: deleteAppFormData, enhance: deleteAppEnhance, submitting: deleteAppSubmitting } = deleteAppForm;
+  const { form: deleteAppFormData, enhance: deleteAppEnhance, submitting: deleteAppSubmitting } = $derived(deleteAppForm);
 
-  const avatar = createAvatar(botttsNeutral, {
-    size: 128,
-    seed: appData?.id ?? "default-avatar"
-  }).toDataUri();
-
-  new TextareaAutosize({
-    element: () => textAreaEl,
-    input: () => $appFormData.description ?? "",
-    maxHeight: 200
-  });
-
-  appTimeout.subscribe((value) => {
-    if (value) {
-      toast.loading(`It's taking longer than expected to ${language.normal} your app...`, {
-        id: toastLoading
-      });
-    }
-  });
+  const avatar = $derived(
+    createAvatar(botttsNeutral, {
+      size: 128,
+      seed: appData?.client_id
+    }).toDataUri()
+  );
 
   const addUrl = () => {
     $appFormData.redirectUris = [...$appFormData.redirectUris, ""];
@@ -116,6 +105,28 @@
     });
   };
 
+  function addItem(value: Scope) {
+    $appFormData.scopes = [...$appFormData.scopes, value];
+  }
+
+  function removeItem(value: Scope) {
+    $appFormData.scopes = $appFormData.scopes.filter((i) => i !== value);
+  }
+
+  new TextareaAutosize({
+    element: () => textAreaEl,
+    input: () => $appFormData.description ?? "",
+    maxHeight: 200
+  });
+
+  appTimeout.subscribe((value) => {
+    if (value) {
+      toast.loading(`It's taking longer than expected to ${language.normal} your app...`, {
+        id: toastLoading
+      });
+    }
+  });
+
   appErrors.subscribe(({ redirectUris, contacts }) => {
     if (redirectUris) {
       urlErrors = Object.values(redirectUris).some((uri) => uri !== undefined);
@@ -129,14 +140,6 @@
       contactErrors = false;
     }
   });
-
-  function addItem(value: Scope) {
-    $appFormData.scopes = [...$appFormData.scopes, value];
-  }
-
-  function removeItem(value: Scope) {
-    $appFormData.scopes = $appFormData.scopes.filter((i) => i !== value);
-  }
 </script>
 
 <form

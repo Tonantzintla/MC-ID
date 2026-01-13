@@ -2,7 +2,7 @@ import { dev } from "$app/environment";
 import { getRequestEvent } from "$app/server";
 import { env as privateEnv } from "$env/dynamic/private";
 import { env as publicEnv } from "$env/dynamic/public";
-import { Scope, scopes } from "$lib/scopes";
+import { Scope } from "$lib/scopes";
 import { EmailService } from "$lib/server/email-service";
 import { getAdditionalUserInfo } from "$lib/server/getAdditionalUserInfo";
 import { hashOptions } from "$lib/server/hash-options";
@@ -106,14 +106,15 @@ const options = {
       generateClientSecret() {
         return generateRandomSecret();
       },
-      scopes: ["openid", ...scopes.map((s) => s.value), "offline_access"],
-      clientRegistrationDefaultScopes: [Scope.PROFILE],
+
+      scopes: Object.values(Scope),
+      clientRegistrationDefaultScopes: [Scope.OPENID, Scope.PROFILE],
       advertisedMetadata: {
-        scopes_supported: ["openid", ...scopes.map((s) => s.value), "offline_access"],
+        scopes_supported: Object.values(Scope),
         claims_supported: ["sub", "name", "email", "email_verified", "accounts", "connections"]
       },
       customUserInfoClaims: async ({ user, scopes: requestedScopes }) => {
-        return await getAdditionalUserInfo(user, requestedScopes);
+        return await getAdditionalUserInfo(user, requestedScopes as Scope[]);
       }
     }),
     apiKey()

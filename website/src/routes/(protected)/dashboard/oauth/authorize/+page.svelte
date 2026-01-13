@@ -10,8 +10,8 @@
   import { Spinner } from "$lib/components/ui/spinner";
   import { IsHover } from "$lib/hooks/is-hover.svelte";
   import { scopes } from "$lib/scopes";
+  import type { PrimaryMcAccount } from "$lib/types/global";
   import { cn } from "$lib/utils";
-  import { tz } from "@date-fns/tz";
   import { botttsNeutral } from "@dicebear/collection";
   import { createAvatar } from "@dicebear/core";
   import { type Icon as IconType } from "@lucide/svelte";
@@ -20,29 +20,30 @@
   import ChevronRight from "@lucide/svelte/icons/chevron-right";
   import CircleCheck from "@lucide/svelte/icons/circle-check";
   import CircleX from "@lucide/svelte/icons/circle-x";
-  import Clock from "@lucide/svelte/icons/clock";
   import Ellipsis from "@lucide/svelte/icons/ellipsis";
   import ExternalLink from "@lucide/svelte/icons/external-link";
   import Info from "@lucide/svelte/icons/info";
   import Scale from "@lucide/svelte/icons/scale";
   import type { User } from "better-auth";
-  import { format as formatDate } from "date-fns";
   import { getContext } from "svelte";
+  import { toast } from "svelte-sonner";
   import type { PageServerData } from "./$types";
   import { consent } from "./consent.remote";
 
   const { data }: { data: PageServerData } = $props();
   const { oauthClient, scope: requestedScopes, oauthQuery } = $derived(data);
   const user = $derived<User>(page.data?.user);
+  const primaryMcAccount = $derived<PrimaryMcAccount>(page.data?.primaryMcAccount);
   const isHover = getContext<IsHover>("isHover");
-  const appMetadata = $derived((oauthClient?.metadata ?? {}) as Record<string, unknown>);
 
   const dataEmpty = $derived(!oauthClient || !requestedScopes);
 
-  const avatar = createAvatar(botttsNeutral, {
-    size: 128,
-    seed: oauthClient?.id ?? "default-avatar"
-  });
+  const avatar = $derived(
+    createAvatar(botttsNeutral, {
+      size: 128,
+      seed: oauthClient?.client_id
+    })
+  );
 
   let declinePending = $state(false);
   let acceptPending = $state(false);
@@ -51,7 +52,7 @@
 
 <div class="@container mx-auto flex max-w-xl flex-col justify-start gap-8 self-center px-2 py-6 md:px-0">
   {#if dataEmpty || data.error}
-    <Empty.Root class="h-full bg-gradient-to-b from-muted/50 from-30% to-background">
+    <Empty.Root class="h-full bg-linear-to-b from-muted/50 from-30% to-background">
       <Empty.Header>
         <Empty.Media variant="icon">
           <CircleX />
@@ -78,7 +79,7 @@
         <div class="pointer-events-none flex flex-nowrap items-center justify-center gap-4 select-none">
           <Avatar.Root class="pointer-events-none size-16 rounded-none sm:size-24">
             <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full" />
-            <Avatar.Fallback class="rounded-none">{oauthClient?.name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+            <Avatar.Fallback class="rounded-none">{oauthClient?.client_name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
           </Avatar.Root>
 
           <div class="flex size-12 items-center justify-center sm:size-24">
@@ -86,14 +87,14 @@
           </div>
 
           <Avatar.Root class="pointer-events-none size-16 rounded-none sm:size-24">
-            <Avatar.Image src="https://nmsr.nickac.dev/face/DarthGigi" alt={user.name} />
+            <Avatar.Image src={`https://nmsr.nickac.dev/face/${primaryMcAccount.uuid}`} alt={user.name} />
             <Avatar.Fallback class="rounded-none">{user.name.slice(0, 2).toUpperCase()}</Avatar.Fallback>
           </Avatar.Root>
         </div>
         <Card.Title class="mt-4 flex items-center justify-center gap-1.5 text-center text-2xl font-bold sm:text-3xl">
-          {oauthClient?.name}
+          {oauthClient?.client_name}
 
-          {#if appMetadata?.verified}
+          {#if oauthClient?.verified}
             <Popover.Root bind:open={showPopover}>
               <Popover.Trigger
                 onpointerenter={() => {
@@ -114,27 +115,27 @@
         </Card.Title>
         <Card.Description class="text-center sm:text-lg">wants to connect to your MC-ID account.</Card.Description>
       </Card.Header>
-      <ScrollArea class="h-[30rem] w-full sm:h-full" type="auto">
+      <ScrollArea class="h-120 w-full sm:h-full" type="auto">
         <Card.Content class="space-y-2">
           <Item.Group class="rounded-lg bg-accent p-4">
             <p class="text-sm text-muted-foreground">
-              This will allow the developer of {oauthClient?.name} to:
+              This will allow the developer of {oauthClient?.client_name} to:
             </p>
             {#each scopes as scope (scope.value)}
               {@render scopeItem({ canAccess: requestedScopes!.includes(scope.value), description: scope.consentDescription })}
             {/each}
           </Item.Group>
 
-          {#if appMetadata?.description || appMetadata?.uri}
+          {#if oauthClient?.description || oauthClient?.client_uri}
             <div class="rounded-lg bg-accent p-4">
-              {#if appMetadata.description}
+              {#if oauthClient.description}
                 {@render additionalItem({
                   IconComponent: BookText,
-                  description: appMetadata.description as string
+                  description: oauthClient.description as string
                 })}
               {/if}
-              {#if appMetadata.uri}
-                {@render additionalItem({ IconComponent: Info, description: `For more information about this app, please visit: <a href="${appMetadata.uri}" class="underline" target="_blank" rel="noopener noreferrer">${appMetadata.uri}</a>` })}
+              {#if oauthClient.client_uri}
+                {@render additionalItem({ IconComponent: Info, description: `For more information about this app, please visit: <a href="${oauthClient.client_uri}" class="underline" target="_blank" rel="noopener noreferrer">${oauthClient.client_uri}</a>` })}
               {/if}
             </div>
           {/if}
@@ -143,11 +144,8 @@
             {@render additionalItem({ IconComponent: ExternalLink, description: `Once you authorize, you will be redirected <strong>outside of MC-ID</strong>.` })}
             {@render additionalItem({
               IconComponent: Scale,
-              description: `The developer of ${oauthClient?.name}${oauthClient?.name?.endsWith("s") ? "'" : "'s"} ${appMetadata?.policyUri ? `<a href="${appMetadata.policyUri}" class="underline" target="_blank" rel="noopener noreferrer">privacy policy</a>` : "privacy policy"} and ${appMetadata?.tosUri ? `<a href="${appMetadata.tosUri}" class="underline" target="_blank" rel="noopener noreferrer">terms of service</a>` : "terms of service"} apply to this application`
+              description: `The developer of ${oauthClient?.client_name}${oauthClient?.client_name?.endsWith("s") ? "'" : "'s"} ${oauthClient?.policy_uri ? `<a href="${oauthClient.policy_uri}" class="underline" target="_blank" rel="noopener noreferrer">privacy policy</a>` : "privacy policy"} and ${oauthClient?.tos_uri ? `<a href="${oauthClient.tos_uri}" class="underline" target="_blank" rel="noopener noreferrer">terms of service</a>` : "terms of service"} apply to this application`
             })}
-            {#if oauthClient?.createdAt}
-              {@render additionalItem({ IconComponent: Clock, description: `Active since ${formatDate(new Date(oauthClient?.createdAt), "MMM d, yyyy", { in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })}` })}
-            {/if}
           </div>
 
           <Item.Group class="rounded-lg bg-accent p-4">
@@ -168,11 +166,16 @@
             declinePending = true;
             await consent({
               accept: false,
-              scope: requestedScopes?.join(" "),
+              scopes: requestedScopes,
               oauth_query: oauthQuery || ""
-            }).finally(() => {
-              declinePending = false;
-            });
+            })
+              .finally(() => {
+                declinePending = false;
+              })
+              .catch((err) => {
+                console.error("Error during authorization decline:", err);
+                toast.error("An unknown error occurred while processing your authorization.");
+              });
           }}>
           Cancel
           {#if declinePending}
@@ -185,11 +188,16 @@
             acceptPending = true;
             await consent({
               accept: true,
-              scope: requestedScopes?.join(" "),
+              scopes: requestedScopes,
               oauth_query: oauthQuery || ""
-            }).finally(() => {
-              acceptPending = false;
-            });
+            })
+              .finally(() => {
+                acceptPending = false;
+              })
+              .catch((err) => {
+                console.error("Error during authorization consent:", err);
+                toast.error("An unknown error occurred while processing your authorization.");
+              });
           }}>
           Authorize
           {#if acceptPending}

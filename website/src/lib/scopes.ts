@@ -1,7 +1,9 @@
 enum Scope {
   PROFILE = "profile",
   EMAIL = "email",
-  CONNECTIONS = "connections"
+  CONNECTIONS = "connections",
+  OPENID = "openid",
+  OFFLINE_ACCESS = "offline_access"
 }
 
 const scopes = [

@@ -15,11 +15,11 @@ type UserInfoError = {
 
 type UserInfoResult = UserInfoSuccess | UserInfoError;
 
-export async function getAdditionalUserInfo(user: User, scopes: string[]): Promise<UserInfoResult> {
+export async function getAdditionalUserInfo(user: User, requestedScopes: Scope[]): Promise<UserInfoResult> {
   const data: UserInfoSuccess = {};
-  console.info("Getting additional user info claim for user:", user.id, "scopes:", scopes);
+  console.info("Getting additional user info claim for user:", user.id, "requestedScopes:", requestedScopes);
 
-  if (scopes.includes(Scope.PROFILE)) {
+  if (requestedScopes.includes(Scope.PROFILE)) {
     const mcAccounts = await db.query.minecraftAccount.findMany({
       where: (mc, { eq }) => eq(mc.userId, user.id),
       columns: {
@@ -34,7 +34,7 @@ export async function getAdditionalUserInfo(user: User, scopes: string[]): Promi
       data.accounts = [];
     }
   }
-  if (scopes.includes(Scope.CONNECTIONS)) {
+  if (requestedScopes.includes(Scope.CONNECTIONS)) {
     const connections = await db.query.account.findMany({
       where: (a, { eq, and, not }) => and(eq(a.userId, user.id), not(eq(a.providerId, "credential"))),
       columns: {

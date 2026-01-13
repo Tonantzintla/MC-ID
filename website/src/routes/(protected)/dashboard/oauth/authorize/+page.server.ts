@@ -1,38 +1,35 @@
-import { db } from "$lib/server/db";
-import { eq } from "drizzle-orm";
+import { Scope } from "$lib/scopes";
+import { auth } from "$lib/server/auth";
 import { SvelteURLSearchParams } from "svelte/reactivity";
 import type { PageServerLoad } from "./$types";
 
-export const load = (async ({ url }) => {
+export const load = (async ({ url, request }) => {
   const params = new SvelteURLSearchParams(url.searchParams.toString());
 
   const client_id = params.get("client_id");
-  const scope = params.get("scope")?.split(" ");
+  const scope = params.get("scope")?.split(",");
 
   // Preserve the full query string for oauth_query parameter
   const oauthQuery = url.search.slice(1); // Remove leading '?'
 
-  if (!client_id || !scope) {
+  if (!client_id || !scope || !scope.includes(Scope.PROFILE)) {
     return {
       error: "invalid_request",
-      error_description: `Missing required parameters: ${!client_id ? "client_id " : ""}${!scope ? "scope" : ""}`.trim(),
+      error_description: `Missing required parameters: ${!client_id ? "client_id " : ""}${!scope ? "scope " : ""}${!scope?.includes(Scope.PROFILE) ? Scope.PROFILE + " scope" : ""}`.trim(),
       status: 400
     };
   }
 
-  const oauthClientRecord = await db.query.oauthClient.findFirst({
-    where: (a) => eq(a.clientId, client_id),
-    columns: {
-      id: true,
-      name: true,
-      metadata: true,
-      createdAt: true,
-      disabled: true,
-      scopes: true
-    }
+  const oauthClientPublic = await auth.api.getOAuthClientPublic({
+    query: {
+      client_id // required,
+    },
+    // This endpoint requires session cookies.
+    headers: request.headers,
+    request
   });
 
-  if (!oauthClientRecord) {
+  if (!oauthClientPublic) {
     return {
       error: "invalid_client",
       error_description: "Client not found.",
@@ -40,21 +37,8 @@ export const load = (async ({ url }) => {
     };
   }
 
-  const allowedScopes = oauthClientRecord.scopes ?? [];
-  // Filter out openid and offline_access from validation as they are standard OIDC scopes
-  const standardScopes = ["openid", "offline_access"];
-  const customScopes = scope.filter((s) => !standardScopes.includes(s));
-  const invalidScopes = customScopes.filter((s) => !allowedScopes.includes(s));
-  if (invalidScopes.length > 0) {
-    return {
-      error: "invalid_scope",
-      error_description: `The following scopes have not been enabled for this client: ${invalidScopes.join(", ")}`,
-      status: 400
-    };
-  }
-
   return {
-    oauthClient: oauthClientRecord,
+    oauthClient: oauthClientPublic,
     scope,
     oauthQuery
   };

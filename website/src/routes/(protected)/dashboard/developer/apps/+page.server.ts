@@ -1,23 +1,22 @@
+import { Scope } from "$lib/scopes";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
+import type { OAuthClient } from "@better-auth/oauth-provider";
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 as zod } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types";
 import { appSchema, deleteAppSchema } from "./schema";
-import type { SelectOauthClientWithoutSecret } from "./types";
 
 export const load = (async (event) => {
-  const { locals } = event;
+  const { locals, request } = event;
 
   if (!locals.user) redirect(303, "/login");
 
   try {
-    const apps: SelectOauthClientWithoutSecret[] = await db.query.oauthClient.findMany({
-      where: (app, { eq }) => eq(app.userId, locals.user!.id),
-      columns: {
-        clientSecret: false
-      }
+    const apps = await auth.api.getOAuthClients({
+      headers: request.headers,
+      request
     });
 
     return {
@@ -36,7 +35,7 @@ export const actions: Actions = {
     const { request, locals } = event;
     const form = await superValidate(event, zod(appSchema));
 
-    let createdApp;
+    let createdApp: OAuthClient;
     try {
       if (!form.valid) {
         return fail(400, {
@@ -58,8 +57,8 @@ export const actions: Actions = {
       }
 
       // Always include openid and offline_access scopes for OIDC compatibility
-      const clientScopes = ["openid", ...form.data.scopes, "offline_access"];
-      createdApp = await auth.api.createOAuthClient({
+      const clientScopes = [Scope.OPENID, ...form.data.scopes, Scope.OFFLINE_ACCESS];
+      createdApp = await auth.api.adminCreateOAuthClient({
         headers: request.headers,
         request,
         body: {
@@ -72,7 +71,15 @@ export const actions: Actions = {
           scope: clientScopes.join(" "),
           contacts: form.data.contacts,
           tos_uri: form.data.tosUri,
-          policy_uri: form.data.policyUri
+          policy_uri: form.data.policyUri,
+          type: "web",
+          skip_consent: false,
+          metadata: {
+            description: form.data.description,
+            owner_user_id: locals.user?.id ?? "",
+            trusted: false,
+            official: false
+          }
         }
       });
     } catch (err) {
