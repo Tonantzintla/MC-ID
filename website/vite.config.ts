@@ -20,7 +20,11 @@ export default defineConfig({
       $db: path.resolve("./src/lib/server/db"),
       $lib: path.resolve("./src/lib"),
       $params: path.resolve("./src/params")
-    }
+    },
+    external: ["better-auth"]
+  },
+  ssr: {
+    external: ["better-auth"]
   },
   build: {
     sourcemap: true
