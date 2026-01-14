@@ -19,19 +19,37 @@ const scopes = z.array(z.enum([Scope.OPENID, Scope.PROFILE, Scope.EMAIL, Scope.C
 const contacts = z.array(z.email("Each contact must be a valid email address")).min(1, "At least one contact email is required");
 const tosUri = z.url("The Terms of Service URI must be a valid URI").optional();
 const policyUri = z.url("The Privacy Policy URI must be a valid URI").optional();
+const logoUrl = z.url("The logo URL must be a valid URL").optional();
 
-export const appSchema = z.object({
-  name,
-  uri,
-  description,
-  id,
-  redirectUris,
-  scopes,
-  contacts,
-  tosUri,
-  policyUri
-});
-
+export const appSchema = z
+  .object({
+    name,
+    uri,
+    description,
+    id,
+    redirectUris,
+    scopes,
+    contacts,
+    tosUri,
+    policyUri,
+    logoUrl
+  })
+  .refine(
+    (data) => {
+      if (!data.uri || !data.logoUrl) return true;
+      try {
+        const websiteUrl = new URL(data.uri);
+        const logoUrl = new URL(data.logoUrl);
+        return websiteUrl.origin === logoUrl.origin;
+      } catch {
+        return false;
+      }
+    },
+    {
+      message: "The logo URL must have the same origin as the website URI",
+      path: ["logoUrl"]
+    }
+  );
 export const deleteAppSchema = z.object({
   id
 });

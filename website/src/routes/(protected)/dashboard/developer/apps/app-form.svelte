@@ -21,7 +21,7 @@
   import CircleQuestionMark from "@lucide/svelte/icons/circle-question-mark";
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
   import RefreshCw from "@lucide/svelte/icons/refresh-cw";
-  import { TextareaAutosize } from "runed";
+  import { Debounced, TextareaAutosize } from "runed";
   import { tick } from "svelte";
   import { toast } from "svelte-sonner";
   import { cubicOut } from "svelte/easing";
@@ -60,7 +60,8 @@
     validators: zodClient(appSchema),
     dataType: "json",
     timeoutMs: 2000,
-    validationMethod: "oninput"
+    validationMethod: "oninput",
+    invalidateAll: isEdit ? "pessimistic" : undefined
   });
 
   const deleteAppForm = superForm(data.deleteAppForm, {
@@ -74,12 +75,17 @@
 
   const { form: deleteAppFormData, enhance: deleteAppEnhance, submitting: deleteAppSubmitting } = $derived(deleteAppForm);
 
-  const avatar = $derived(
-    createAvatar(botttsNeutral, {
+  const debouncediconUrlValue = $state(new Debounced(() => $appFormData.logoUrl, 300));
+
+  const avatar = $derived.by(() => {
+    if ($appErrors.logoUrl === undefined && $appFormData.logoUrl && debouncediconUrlValue.current) {
+      return debouncediconUrlValue.current;
+    }
+    return createAvatar(botttsNeutral, {
       size: 128,
       seed: appData?.client_id
-    }).toDataUri()
-  );
+    }).toDataUri();
+  });
 
   const addUrl = () => {
     $appFormData.redirectUris = [...$appFormData.redirectUris, ""];
@@ -416,39 +422,6 @@
       </Accordion.Content>
     </Accordion.Item>
 
-    <!-- <Accordion.Item value="client-type">
-      <Accordion.Trigger>Client Type & Auth Method</Accordion.Trigger>
-      <Accordion.Content class="space-y-4">
-        <Form.Field form={appForm} name="clientType">
-          <Form.Control>
-            {#snippet children({ props })}
-              <Form.Label for={props.name}>Client Type</Form.Label>
-              <Form.Description>This defines how your app will interact with the OAuth2 server.</Form.Description>
-              <select {...props} bind:value={$appFormData.clientType} class="border-input bg-background placeholder:text-muted-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                <option value="confidential">Confidential</option>
-                <option value="public">Public</option>
-              </select>
-              <Form.FieldErrors variant="single" />
-            {/snippet}
-          </Form.Control>
-        </Form.Field>
-        <Form.Field form={appForm} name="authMethod">
-          <Form.Control>
-            {#snippet children({ props })}
-              <Form.Label for={props.name}>Client Authentication Method</Form.Label>
-              <Form.Description>This defines how your app will authenticate with the OAuth2 server.</Form.Description>
-              <select {...props} bind:value={$appFormData.authMethod} class="border-input bg-background placeholder:text-muted-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                <option value="client_secret_basic">Client Secret Basic</option>
-                <option value="client_secret_post">Client Secret Post</option>
-                <option value="none">None</option>
-              </select>
-              <Form.FieldErrors variant="single" />
-            {/snippet}
-          </Form.Control>
-        </Form.Field>
-      </Accordion.Content>
-    </Accordion.Item> -->
-
     <Accordion.Item value="metadata">
       <Accordion.Trigger class={cn({ "text-destructive": $appErrors.description || $appErrors.tosUri || $appErrors.policyUri })}>Metadata</Accordion.Trigger>
       <Accordion.Content class="space-y-4">
@@ -458,6 +431,16 @@
               <Form.Label for={props.name}>Description</Form.Label>
               <Form.Description>This is a short description of your app, it will be displayed in the dashboard.</Form.Description>
               <Textarea {...props} class="resize-none" bind:value={$appFormData.description} bind:ref={textAreaEl} autocomplete="off" placeholder="Describe your app in a few words" />
+              <Form.FieldErrors variant="single" />
+            {/snippet}
+          </Form.Control>
+        </Form.Field>
+        <Form.Field form={appForm} name="logoUrl">
+          <Form.Control>
+            {#snippet children({ props })}
+              <Form.Label for={props.name}>Logo URL</Form.Label>
+              <Form.Description>This is the URL to your app's logo.</Form.Description>
+              <Input {...props} bind:value={$appFormData.logoUrl} type="url" autocomplete="url" />
               <Form.FieldErrors variant="single" />
             {/snippet}
           </Form.Control>

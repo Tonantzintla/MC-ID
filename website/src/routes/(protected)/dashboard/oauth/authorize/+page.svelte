@@ -25,6 +25,7 @@
   import Info from "@lucide/svelte/icons/info";
   import Scale from "@lucide/svelte/icons/scale";
   import type { User } from "better-auth";
+  import type { AvatarRootProps } from "bits-ui";
   import { getContext } from "svelte";
   import { toast } from "svelte-sonner";
   import type { PageServerData } from "./$types";
@@ -38,16 +39,22 @@
 
   const dataEmpty = $derived(!oauthClient || !requestedScopes);
 
-  const avatar = $derived(
+  const preMadeAvatar = $derived(
     createAvatar(botttsNeutral, {
       size: 128,
       seed: oauthClient?.client_id
-    })
+    }).toDataUri()
   );
+
+  const avatar = $derived.by(() => {
+    if (oauthClient?.logo_uri) return `/api/internal/image-proxy?url=${encodeURIComponent(oauthClient.logo_uri)}`;
+    return preMadeAvatar;
+  });
 
   let declinePending = $state(false);
   let acceptPending = $state(false);
   let showPopover = $state(false);
+  let loadingStatus = $state<AvatarRootProps["loadingStatus"]>("loading");
 </script>
 
 <div class="@container mx-auto flex max-w-xl flex-col justify-start gap-8 self-center px-2 py-6 md:px-0">
@@ -77,9 +84,18 @@
     <Card.Root>
       <Card.Header>
         <div class="pointer-events-none flex flex-nowrap items-center justify-center gap-4 select-none">
-          <Avatar.Root class="pointer-events-none size-16 rounded-none sm:size-24">
-            <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full" />
-            <Avatar.Fallback class="rounded-none">{oauthClient?.client_name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+          <Avatar.Root bind:loadingStatus class="pointer-events-none size-16 rounded-none sm:size-24">
+            <Avatar.Image src={avatar} alt="App Avatar" class="size-full" />
+            <Avatar.Fallback class="rounded-none">
+              {#if oauthClient?.logo_uri && loadingStatus === "error"}
+                <Avatar.Root class="pointer-events-none size-16 rounded-none sm:size-24">
+                  <Avatar.Image src={preMadeAvatar} alt="App Avatar" class="size-full" />
+                  <Avatar.Fallback class="rounded-none">{oauthClient?.client_name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+                </Avatar.Root>
+              {:else}
+                {oauthClient?.client_name?.slice(0, 2).toUpperCase()}
+              {/if}
+            </Avatar.Fallback>
           </Avatar.Root>
 
           <div class="flex size-12 items-center justify-center sm:size-24">

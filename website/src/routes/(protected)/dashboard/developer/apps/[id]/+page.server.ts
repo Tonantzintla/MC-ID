@@ -32,7 +32,8 @@ export const load = (async (event) => {
           contacts: app.contacts ?? [],
           tosUri: app.tos_uri,
           policyUri: app.policy_uri,
-          scopes: (app.scope?.split(" ") as Scope[]) || [Scope.OPENID, Scope.OFFLINE_ACCESS]
+          scopes: (app.scope?.split(" ") as Scope[]) || [Scope.OPENID, Scope.OFFLINE_ACCESS],
+          logoUrl: app.logo_uri
         }
       }),
       appData: app,
@@ -79,7 +80,8 @@ export const actions: Actions = {
             scope: Array.from(new Set(clientScopes)).join(" "),
             contacts: form.data.contacts,
             tos_uri: form.data.tosUri,
-            policy_uri: form.data.policyUri
+            policy_uri: form.data.policyUri,
+            logo_uri: form.data.logoUrl
             // metadata: {
             //   description: form.data.description
             // }
