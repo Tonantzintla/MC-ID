@@ -103,6 +103,7 @@
 
 <script lang="ts">
   import ThemeSelector from "$components/theme-selector.svelte";
+  import { sidebarsState } from "$stores/internal";
   import { Button } from "$ui/button";
   import * as Sidebar from "$ui/sidebar";
   import { useSidebar } from "$ui/sidebar/context.svelte";
@@ -125,8 +126,8 @@
     </Button>
   </Sidebar.Header>
   <Sidebar.Content>
-    <Nav title="Dashboard" items={data.navMain} />
-    <Nav title="Developer" items={data.navDeveloper} open={false} />
+    <Nav title="Dashboard" items={data.navMain} bind:open={$sidebarsState.userSidebar} />
+    <Nav title="Developer" items={data.navDeveloper} bind:open={$sidebarsState.devSidebar} />
   </Sidebar.Content>
   <Sidebar.Footer class="flex flex-row gap-2">
     <NavUser />

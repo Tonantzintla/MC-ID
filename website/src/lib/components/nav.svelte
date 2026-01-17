@@ -8,10 +8,10 @@
   import { cubicOut } from "svelte/easing";
   import { slide } from "svelte/transition";
 
-  const {
+  let {
     items,
     title,
-    open = true
+    open = $bindable(true)
   }: {
     items: NavItem[];
     title: string;
@@ -20,7 +20,7 @@
 </script>
 
 <Sidebar.Group class="group-data-[collapsible=icon]:hidden">
-  <Collapsible.Root {open} class="group/collapsible-title">
+  <Collapsible.Root bind:open class="group/collapsible-title">
     <Sidebar.GroupLabel class="mb-1 w-full text-left hover:bg-sidebar-accent">
       {#snippet child({ props })}
         <Collapsible.Trigger {...props}>
