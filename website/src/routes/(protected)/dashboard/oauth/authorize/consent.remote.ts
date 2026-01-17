@@ -1,6 +1,6 @@
-import { getRequestEvent, query } from "$app/server";
+import { command, getRequestEvent } from "$app/server";
 import { auth } from "$lib/server/auth";
-import { error, redirect } from "@sveltejs/kit";
+import { error } from "@sveltejs/kit";
 import { z } from "zod/v4-mini";
 
 const consentSchema = z.object({
@@ -9,7 +9,7 @@ const consentSchema = z.object({
   oauth_query: z.string() // The original OAuth query string with signature
 });
 
-export const consent = query(consentSchema, async ({ accept, scopes, oauth_query }) => {
+export const consent = command(consentSchema, async ({ accept, scopes, oauth_query }) => {
   const { locals, request } = getRequestEvent();
   if (!locals.user) error(401, "Unauthorized");
   let redirectURI: string;
@@ -29,5 +29,8 @@ export const consent = query(consentSchema, async ({ accept, scopes, oauth_query
     console.error("OAuth Consent Error:", err);
     error(500, "Something went wrong during consent processing.");
   }
-  redirect(307, redirectURI);
+  return {
+    redirect: redirectURI,
+    status: 307
+  };
 });

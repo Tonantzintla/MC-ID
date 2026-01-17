@@ -180,7 +180,7 @@
           variant="secondary"
           onclick={async () => {
             declinePending = true;
-            await consent({
+            const result = await consent({
               accept: false,
               scopes: requestedScopes,
               oauth_query: oauthQuery || ""
@@ -192,6 +192,10 @@
                 console.error("Error during authorization decline:", err);
                 toast.error("An unknown error occurred while processing your authorization.");
               });
+
+            if (result && result.status === 307) {
+              window.location.href = result.redirect;
+            }
           }}>
           Cancel
           {#if declinePending}
@@ -202,7 +206,7 @@
           class="flex-1 text-base"
           onclick={async () => {
             acceptPending = true;
-            await consent({
+            const result = await consent({
               accept: true,
               scopes: requestedScopes,
               oauth_query: oauthQuery || ""
@@ -214,6 +218,9 @@
                 console.error("Error during authorization consent:", err);
                 toast.error("An unknown error occurred while processing your authorization.");
               });
+            if (result && result.status === 307) {
+              window.location.href = result.redirect;
+            }
           }}>
           Authorize
           {#if acceptPending}
