@@ -120,7 +120,7 @@
     <Button href="/dashboard" class="flex items-center justify-start gap-2" variant="ghost">
       <enhanced:img src="$lib/assets/MC-ID-White.svg" class="pointer-events-none h-6 w-auto select-none" alt="MC-ID"></enhanced:img>
       {#if sidebar.open}
-        <span class="text-lg">Minecraft ID</span>
+        <span class="text-lg">MC-ID</span>
       {/if}
     </Button>
   </Sidebar.Header>
