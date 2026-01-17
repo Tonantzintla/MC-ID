@@ -8,6 +8,7 @@
   import MessageCircleMore from "@lucide/svelte/icons/message-circle-more";
   import Pickaxe from "@lucide/svelte/icons/pickaxe";
   import Settings2Icon from "@lucide/svelte/icons/settings-2";
+  import ShieldUser from "@lucide/svelte/icons/shield-user";
   import UserIcon from "@lucide/svelte/icons/user";
 
   type SingleNavItem = {
@@ -54,6 +55,11 @@
             title: "Security",
             url: BASE_SETTINGS_URL + "/security",
             icon: Settings2Icon
+          },
+          {
+            title: "Privacy",
+            url: BASE_SETTINGS_URL + "/privacy",
+            icon: ShieldUser
           }
         ]
       },
