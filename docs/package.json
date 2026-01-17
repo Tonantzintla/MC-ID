@@ -12,11 +12,11 @@
     "lint": "prettier --check ."
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.6.1",
+    "@astrojs/sitemap": "^3.7.0",
     "@astrojs/starlight": "^0.37.3",
     "@astrojs/starlight-tailwind": "^4.0.2",
     "@tailwindcss/vite": "^4.1.18",
-    "astro": "^5.16.9",
+    "astro": "^5.16.11",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",
