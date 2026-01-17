@@ -61,22 +61,28 @@
                             </Sidebar.MenuButton>
                           {/snippet}
                         </Collapsible.Trigger>
-                        <Collapsible.Content>
-                          <Sidebar.MenuSub>
-                            {#each item.subItems ?? [] as subItem (subItem.title)}
-                              <Sidebar.MenuSubItem>
-                                <Sidebar.MenuSubButton isActive={page.url.pathname.endsWith(subItem.url)}>
-                                  {#snippet child({ props })}
-                                    <!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
-                                    <a href={resolve(subItem.url as any)} {...props} target={subItem.target}>
-                                      <subItem.icon />
-                                      <span>{subItem.title}</span>
-                                    </a>
-                                  {/snippet}
-                                </Sidebar.MenuSubButton>
-                              </Sidebar.MenuSubItem>
-                            {/each}
-                          </Sidebar.MenuSub>
+                        <Collapsible.Content forceMount>
+                          {#snippet child({ props: subItemProps, open: subItemOpen })}
+                            {#if subItemOpen}
+                              <div {...subItemProps} transition:slide={{ duration: 150, easing: cubicOut, axis: "y" }}>
+                                <Sidebar.MenuSub>
+                                  {#each item.subItems ?? [] as subItem (subItem.title)}
+                                    <Sidebar.MenuSubItem>
+                                      <Sidebar.MenuSubButton isActive={page.url.pathname.endsWith(subItem.url)}>
+                                        {#snippet child({ props })}
+                                          <!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
+                                          <a href={resolve(subItem.url as any)} {...props} target={subItem.target}>
+                                            <subItem.icon />
+                                            <span>{subItem.title}</span>
+                                          </a>
+                                        {/snippet}
+                                      </Sidebar.MenuSubButton>
+                                    </Sidebar.MenuSubItem>
+                                  {/each}
+                                </Sidebar.MenuSub>
+                              </div>
+                            {/if}
+                          {/snippet}
                         </Collapsible.Content>
                       </Sidebar.MenuItem>
                     {/snippet}
