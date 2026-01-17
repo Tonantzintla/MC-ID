@@ -7,7 +7,7 @@ export const load = (async ({ url, request }) => {
   const params = new SvelteURLSearchParams(url.searchParams.toString());
 
   const client_id = params.get("client_id");
-  const scope = params.get("scope")?.split(",");
+  const scope = params.get("scope")?.split(" ");
 
   // Preserve the full query string for oauth_query parameter
   const oauthQuery = url.search.slice(1); // Remove leading '?'
