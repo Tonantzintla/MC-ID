@@ -176,7 +176,7 @@
               syncingUser = true;
               toast.promise(
                 new Promise((resolve, reject) => {
-                  syncUser(page.data.user.id ?? $formData.uuid)
+                  syncUser(page.data.primaryMcAccount.uuid ?? $formData.uuid)
                     .then(({ data, success, message }) => {
                       if (!success) throw new Error(message ?? "Failed to sync user.");
                       username = data.name;
