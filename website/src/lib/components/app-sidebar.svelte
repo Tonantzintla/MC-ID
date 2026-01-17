@@ -2,13 +2,14 @@
   import { type Icon as IconType } from "@lucide/svelte";
   import CodeXmlIcon from "@lucide/svelte/icons/code-xml";
   import ExternalLink from "@lucide/svelte/icons/external-link";
+  import Eye from "@lucide/svelte/icons/eye";
+  import FingerprintPattern from "@lucide/svelte/icons/fingerprint-pattern";
   import HouseIcon from "@lucide/svelte/icons/house";
   import Key from "@lucide/svelte/icons/key";
   import Link from "@lucide/svelte/icons/link";
   import MessageCircleMore from "@lucide/svelte/icons/message-circle-more";
   import Pickaxe from "@lucide/svelte/icons/pickaxe";
   import Settings2Icon from "@lucide/svelte/icons/settings-2";
-  import ShieldUser from "@lucide/svelte/icons/shield-user";
   import UserIcon from "@lucide/svelte/icons/user";
 
   type SingleNavItem = {
@@ -54,12 +55,12 @@
           {
             title: "Security",
             url: BASE_SETTINGS_URL + "/security",
-            icon: Settings2Icon
+            icon: FingerprintPattern
           },
           {
             title: "Privacy",
             url: BASE_SETTINGS_URL + "/privacy",
-            icon: ShieldUser
+            icon: Eye
           }
         ]
       },
