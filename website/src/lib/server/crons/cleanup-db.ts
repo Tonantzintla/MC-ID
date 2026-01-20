@@ -1,5 +1,5 @@
 import { db } from "$lib/server/db";
-import { apikey, oauthAccessToken, oauthRefreshToken, session, verification, verificationCodes } from "$lib/server/db/schema";
+import { apikey, oauthAccessToken, oauthRefreshToken, session, verification, verificationCodes } from "$lib/shared/db/schema";
 import { and, isNotNull, lt, or } from "drizzle-orm";
 import cron from "node-cron";
 

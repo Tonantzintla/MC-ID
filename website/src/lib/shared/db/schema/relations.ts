@@ -1,7 +1,8 @@
 import { relations } from "drizzle-orm";
-import { apikey, user } from "./auth-schema";
+import { apikey, oauthClient, user } from "./auth-schema";
 import { verificationCodes } from "./codes";
 import { mcuser } from "./mc-user";
+import { oauthClientReport } from "./reports";
 
 export const mcUsersRelations = relations(mcuser, ({ many }) => ({
   verificationCodes: many(verificationCodes)
@@ -23,5 +24,20 @@ export const codeRelations = relations(verificationCodes, ({ one }) => ({
   apiKey: one(apikey, {
     fields: [verificationCodes.appApiKeyId],
     references: [apikey.id]
+  })
+}));
+
+export const oauthClientReportRelations = relations(oauthClientReport, ({ one }) => ({
+  reporter: one(user, {
+    fields: [oauthClientReport.reporterId],
+    references: [user.id]
+  }),
+  client: one(oauthClient, {
+    fields: [oauthClientReport.clientId],
+    references: [oauthClient.clientId]
+  }),
+  resolvedBy: one(user, {
+    fields: [oauthClientReport.resolvedById],
+    references: [user.id]
   })
 }));

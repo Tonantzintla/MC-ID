@@ -1,7 +1,7 @@
 import { env } from "$env/dynamic/private";
+import * as schema from "$lib/shared/db/schema";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import * as schema from "./schema";
 
 const { DATABASE_URL } = env;
 

@@ -1,6 +1,6 @@
 import { MCIDky, minecraftKy } from "$lib/customKy";
 import { db } from "$lib/server/db";
-import { minecraftAccount } from "$lib/server/db/schema";
+import { minecraftAccount } from "$lib/shared/db/schema";
 import type { Actions } from "@sveltejs/kit";
 import { fail } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";

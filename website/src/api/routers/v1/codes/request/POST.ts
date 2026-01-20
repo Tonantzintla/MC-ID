@@ -3,7 +3,7 @@ import { authMiddleware } from "$api/middlewares/auth";
 import { MinecraftUUIDSchema } from "$api/schemas";
 import { defaultPermissions, getUsernameFromMcid, logger } from "$api/utils";
 import { resolve } from "$app/paths";
-import { mcuser, verificationCodes } from "$lib/server/db/schema";
+import { mcuser, verificationCodes } from "$lib/shared/db/schema";
 import { ORPCError } from "@orpc/server";
 import { z } from "zod";
 

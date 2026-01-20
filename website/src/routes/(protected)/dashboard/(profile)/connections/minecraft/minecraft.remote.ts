@@ -1,7 +1,7 @@
 import { command, getRequestEvent, query } from "$app/server";
 import { MCIDky, minecraftKy } from "$lib/customKy";
 import { db } from "$lib/server/db";
-import { minecraftAccount } from "$lib/server/db/schema";
+import { minecraftAccount } from "$lib/shared/db/schema";
 import { error } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
 import { HTTPError } from "ky";
