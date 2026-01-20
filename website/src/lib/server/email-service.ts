@@ -1,3 +1,4 @@
+import appStyles from "$src/app.css?raw";
 import Renderer, { toPlainText } from "better-svelte-email/render";
 import { usesend } from "./usesend";
 
@@ -10,7 +11,7 @@ interface EmailOptions {
   retryDelay?: number;
 }
 
-const renderer = new Renderer();
+const renderer = new Renderer({ customCSS: appStyles });
 
 export class EmailService {
   private static readonly DEFAULT_FROM = "MC-ID <no-reply@mc-id.com>";
