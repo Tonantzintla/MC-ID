@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Scope, scopes } from "$lib/scopes";
+  import { reportReasonEnum } from "$lib/shared/db/schema/reports";
   import { cn } from "$lib/utils";
   import * as AlertDialog from "$ui/alert-dialog";
   import * as Avatar from "$ui/avatar";
@@ -10,8 +11,11 @@
   import * as DropdownMenu from "$ui/dropdown-menu";
   import * as Empty from "$ui/empty";
   import * as Item from "$ui/item";
+  import { Label } from "$ui/label";
+  import * as Select from "$ui/select";
   import { Separator } from "$ui/separator";
   import { Spinner } from "$ui/spinner";
+  import { Textarea } from "$ui/textarea";
   import type { OAuthClient, OAuthConsent } from "@better-auth/oauth-provider";
   import { tz } from "@date-fns/tz";
   import { botttsNeutral } from "@dicebear/collection";
@@ -32,6 +36,26 @@
   import { cubicOut } from "svelte/easing";
   import { slide } from "svelte/transition";
   import { deleteConsent, getConsentedApps } from "./consented-apps.remote";
+  import { submitReport } from "./report.remote";
+
+  type SelectedAppForDeauth = {
+    app: OAuthClient;
+    consent: OAuthConsent<Scope[]>;
+  } | null;
+
+  type SelectedAppForReport = SelectedAppForDeauth;
+
+  const reportReasons = reportReasonEnum.enumValues;
+  type ReportReason = (typeof reportReasons)[number];
+
+  const reasonLabels: Record<ReportReason, string> = {
+    malicious: "Malicious behavior",
+    misleading: "Misleading information",
+    spam: "Spam or unwanted content",
+    privacy_violation: "Privacy violation",
+    impersonation: "Impersonation",
+    other: "Other"
+  };
 
   const generateAvatar = (clientId?: string) =>
     createAvatar(botttsNeutral, {
@@ -45,12 +69,17 @@
   };
 
   let selectedAppForInfo: OAuthClient | null = $state(null);
-  let selectedAppForDeauth: { app: OAuthClient; consent: OAuthConsent<Scope[]> } | null = $state(null);
+  let selectedAppForDeauth: SelectedAppForDeauth | null = $state(null);
+  let selectedAppForReport: SelectedAppForReport | null = $state(null);
   let loadingStatus = $state<AvatarRootProps["loadingStatus"]>("loading");
   let loadingStatusDialog = $state<AvatarRootProps["loadingStatus"]>("loading");
   let dialogOpen = $derived(selectedAppForInfo !== null);
   let alertDialogOpen = $derived(selectedAppForDeauth !== null);
+  let reportDialogOpen = $derived(selectedAppForReport !== null);
   let deauthorizing = $state<boolean>(false);
+  let submittingReport = $state<boolean>(false);
+  let reportReason = $state<ReportReason | undefined>(undefined);
+  let reportDescription = $state<string>("");
 </script>
 
 <Card.Root class="w-full bg-background">
@@ -113,7 +142,11 @@
                             <DropdownMenu.Separator />
                             <DropdownMenu.Item onclick={() => (selectedAppForInfo = authorization.publicApp)}>View Details</DropdownMenu.Item>
                             <DropdownMenu.Separator />
-                            <DropdownMenu.Item disabled class="text-destructive data-highlighted:text-destructive">Report</DropdownMenu.Item>
+                            <DropdownMenu.Item
+                              onclick={() => {
+                                selectedAppForReport = { app: authorization.publicApp, consent: authorization.consent as OAuthConsent<Scope[]> };
+                              }}
+                              class="text-destructive data-highlighted:text-destructive">Report</DropdownMenu.Item>
                             <DropdownMenu.Item onclick={() => (selectedAppForDeauth = { app: authorization.publicApp, consent: authorization.consent as OAuthConsent<Scope[]> })} class="text-destructive data-highlighted:text-destructive">Deauthorize</DropdownMenu.Item>
                           </DropdownMenu.Group>
                         </DropdownMenu.Content>
@@ -309,3 +342,92 @@
     {/if}
   </AlertDialog.Content>
 </AlertDialog.Root>
+
+<Dialog.Root
+  bind:open={reportDialogOpen}
+  onOpenChange={(open) => {
+    if (!open) {
+      reportReason = undefined;
+      reportDescription = "";
+    }
+  }}>
+  <Dialog.Content>
+    {#if selectedAppForReport}
+      <Dialog.Header>
+        <Dialog.Title class="flex items-center gap-2">
+          Report {selectedAppForReport.app.client_name}
+        </Dialog.Title>
+        <Dialog.Description>Help us keep MC-ID safe by reporting applications that violate our policies.</Dialog.Description>
+        <Dialog.Description>Reporting an application will also revoke its access to your account.</Dialog.Description>
+      </Dialog.Header>
+
+      <div class="space-y-4 py-4">
+        <div class="space-y-2">
+          <Label for="report-reason">Reason for report</Label>
+          <Select.Root type="single" bind:value={reportReason}>
+            <Select.Trigger id="report-reason" class="w-full">
+              {reportReason ? reasonLabels[reportReason] : "Select a reason..."}
+            </Select.Trigger>
+            <Select.Content>
+              {#each reportReasons as reason (reason)}
+                <Select.Item value={reason}>{reasonLabels[reason]}</Select.Item>
+              {/each}
+            </Select.Content>
+          </Select.Root>
+        </div>
+
+        <div class="space-y-2">
+          <Label for="report-description">Additional details (optional)</Label>
+          <Textarea id="report-description" bind:value={reportDescription} placeholder="Provide any additional context that might help us investigate this report..." rows={4} />
+        </div>
+      </div>
+
+      <Dialog.Footer>
+        <Button variant="outline" onclick={() => (selectedAppForReport = null)}>Cancel</Button>
+        <Button
+          variant="destructive"
+          disabled={!reportReason || submittingReport}
+          onclick={() => {
+            if (!reportReason || !selectedAppForReport) return;
+
+            submittingReport = true;
+            toast.promise(
+              new Promise((resolve, reject) => {
+                submitReport({
+                  clientId: selectedAppForReport!.app.client_id,
+                  reason: reportReason!,
+                  description: reportDescription || undefined,
+                  consentId: selectedAppForReport!.consent.id
+                })
+                  .then(resolve)
+                  .catch(reject)
+                  .finally(() => {
+                    selectedAppForReport = null;
+                    submittingReport = false;
+                    reportReason = undefined;
+                    reportDescription = "";
+                  });
+              }),
+              {
+                loading: "Submitting report...",
+                success: "Report submitted successfully. Thank you for helping keep MC-ID safe!",
+                error: "Failed to submit report"
+              }
+            );
+          }}>
+          {#if submittingReport}
+            <Spinner />
+          {:else}
+            Submit Report
+          {/if}
+        </Button>
+      </Dialog.Footer>
+    {:else}
+      {@render empty({
+        title: "No Application Selected",
+        description: "Please select an application to report.",
+        Icon: SearchAlert
+      })}
+    {/if}
+  </Dialog.Content>
+</Dialog.Root>
