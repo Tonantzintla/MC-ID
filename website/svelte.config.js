@@ -49,7 +49,8 @@ const config = {
       $params: "./src/params",
       $content: "./src/content",
       $css: "./src/app.css",
-      $api: "./src/api"
+      $api: "./src/api",
+      $src: "./src"
     }
   },
   // Hide build warnings from node_modules
