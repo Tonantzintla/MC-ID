@@ -35,6 +35,7 @@
     variant?: ButtonVariant;
     size?: ButtonSize;
     loading?: boolean;
+    "data-slot"?: string;
     onClickPromise?: (
       e: MouseEvent & {
         currentTarget: EventTarget & HTMLButtonElement;
@@ -63,14 +64,14 @@
   import { cn } from "$lib/utils";
   import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
 
-  let { ref = $bindable(null), variant = "default", size = "default", href = undefined, type = "button", loading = false, disabled = false, tabindex = 0, onclick, onClickPromise, class: className, children, ...rest }: ButtonProps = $props();
+  let { ref = $bindable(null), variant = "default", size = "default", href = undefined, type = "button", loading = false, disabled = false, tabindex = 0, onclick, onClickPromise, class: className, "data-slot": dataSlot = "button", children, ...rest }: ButtonProps = $props();
 </script>
 
 <!-- This approach to disabled links is inspired by bits-ui see: https://github.com/huntabyte/bits-ui/pull/1055 -->
 <svelte:element
   this={href ? "a" : "button"}
   {...rest}
-  data-slot="button"
+  data-slot={dataSlot}
   type={href ? undefined : type}
   href={href && !disabled ? href : undefined}
   disabled={href ? undefined : disabled || loading}
