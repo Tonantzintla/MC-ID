@@ -12,9 +12,9 @@ import { passkey } from "@better-auth/passkey";
 import { hash as argon2Hash, verify as argon2Verify } from "@node-rs/argon2";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth, type BetterAuthOptions } from "better-auth/minimal";
-import { apiKey, customSession, jwt, openAPI } from "better-auth/plugins";
+import { admin, apiKey, customSession, jwt, openAPI } from "better-auth/plugins";
 import { sveltekitCookies } from "better-auth/svelte-kit";
-import { db } from "./db"; // your drizzle instance
+import { db } from "./db";
 
 const { PUBLIC_BASE_URL } = publicEnv;
 const { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, ADDRESS_HEADER } = privateEnv;
@@ -23,7 +23,7 @@ const options = {
   appName: "MC-ID",
   baseURL: PUBLIC_BASE_URL,
   database: drizzleAdapter(db, {
-    provider: "pg" // or "mysql", "sqlite"
+    provider: "pg"
   }),
   account: {
     accountLinking: {
@@ -117,7 +117,8 @@ const options = {
         return await getAdditionalUserInfo(user, requestedScopes as Scope[]);
       }
     }),
-    apiKey()
+    apiKey(),
+    admin()
   ],
   advanced: {
     ipAddress: {

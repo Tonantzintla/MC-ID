@@ -15,6 +15,13 @@
       "when": 1768873689128,
       "tag": "0001_omniscient_enchantress",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769203596720,
+      "tag": "0002_complex_blacklash",
+      "breakpoints": true
     }
   ]
 }
