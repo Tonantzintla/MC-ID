@@ -104,6 +104,13 @@
         icon: ExternalLink,
         target: "_blank"
       }
+    ],
+    navAdmin: [
+      {
+        name: "User Management",
+        url: BASE_DASHBOARD_URL + "/admin/users",
+        icon: UserIcon
+      }
     ]
   } as const satisfies Record<string, NavItem[]>;
 </script>
@@ -135,6 +142,7 @@
   <Sidebar.Content>
     <Nav title="Dashboard" items={data.navMain} bind:open={$sidebarsState.userSidebar} />
     <Nav title="Developer" items={data.navDeveloper} bind:open={$sidebarsState.devSidebar} />
+    <Nav title="Admin" items={data.navAdmin} bind:open={$sidebarsState.adminSidebar} />
   </Sidebar.Content>
   <Sidebar.Footer class="flex flex-row gap-2">
     <NavUser />

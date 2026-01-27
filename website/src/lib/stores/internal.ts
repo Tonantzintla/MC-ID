@@ -12,7 +12,8 @@ export const sidebarsState = persisted<Record<string, boolean>>(
   "sidebarsState",
   {
     userSidebar: true,
-    devSidebar: false
+    devSidebar: false,
+    adminSidebar: true
   },
   {
     syncTabs: true

@@ -1,4 +1,5 @@
 import { building } from "$app/environment";
+import { UserRole } from "$lib/roles";
 import { auth } from "$lib/server/auth"; // path to your auth file
 import { cleanupDbCron } from "$lib/server/crons/cleanup-db";
 import { redirect, type Handle, type ServerInit } from "@sveltejs/kit";
@@ -21,6 +22,7 @@ export const init: ServerInit = async () => {
 };
 
 const protectedRouteGroupName = "(protected)";
+const protectedAdminRouteGroupName = "(admin)";
 const signInPath = "/login";
 
 const betterAuthHandler = (async ({ event, resolve }) => {
@@ -49,6 +51,14 @@ const protectedHandler = (async ({ event, resolve }) => {
   if (!locals.user) {
     if (route.id?.includes(protectedRouteGroupName) || event.isRemoteRequest) {
       redirect(307, signInPath);
+    }
+  }
+  if (locals.user) {
+    const roles = (locals.user.role ? locals.user.role.split(",") : []) as UserRole[];
+    const isAdmin = roles.includes(UserRole.Admin);
+    if (route.id?.includes(protectedAdminRouteGroupName) && !isAdmin) {
+      console.info("Redirecting to dashboard as user lacks admin role.");
+      redirect(307, "/dashboard");
     }
   }
   if (locals.user && locals.session) {
