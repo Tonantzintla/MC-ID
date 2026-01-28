@@ -110,6 +110,11 @@
         name: "User Management",
         url: BASE_DASHBOARD_URL + "/admin/users",
         icon: UserIcon
+      },
+      {
+        name: "API Key Management",
+        url: BASE_DASHBOARD_URL + "/admin/api-keys",
+        icon: Key
       }
     ]
   } as const satisfies Record<string, NavItem[]>;
