@@ -15,23 +15,27 @@
   const session = authClient.useSession();
   const emailVerified = $derived($session.data?.user?.emailVerified ?? false);
 
-  const keyForm = superForm(data.keyForm, {
-    validators: zodClient(keySchema),
-    dataType: "json",
-    timeoutMs: 2000,
-    validationMethod: "onblur"
-  });
+  const keyForm = $derived(
+    superForm(data.keyForm, {
+      validators: zodClient(keySchema),
+      dataType: "json",
+      timeoutMs: 2000,
+      validationMethod: "onblur"
+    })
+  );
 
-  const { form: keyFormData, enhance: keyEnhance, tainted: keyTainted, isTainted: keyIsTainted, submitting: keySubmitting, timeout: keyTimeout, errors: keyErrors } = keyForm;
+  const { form: keyFormData, enhance: keyEnhance, tainted: keyTainted, isTainted: keyIsTainted, submitting: keySubmitting, timeout: keyTimeout, errors: keyErrors } = $derived(keyForm);
 
   const buttonDisabled = $derived(!keyIsTainted($keyTainted) || $keySubmitting || !emailVerified || ($keyErrors.name?.length ?? 0) > 0);
 
-  keyTimeout.subscribe((value) => {
-    if (value) {
-      toast.loading("It's taking longer than expected to create your key...", {
-        id: toastLoading
-      });
-    }
+  $effect(() => {
+    keyTimeout.subscribe((value) => {
+      if (value) {
+        toast.loading("It's taking longer than expected to create your key...", {
+          id: toastLoading
+        });
+      }
+    });
   });
 </script>
 

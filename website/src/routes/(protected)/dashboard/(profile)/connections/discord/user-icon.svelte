@@ -11,7 +11,7 @@
   }
 
   const { class: className = "size-12", account }: props = $props();
-  const { data, user: _user } = account;
+  const { data, user: _user } = $derived(account);
 
   let errored = $state(false);
 </script>

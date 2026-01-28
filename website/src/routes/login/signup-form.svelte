@@ -15,31 +15,37 @@
 
   const { data, handleSignInButtonClick }: { data: { signupForm: SuperValidated<Infer<SignupFormSchema>> }; handleSignInButtonClick: () => void } = $props();
 
-  const form = superForm(data.signupForm, {
-    validators: zodClient(signupFormSchema),
-    dataType: "json",
-    timeoutMs: 2000,
-    validationMethod: "onblur"
-  });
-
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = form;
-
   let toastLoading = $state<number | string>();
   let strength = $state<ZxcvbnResult>();
   let anyErrors = $state(false);
 
   const passesStrength = $derived((strength?.score ?? 0) >= 3);
 
-  errors.subscribe((value) => {
-    anyErrors = Object.values(value).some((v) => v !== undefined && v.length > 0);
+  const form = $derived(
+    superForm(data.signupForm, {
+      validators: zodClient(signupFormSchema),
+      dataType: "json",
+      timeoutMs: 2000,
+      validationMethod: "onblur"
+    })
+  );
+
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = $derived(form);
+
+  $effect(() => {
+    errors.subscribe((value) => {
+      anyErrors = Object.values(value).some((v) => v !== undefined && v.length > 0);
+    });
   });
 
-  timeout.subscribe((value) => {
-    if (value) {
-      toast.loading("It's taking longer than expected to sign you up...", {
-        id: toastLoading
-      });
-    }
+  $effect(() => {
+    timeout.subscribe((value) => {
+      if (value) {
+        toast.loading("It's taking longer than expected to sign you up...", {
+          id: toastLoading
+        });
+      }
+    });
   });
 </script>
 

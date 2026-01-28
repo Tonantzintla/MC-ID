@@ -9,7 +9,7 @@
 
   let { data }: PageProps = $props();
 
-  const account = data.discordAccount;
+  const account = $derived(data.discordAccount);
 </script>
 
 {#if account}

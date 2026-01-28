@@ -10,24 +10,28 @@
 
   const { data }: { data: { passwordUpdateForm: SuperValidated<Infer<PasswordUpdateSchema>> } } = $props();
 
-  const form = superForm(data.passwordUpdateForm, {
-    validators: zodClient(passwordUpdateSchema),
-    dataType: "json",
-    timeoutMs: 2000,
-    validationMethod: "onblur"
-  });
+  const form = $derived(
+    superForm(data.passwordUpdateForm, {
+      validators: zodClient(passwordUpdateSchema),
+      dataType: "json",
+      timeoutMs: 2000,
+      validationMethod: "onblur"
+    })
+  );
 
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = form;
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = $derived(form);
 
   let toastLoading = $state<number | string>();
   let strength = $state<ZxcvbnResult>();
 
-  timeout.subscribe((value) => {
-    if (value) {
-      toast.loading("It's taking longer than expected to update your password...", {
-        id: toastLoading
-      });
-    }
+  $effect(() => {
+    timeout.subscribe((value) => {
+      if (value) {
+        toast.loading("It's taking longer than expected to update your password...", {
+          id: toastLoading
+        });
+      }
+    });
   });
 </script>
 

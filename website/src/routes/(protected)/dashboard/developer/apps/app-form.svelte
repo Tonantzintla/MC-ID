@@ -55,21 +55,24 @@
     normal: isCreate ? "create" : "edit"
   } as const);
 
-  // svelte-ignore state_referenced_locally
-  const appForm = superForm(data.appForm, {
-    validators: zodClient(appSchema),
-    dataType: "json",
-    timeoutMs: 2000,
-    validationMethod: "oninput",
-    invalidateAll: isEdit ? "pessimistic" : undefined
-  });
+  const appForm = $derived(
+    superForm(data.appForm, {
+      validators: zodClient(appSchema),
+      dataType: "json",
+      timeoutMs: 2000,
+      validationMethod: "oninput",
+      invalidateAll: isEdit ? "pessimistic" : undefined
+    })
+  );
 
-  const deleteAppForm = superForm(data.deleteAppForm, {
-    validators: zodClient(deleteAppSchema),
-    dataType: "json",
-    timeoutMs: 2000,
-    validationMethod: "onblur"
-  });
+  const deleteAppForm = $derived(
+    superForm(data.deleteAppForm, {
+      validators: zodClient(deleteAppSchema),
+      dataType: "json",
+      timeoutMs: 2000,
+      validationMethod: "onblur"
+    })
+  );
 
   const { form: appFormData, enhance: appEnhance, tainted: appTainted, isTainted: appIsTainted, submitting: appSubmitting, timeout: appTimeout, errors: appErrors } = $derived(appForm);
 
@@ -125,26 +128,30 @@
     maxHeight: 200
   });
 
-  appTimeout.subscribe((value) => {
-    if (value) {
-      toast.loading(`It's taking longer than expected to ${language.normal} your app...`, {
-        id: toastLoading
-      });
-    }
+  $effect(() => {
+    appTimeout.subscribe((value) => {
+      if (value) {
+        toast.loading(`It's taking longer than expected to ${language.normal} your app...`, {
+          id: toastLoading
+        });
+      }
+    });
   });
 
-  appErrors.subscribe(({ redirectUris, contacts }) => {
-    if (redirectUris) {
-      urlErrors = Object.values(redirectUris).some((uri) => uri !== undefined);
-    } else {
-      urlErrors = false;
-    }
+  $effect(() => {
+    appErrors.subscribe(({ redirectUris, contacts }) => {
+      if (redirectUris) {
+        urlErrors = Object.values(redirectUris).some((uri) => uri !== undefined);
+      } else {
+        urlErrors = false;
+      }
 
-    if (contacts) {
-      contactErrors = Object.values(contacts).some((email) => email !== undefined);
-    } else {
-      contactErrors = false;
-    }
+      if (contacts) {
+        contactErrors = Object.values(contacts).some((email) => email !== undefined);
+      } else {
+        contactErrors = false;
+      }
+    });
   });
 </script>
 

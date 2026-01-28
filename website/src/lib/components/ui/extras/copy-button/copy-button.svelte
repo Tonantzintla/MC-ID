@@ -11,9 +11,11 @@
   let { ref = $bindable(null), text, icon, animationDuration = 500, variant = "ghost", size = "icon", onCopy, class: className, tabindex = -1, children, ...rest }: CopyButtonProps = $props();
 
   // this way if the user passes text then the button will be the default size
-  if (size === "icon" && children) {
-    size = "default";
-  }
+  $effect(() => {
+    if (size === "icon" && children) {
+      size = "default";
+    }
+  });
 
   const clipboard = new UseClipboard();
 </script>

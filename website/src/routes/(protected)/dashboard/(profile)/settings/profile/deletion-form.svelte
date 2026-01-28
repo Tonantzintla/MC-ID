@@ -11,23 +11,27 @@
 
   const { data }: { data: { accountDeletionForm: SuperValidated<Infer<AccountDeletionSchema>> } } = $props();
 
-  const form = superForm(data.accountDeletionForm, {
-    validators: zodClient(accountDeletionSchema),
-    dataType: "json",
-    timeoutMs: 2000,
-    validationMethod: "onblur"
-  });
-
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = form;
-
   let toastLoading = $state<number | string>();
 
-  timeout.subscribe((value) => {
-    if (value) {
-      toast.loading("It's taking longer than expected to delete your account...", {
-        id: toastLoading
-      });
-    }
+  const form = $derived(
+    superForm(data.accountDeletionForm, {
+      validators: zodClient(accountDeletionSchema),
+      dataType: "json",
+      timeoutMs: 2000,
+      validationMethod: "onblur"
+    })
+  );
+
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = $derived(form);
+
+  $effect(() => {
+    timeout.subscribe((value) => {
+      if (value) {
+        toast.loading("It's taking longer than expected to delete your account...", {
+          id: toastLoading
+        });
+      }
+    });
   });
 </script>
 

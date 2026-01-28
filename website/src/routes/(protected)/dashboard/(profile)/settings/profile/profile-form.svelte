@@ -21,20 +21,25 @@
   import { profileUpdateSchema, type ProfileUpdateSchema } from "./schema";
   import { serverDate, syncUser } from "./sync.remote";
 
+  const VERIFICATION_RATE_LIMIT_KEY = "email_verification_last_sent";
+  const RATE_LIMIT_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+
   const { data }: { data: { profileUpdateForm: SuperValidated<Infer<ProfileUpdateSchema>> } } = $props();
 
   const session = authClient.useSession();
   const emailVerified = $derived($session.data?.user?.emailVerified ?? false);
 
-  const form = superForm(data.profileUpdateForm, {
-    validators: zodClient(profileUpdateSchema),
-    dataType: "json",
-    timeoutMs: 2000,
-    validationMethod: "onblur",
-    resetForm: false
-  });
+  const form = $derived(
+    superForm(data.profileUpdateForm, {
+      validators: zodClient(profileUpdateSchema),
+      dataType: "json",
+      timeoutMs: 2000,
+      validationMethod: "onblur",
+      resetForm: false
+    })
+  );
 
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = $derived(form);
 
   const serverDateResult = $derived(await serverDate());
   let syncDisabled = $derived(!page.data.primaryMcAccount.username && $lastSynced && new Date(serverDateResult.data).getTime() - $lastSynced.getTime() < 3 * 24 * 60 * 60 * 1000);
@@ -45,8 +50,33 @@
   let verificationRateLimitExpiry = $state<number | null>(null);
   let remainingTime = $state<string>("");
 
-  const VERIFICATION_RATE_LIMIT_KEY = "email_verification_last_sent";
-  const RATE_LIMIT_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+  const handleSendVerification = async () => {
+    sendingVerification = true;
+
+    try {
+      if (!$session.data?.user?.email) throw new Error("No email associated with the user.");
+
+      await authClient.sendVerificationEmail({
+        email: $session.data.user.email,
+        callbackURL: "/dashboard/settings/profile" // The redirect URL after verification
+      });
+      toast.success("Verification email sent!", {
+        description: "Please check your inbox for the verification link."
+      });
+
+      // Set rate limit
+      const now = Date.now();
+      localStorage.setItem(VERIFICATION_RATE_LIMIT_KEY, now.toString());
+      verificationRateLimitExpiry = now + RATE_LIMIT_DURATION;
+    } catch (error) {
+      console.error("Error sending verification email:", error);
+      toast.error("Failed to send verification email", {
+        description: "Please try again later."
+      });
+    } finally {
+      sendingVerification = false;
+    }
+  };
 
   onMount(() => {
     // Check localStorage for rate limit
@@ -85,40 +115,14 @@
     return () => clearInterval(interval);
   });
 
-  const handleSendVerification = async () => {
-    sendingVerification = true;
-
-    try {
-      if (!$session.data?.user?.email) throw new Error("No email associated with the user.");
-
-      await authClient.sendVerificationEmail({
-        email: $session.data.user.email,
-        callbackURL: "/dashboard/settings/profile" // The redirect URL after verification
-      });
-      toast.success("Verification email sent!", {
-        description: "Please check your inbox for the verification link."
-      });
-
-      // Set rate limit
-      const now = Date.now();
-      localStorage.setItem(VERIFICATION_RATE_LIMIT_KEY, now.toString());
-      verificationRateLimitExpiry = now + RATE_LIMIT_DURATION;
-    } catch (error) {
-      console.error("Error sending verification email:", error);
-      toast.error("Failed to send verification email", {
-        description: "Please try again later."
-      });
-    } finally {
-      sendingVerification = false;
-    }
-  };
-
-  timeout.subscribe((value) => {
-    if (value) {
-      toast.loading("It's taking longer than expected to update your profile...", {
-        id: toastLoading
-      });
-    }
+  $effect(() => {
+    timeout.subscribe((value) => {
+      if (value) {
+        toast.loading("It's taking longer than expected to update your profile...", {
+          id: toastLoading
+        });
+      }
+    });
   });
 </script>
 

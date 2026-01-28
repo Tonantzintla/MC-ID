@@ -17,16 +17,18 @@
 
   const { data, handleSignUpButtonClick }: { data: { loginForm: SuperValidated<Infer<LoginFormSchema>> }; handleSignUpButtonClick: () => void } = $props();
 
-  const form = superForm(data.loginForm, {
-    validators: zodClient(loginFormSchema),
-    dataType: "json",
-    timeoutMs: 2000,
-    validationMethod: "onblur"
-  });
-
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
-
   let toastLoading = $state<number | string>();
+
+  const form = $derived(
+    superForm(data.loginForm, {
+      validators: zodClient(loginFormSchema),
+      dataType: "json",
+      timeoutMs: 2000,
+      validationMethod: "onblur"
+    })
+  );
+
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = $derived(form);
 
   async function signInWithPasskey(autoFill = false) {
     await authClient.signIn.passkey({
@@ -43,12 +45,14 @@
     });
   }
 
-  timeout.subscribe((value) => {
-    if (value) {
-      toast.loading("It's taking longer than expected to log you in...", {
-        id: toastLoading
-      });
-    }
+  $effect(() => {
+    timeout.subscribe((value) => {
+      if (value) {
+        toast.loading("It's taking longer than expected to log you in...", {
+          id: toastLoading
+        });
+      }
+    });
   });
 
   $effect(() => {

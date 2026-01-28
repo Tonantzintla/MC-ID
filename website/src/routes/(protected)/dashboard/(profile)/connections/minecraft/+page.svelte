@@ -23,32 +23,28 @@
   import { makePrimary, minecraftAccounts, requestCode, unlinkAccount } from "./minecraft.remote";
   import { requestCodeFormSchema, username } from "./schema";
 
-  let { data }: { data: PageServerData } = $props();
-
-  const form = superForm(data.verifyCodeForm, {
-    validators: zodClient(requestCodeFormSchema),
-    dataType: "json",
-    timeoutMs: 2000,
-    validationMethod: "onblur"
-  });
-
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
+  const { data }: { data: PageServerData } = $props();
 
   let toastLoading = $state<number | string>();
-
-  timeout.subscribe((value) => {
-    if (value) {
-      toast.loading("It's taking longer than expected to verify your code...", {
-        id: toastLoading
-      });
-    }
-  });
 
   let mcUsernameInput = $state<string>("");
   let mcUsername = $derived<ZodSafeParseResult<string>>(username.safeParse(mcUsernameInput));
   let step = $state<"request" | "verify">("request");
 
   let loadingRequest = $state<boolean>(false);
+
+  const allMinecraftAccounts = minecraftAccounts();
+
+  const form = $derived(
+    superForm(data.verifyCodeForm, {
+      validators: zodClient(requestCodeFormSchema),
+      dataType: "json",
+      timeoutMs: 2000,
+      validationMethod: "onblur"
+    })
+  );
+
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = $derived(form);
 
   const handleRequestCode = async () => {
     if (!mcUsername.success) return;
@@ -110,12 +106,20 @@
     }
   };
 
-  const allMinecraftAccounts = minecraftAccounts();
+  $effect(() => {
+    timeout.subscribe((value) => {
+      if (value) {
+        toast.loading("It's taking longer than expected to verify your code...", {
+          id: toastLoading
+        });
+      }
+    });
+  });
 </script>
 
 <Card.Root class="grid grid-cols-1 grid-rows-1 overflow-clip">
   {#if step === "request"}
-    <div class="col-[1] row-[1] space-y-2" in:fly={{ x: "100%" }} out:fly={{ x: "-100%" }}>
+    <div class="col-1 row-1 space-y-2" in:fly={{ x: "100%" }} out:fly={{ x: "-100%" }}>
       <Card.Header>
         <Card.Title>Add Minecraft Account</Card.Title>
         <Card.Description>To link your Minecraft account, please enter your Minecraft username below.</Card.Description>
@@ -138,7 +142,7 @@
       </Card.Footer>
     </div>
   {:else if step === "verify"}
-    <div class="col-[1] row-[1] space-y-2" in:fly={{ x: "100%" }} out:fly={{ x: "-100%" }}>
+    <div class="col-1 row-1 space-y-2" in:fly={{ x: "100%" }} out:fly={{ x: "-100%" }}>
       <Card.Header>
         <Card.Title>Enter Code</Card.Title>
         <Card.Description class="space-y-1">
@@ -245,7 +249,7 @@
 
 {#snippet mcAccountItem(account: PrimaryMcAccount & { primary: boolean })}
   <Item.Root variant="outline" class="overflow-clip">
-    <Item.Media class="pointer-events-none relative select-none group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center">
+    <Item.Media class="pointer-events-none relative select-none group-has-data-[slot=item-description]/item:translate-y-0 group-has-data-[slot=item-description]/item:self-center">
       <Avatar.Root class="size-16 rounded-none">
         <Avatar.Image src="https://nmsr.nickac.dev/face/{account.uuid}" alt={account.username} />
         <Avatar.Fallback class="rounded-lg">
