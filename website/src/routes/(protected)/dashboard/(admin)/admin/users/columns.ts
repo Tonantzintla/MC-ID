@@ -1,3 +1,4 @@
+import { DateTooltip } from "$components/data-table";
 import DataTableSortingButton from "$components/data-table/sorting-button.svelte";
 import type { UserRole } from "$lib/roles";
 import { Checkbox } from "$ui/checkbox";
@@ -6,7 +7,7 @@ import type { ColumnDef } from "@tanstack/table-core";
 import type { UserWithRole } from "better-auth/plugins";
 import { toDate } from "date-fns";
 import DataTableActions from "./data-table-actions.svelte";
-import { dateTooltip, rolesSnippet } from "./snippets.svelte";
+import { rolesSnippet } from "./snippets.svelte";
 
 export const columns: ColumnDef<UserWithRole>[] = [
   {
@@ -78,12 +79,13 @@ export const columns: ColumnDef<UserWithRole>[] = [
     header: ({ column }) => {
       return renderComponent(DataTableSortingButton, {
         title: "Created",
-        column
+        column,
+        datatype: "date"
       });
     },
     cell: ({ getValue }) => {
       const date = toDate(getValue() as string);
-      return renderSnippet(dateTooltip, { date });
+      return renderComponent(DateTooltip, { date });
     }
   },
   {

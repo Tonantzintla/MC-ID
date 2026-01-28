@@ -1,5 +1,5 @@
 <script lang="ts" generics="TData">
-  import { DataTableFacetedFilter, DataTableViewOptions } from "$components/data-table";
+  import { DataTableFacetedFilter, DataTableViewOptions, booleanOptions } from "$components/data-table";
   import { roles } from "$lib/roles";
   import { Button } from "$ui/button";
   import { Input } from "$ui/input";
@@ -14,11 +14,6 @@
   const emailVerifiedCol = $derived(table.getColumn("Email Verified"));
   const bannedCol = $derived(table.getColumn("Banned"));
   const roleCol = $derived(table.getColumn("Roles"));
-
-  const boolean = [
-    { label: "Yes", value: true },
-    { label: "No", value: false }
-  ];
 </script>
 
 <div class="flex items-center justify-between gap-2">
@@ -52,11 +47,11 @@
     </Select.Root>
 
     {#if emailVerifiedCol}
-      <DataTableFacetedFilter column={emailVerifiedCol} title="Email Verified" options={boolean} />
+      <DataTableFacetedFilter column={emailVerifiedCol} title="Email Verified" options={booleanOptions} />
     {/if}
 
     {#if bannedCol}
-      <DataTableFacetedFilter column={bannedCol} title="Banned" options={boolean} />
+      <DataTableFacetedFilter column={bannedCol} title="Banned" options={booleanOptions} />
     {/if}
     {#if roleCol}
       <DataTableFacetedFilter column={roleCol} title="Roles" options={roles} />

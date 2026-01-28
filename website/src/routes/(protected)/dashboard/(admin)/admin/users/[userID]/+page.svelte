@@ -1,5 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
+  import DateTooltip from "$components/data-table/date-tooltip.svelte";
   import { authClient } from "$lib/auth-client";
   import { roles, type UserRole } from "$lib/roles";
   import * as AlertDialog from "$ui/alert-dialog";
@@ -31,7 +32,7 @@
   import { toast } from "svelte-sonner";
   import { superForm } from "sveltekit-superforms";
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
-  import { dateTooltip, rolesSnippet } from "../snippets.svelte";
+  import { rolesSnippet } from "../snippets.svelte";
   import type { PageProps } from "./$types";
   import { banFormSchema } from "./schema";
 
@@ -132,14 +133,14 @@
           {#if user.role}
             <Item.Description class="flex flex-col flex-wrap gap-1">
               <div>
-                {@render rolesSnippet({ roles: user.role.split(",") })}
+                {@render rolesSnippet({ roles: user.role.split(",") as UserRole[] })}
               </div>
               <Separator />
               <p>
-                Created {@render dateTooltip({ date: user.createdAt })}
+                Created <DateTooltip date={user.createdAt} />
               </p>
               <p>
-                Updated {@render dateTooltip({ date: user.updatedAt })}
+                Updated <DateTooltip date={user.updatedAt} />
               </p>
             </Item.Description>
           {/if}
@@ -153,7 +154,7 @@
               {user.banExpires}
               {#if user.banExpires}
                 <p>
-                  Ban Expires {@render dateTooltip({ date: user.banExpires })}
+                  Ban Expires <DateTooltip date={user.banExpires} />
                 </p>
               {:else}
                 <p>Ban Expires: Never</p>
