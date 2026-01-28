@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import DateTooltip from "$components/data-table/date-tooltip.svelte";
+  import { DateTooltip } from "$components/data-table";
   import { authClient } from "$lib/auth-client";
   import { roles, type UserRole } from "$lib/roles";
   import * as AlertDialog from "$ui/alert-dialog";

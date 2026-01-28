@@ -4,7 +4,7 @@
 
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import DateTooltip from "$components/data-table/date-tooltip.svelte";
+  import { DateTooltip } from "$components/data-table";
   import * as Avatar from "$ui/avatar";
   import { Button } from "$ui/button";
   import * as HoverCard from "$ui/hover-card";

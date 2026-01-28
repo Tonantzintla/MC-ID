@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import DateTooltip from "$components/data-table/date-tooltip.svelte";
+  import { DateTooltip } from "$components/data-table";
   import * as AlertDialog from "$ui/alert-dialog";
   import * as Avatar from "$ui/avatar";
   import { Badge } from "$ui/badge";

@@ -1,4 +1,4 @@
-import DateTooltip from "$components/data-table/date-tooltip.svelte";
+import { DateTooltip } from "$components/data-table";
 import DataTableSortingButton from "$components/data-table/sorting-button.svelte";
 import { Checkbox } from "$ui/checkbox";
 import { renderComponent, renderSnippet } from "$ui/data-table";
