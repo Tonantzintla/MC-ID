@@ -11,10 +11,14 @@
   import CalendarArrowUp from "@lucide/svelte/icons/calendar-arrow-up";
   import ChevronsUpDown from "@lucide/svelte/icons/chevrons-up-down";
   import { type Column } from "@tanstack/table-core";
-  import type { UserWithRole } from "better-auth/plugins";
   import type { HTMLAttributes } from "svelte/elements";
 
-  type Props = { column: Column<UserWithRole>; title: string; datatype?: "string" | "number" | "date" } & HTMLAttributes<HTMLDivElement>;
+  type Props = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    column: Column<any, any>;
+    title: string;
+    datatype?: "string" | "number" | "date";
+  } & HTMLAttributes<HTMLDivElement>;
 
   const { column, title, class: className, datatype = "string", ...restProps }: Props = $props();
 

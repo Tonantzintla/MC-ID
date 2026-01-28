@@ -1,3 +1,10 @@
+<script lang="ts" module>
+  export const boolean = [
+    { label: "Yes", value: true },
+    { label: "No", value: false }
+  ];
+</script>
+
 <script lang="ts" generics="TData, TValue">
   import { cn } from "$lib/utils.js";
   import { Badge } from "$ui/badge";
