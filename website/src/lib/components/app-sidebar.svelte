@@ -115,6 +115,11 @@
         name: "API Key Management",
         url: BASE_DASHBOARD_URL + "/admin/api-keys",
         icon: Key
+      },
+      {
+        name: "OAuth Apps Management",
+        url: BASE_DASHBOARD_URL + "/admin/oauth-apps",
+        icon: CodeXmlIcon
       }
     ]
   } as const satisfies Record<string, NavItem[]>;
