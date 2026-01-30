@@ -1,9 +1,10 @@
+import { REPORT_REASONS, REPORT_STATUSES } from "$lib/shared/enums/reportEnums";
 import { index, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { oauthClient, user } from "./auth-schema";
 
-export const reportReasonEnum = pgEnum("report_reason", ["malicious", "misleading", "spam", "privacy_violation", "impersonation", "other"]);
+export const reportReasonEnum = pgEnum("report_reason", REPORT_REASONS);
 
-export const reportStatusEnum = pgEnum("report_status", ["pending", "under_review", "resolved", "dismissed"]);
+export const reportStatusEnum = pgEnum("report_status", REPORT_STATUSES);
 
 export const oauthClientReport = pgTable(
   "oauth_client_report",

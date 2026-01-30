@@ -28,9 +28,15 @@ export const codeRelations = relations(verificationCodes, ({ one }) => ({
 }));
 
 export const oauthClientReportRelations = relations(oauthClientReport, ({ one }) => ({
+  oauthClient: one(oauthClient, {
+    fields: [oauthClientReport.clientId],
+    references: [oauthClient.clientId],
+    relationName: "oauthClientReport_client"
+  }),
   reporter: one(user, {
     fields: [oauthClientReport.reporterId],
-    references: [user.id]
+    references: [user.id],
+    relationName: "oauthClientReport_reporter"
   }),
   client: one(oauthClient, {
     fields: [oauthClientReport.clientId],
@@ -38,6 +44,7 @@ export const oauthClientReportRelations = relations(oauthClientReport, ({ one })
   }),
   resolvedBy: one(user, {
     fields: [oauthClientReport.resolvedById],
-    references: [user.id]
+    references: [user.id],
+    relationName: "oauthClientReport_resolver"
   })
 }));

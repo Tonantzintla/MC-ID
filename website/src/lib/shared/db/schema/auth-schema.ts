@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import { boolean, index, integer, jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { oauthClientReport } from "./reports";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -276,7 +277,8 @@ export const oauthClientRelations = relations(oauthClient, ({ one, many }) => ({
   }),
   oauthRefreshTokens: many(oauthRefreshToken),
   oauthAccessTokens: many(oauthAccessToken),
-  oauthConsents: many(oauthConsent)
+  oauthConsents: many(oauthConsent),
+  oauthClientReports: many(oauthClientReport, { relationName: "oauthClientReport_client" })
 }));
 
 export const oauthRefreshTokenRelations = relations(oauthRefreshToken, ({ one, many }) => ({
