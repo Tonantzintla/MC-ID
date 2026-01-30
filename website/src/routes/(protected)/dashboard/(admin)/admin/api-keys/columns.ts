@@ -1,12 +1,12 @@
 import { DateTooltip } from "$components/data-table";
+import MinecraftUser from "$components/data-table/minecraft-user.svelte";
 import DataTableSortingButton from "$components/data-table/sorting-button.svelte";
 import { Checkbox } from "$ui/checkbox";
-import { renderComponent, renderSnippet } from "$ui/data-table";
+import { renderComponent } from "$ui/data-table";
 import type { ColumnDef } from "@tanstack/table-core";
 import { formatDuration, intervalToDuration, toDate } from "date-fns";
 import type { ApiKeyType } from "./+page.server";
 import DataTableActions from "./data-table-actions.svelte";
-import { minecraftAccount } from "./snippets.svelte";
 
 export const columns: ColumnDef<ApiKeyType>[] = [
   {
@@ -61,7 +61,7 @@ export const columns: ColumnDef<ApiKeyType>[] = [
       });
     },
     cell: ({ getValue }) => {
-      return renderSnippet(minecraftAccount, { minecraftAccount: getValue() as ApiKeyType["minecraftAccount"] });
+      return renderComponent(MinecraftUser, { minecraftAccount: getValue() as ApiKeyType["minecraftAccount"] });
     }
   },
   {
