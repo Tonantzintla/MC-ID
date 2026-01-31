@@ -126,6 +126,7 @@
 </script>
 
 <script lang="ts">
+  import { page } from "$app/state";
   import ThemeSelector from "$components/theme-selector.svelte";
   import { sidebarsState } from "$stores/internal";
   import { Button } from "$ui/button";
@@ -152,7 +153,9 @@
   <Sidebar.Content>
     <Nav title="Dashboard" items={data.navMain} bind:open={$sidebarsState.userSidebar} />
     <Nav title="Developer" items={data.navDeveloper} bind:open={$sidebarsState.devSidebar} />
-    <Nav title="Admin" items={data.navAdmin} bind:open={$sidebarsState.adminSidebar} />
+    {#if page.data?.user?.role?.split(",")?.includes("admin")}
+      <Nav title="Admin" items={data.navAdmin} bind:open={$sidebarsState.adminSidebar} />
+    {/if}
   </Sidebar.Content>
   <Sidebar.Footer class="flex flex-row gap-2">
     <NavUser />
