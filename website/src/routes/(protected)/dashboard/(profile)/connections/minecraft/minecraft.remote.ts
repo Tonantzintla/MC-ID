@@ -1,9 +1,10 @@
 import { command, getRequestEvent, query } from "$app/server";
 import { MCIDky, minecraftKy } from "$lib/customKy";
+import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import { minecraftAccount } from "$lib/shared/db/schema";
 import { error } from "@sveltejs/kit";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { HTTPError } from "ky";
 import { z } from "zod";
 import { username as usernameSchema } from "./schema";
@@ -41,14 +42,14 @@ export const requestCode = command(requestCodeSchema, async ({ username }) => {
       demo?: boolean; // Included in response if the account does not own the game.
     }>();
 
-    const existingAccount = await db.query.minecraftAccount.findFirst({
-      where: eq(minecraftAccount.uuid, userData.id)
-    });
+    const hasAccount = await db.$count(minecraftAccount, and(eq(minecraftAccount.uuid, userData.id), eq(minecraftAccount.userId, locals.user.id))).then((count) => count > 0);
 
-    if (existingAccount) {
+    if (hasAccount) {
+      console.info(`An account with the username ${username} is already linked.`);
       return {
         success: false,
-        message: `An account with the username ${username} is already linked.`
+        message: `An account with the username ${username} is already linked.`,
+        status: 400
       };
     }
 
@@ -126,7 +127,7 @@ export const unlinkAccount = command(z.object({ uuid: z.string() }), async ({ uu
 });
 
 export const makePrimary = command(z.object({ uuid: z.string() }), async ({ uuid }) => {
-  const { locals } = getRequestEvent();
+  const { locals, request } = getRequestEvent();
   if (!locals.user) error(401, "Unauthorized");
 
   try {
@@ -138,12 +139,22 @@ export const makePrimary = command(z.object({ uuid: z.string() }), async ({ uuid
       error(404, "Minecraft account not found or does not belong to the user");
     }
 
-    await db.update(minecraftAccount).set({ primary: false }).where(eq(minecraftAccount.userId, locals.user.id));
+    await Promise.all([
+      db
+        .update(minecraftAccount)
+        .set({
+          // Set to TRUE if uuid matches, otherwise set to FALSE
+          primary: sql`${minecraftAccount.uuid} = ${uuid}`
+        })
+        .where(eq(minecraftAccount.userId, locals.user.id)),
 
-    await db
-      .update(minecraftAccount)
-      .set({ primary: true })
-      .where(and(eq(minecraftAccount.uuid, uuid), eq(minecraftAccount.userId, locals.user.id)));
+      auth.api.updateUser({
+        headers: request.headers,
+        body: {
+          name: account.username
+        }
+      })
+    ]);
 
     minecraftAccounts().refresh();
 

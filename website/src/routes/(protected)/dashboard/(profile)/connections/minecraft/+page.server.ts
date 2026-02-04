@@ -1,4 +1,5 @@
 import { MCIDky, minecraftKy } from "$lib/customKy";
+import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import { minecraftAccount } from "$lib/shared/db/schema";
 import type { Actions } from "@sveltejs/kit";
@@ -18,7 +19,7 @@ export const load = (async () => {
 
 export const actions: Actions = {
   verifyCode: async (event) => {
-    const { locals } = event;
+    const { locals, request } = event;
     const form = await superValidate(event, zod(verifyCodeFormSchema));
     if (!form.valid) {
       console.error("Form invalid:", form.errors);
@@ -55,10 +56,33 @@ export const actions: Actions = {
         });
       }
 
-      await saveMinecraftAccount(locals.user!.id, userData.id, userData.name);
+      const [existingAccount, hasAccount] = await Promise.all([
+        db.query.minecraftAccount.findFirst({
+          where: eq(minecraftAccount.uuid, userData.id)
+        }),
+        db.$count(minecraftAccount, and(eq(minecraftAccount.uuid, userData.id), eq(minecraftAccount.userId, locals.user!.id))).then((count) => count > 0)
+      ]);
+
+      if (hasAccount) {
+        console.info(`User ${locals.user!.id} already has the Minecraft account ${username} linked.`);
+        return {
+          success: true,
+          message: `The Minecraft account ${username} is already linked to your profile.`,
+          form
+        };
+      }
+
+      if (existingAccount) {
+        console.info(`An account with the username ${username} is already linked.`);
+        // Remove the existing account to transfer it
+        await db.delete(minecraftAccount).where(eq(minecraftAccount.uuid, userData.id));
+      }
+
+      await saveMinecraftAccount(locals.user!.id, userData.id, userData.name, request);
 
       return {
         success: true,
+        message: existingAccount ? "This account was already linked. We have automatically transferred it to this MC-ID account." : undefined,
         form
       };
     } catch (err) {
@@ -85,14 +109,26 @@ export const actions: Actions = {
   }
 };
 
-async function saveMinecraftAccount(userId: string, uuid: string, username: string) {
+async function saveMinecraftAccount(userId: string, uuid: string, username: string, request: Request) {
   const hasPrimary = await db.$count(minecraftAccount, and(eq(minecraftAccount.userId, userId), eq(minecraftAccount.primary, true)));
 
-  await db.insert(minecraftAccount).values({
-    userId,
-    uuid,
-    username,
-    primary: hasPrimary === 0
-  });
-  console.info("Inserted account:");
+  const updateNamePromise =
+    hasPrimary === 0
+      ? auth.api.updateUser({
+          headers: request.headers,
+          body: {
+            name: username
+          }
+        })
+      : Promise.resolve(null);
+
+  await Promise.all([
+    db.insert(minecraftAccount).values({
+      userId,
+      uuid,
+      username,
+      primary: hasPrimary === 0
+    }),
+    updateNamePromise
+  ]);
 }

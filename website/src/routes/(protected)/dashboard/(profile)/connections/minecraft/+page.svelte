@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { invalidateAll } from "$app/navigation";
   import * as Avatar from "$lib/components/ui/avatar";
   import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card";
@@ -73,7 +74,7 @@
       const result = await unlinkAccount({ uuid });
       if (result.success) {
         toast.success("Minecraft account unlinked successfully!", { id: toastId });
-        window.location.reload();
+        invalidateAll();
       } else {
         toast.error(result.message ?? "Failed to unlink Minecraft account.", { id: toastId });
       }
@@ -92,8 +93,8 @@
       const result = await makePrimary({ uuid });
 
       if (result.success) {
-        toast.success("Minecraft account set as primary successfully!", { id: toastId });
-        window.location.reload();
+        toast.success(result.message ?? "Successfully set Minecraft account as primary!", { id: toastId });
+        invalidateAll();
       } else {
         toast.error(result.message ?? "Failed to set Minecraft account as primary.", { id: toastId });
       }
@@ -171,9 +172,13 @@
               console.info(result);
               if (result.type === "success") {
                 // Refresh the accounts list after adding a new one
-                minecraftAccounts().refresh();
-                toast.success("Minecraft account linked successfully!");
-                window.location.reload();
+                allMinecraftAccounts.refresh();
+                toast.success(result.data.message ?? "Minecraft account linked successfully!");
+                $formData.code = "";
+                $formData.username = "";
+                form.reset();
+                step = "request";
+                invalidateAll();
               } else {
                 toast.error(result.data.error ?? "Failed to verify code.");
               }
