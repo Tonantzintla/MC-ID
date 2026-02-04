@@ -1,5 +1,5 @@
-import { REPORT_REASONS, REPORT_STATUSES } from "$lib/shared/enums/reportEnums";
 import { index, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { REPORT_REASONS, REPORT_STATUSES } from "../../enums/reportEnums";
 import { oauthClient, user } from "./auth-schema";
 
 export const reportReasonEnum = pgEnum("report_reason", REPORT_REASONS);
