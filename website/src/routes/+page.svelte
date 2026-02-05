@@ -6,11 +6,7 @@
   import ThemeSelector from "$components/theme-selector.svelte";
 </script>
 
-<Header
-  menuItems={[
-    { name: "Docs", href: "https://docs.mc-id.com" },
-    { name: "GitHub", href: "https://github.com/Tonantzintla/MC-ID" }
-  ]} />
+<Header />
 
 <HeroOne />
 <UserSection />
