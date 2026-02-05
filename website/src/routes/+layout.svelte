@@ -1,5 +1,6 @@
 <script lang="ts">
   import favicon from "$lib/assets/favicon.svg";
+  import { initLastSynced, initSidebarsState } from "$lib/context";
   import { IsHover } from "$lib/hooks/is-hover.svelte";
   import Spinner from "$ui/spinner/spinner.svelte";
   import * as Tooltip from "$ui/tooltip";
@@ -19,6 +20,8 @@
   const ogDescription = "MC-ID is a unified account system for Minecraft services, providing a seamless login experience across multiple platforms." as const;
 
   setContext("isHover", isHover);
+  initSidebarsState();
+  initLastSynced();
 </script>
 
 <svelte:window

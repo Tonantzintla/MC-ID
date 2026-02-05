@@ -77,7 +77,6 @@
     "skinview3d": "^3.4.1",
     "svelte": "^5.49.2",
     "svelte-check": "^4.3.6",
-    "svelte-persisted-store": "^0.12.0",
     "svelte-seo": "2.0.0",
     "svelte-sonner": "^1.0.7",
     "svelte-toolbelt": "^0.10.6",

@@ -128,7 +128,7 @@
 <script lang="ts">
   import { page } from "$app/state";
   import ThemeSelector from "$components/theme-selector.svelte";
-  import { sidebarsState } from "$stores/internal";
+  import { getSidebarsState } from "$lib/context";
   import { Button } from "$ui/button";
   import * as Sidebar from "$ui/sidebar";
   import { useSidebar } from "$ui/sidebar/context.svelte";
@@ -137,6 +137,7 @@
   import Nav from "./nav.svelte";
 
   const sidebar = useSidebar();
+  const sidebarsState = getSidebarsState();
 
   let { ref = $bindable(null), collapsible = "offcanvas", ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 </script>
@@ -151,10 +152,10 @@
     </Button>
   </Sidebar.Header>
   <Sidebar.Content>
-    <Nav title="Dashboard" items={data.navMain} bind:open={$sidebarsState.userSidebar} />
-    <Nav title="Developer" items={data.navDeveloper} bind:open={$sidebarsState.devSidebar} />
+    <Nav title="Dashboard" items={data.navMain} bind:open={sidebarsState.current.userSidebar} />
+    <Nav title="Developer" items={data.navDeveloper} bind:open={sidebarsState.current.devSidebar} />
     {#if page.data?.user?.role?.split(",")?.includes("admin")}
-      <Nav title="Admin" items={data.navAdmin} bind:open={$sidebarsState.adminSidebar} />
+      <Nav title="Admin" items={data.navAdmin} bind:open={sidebarsState.current.adminSidebar} />
     {/if}
   </Sidebar.Content>
   <Sidebar.Footer class="flex flex-row gap-2">

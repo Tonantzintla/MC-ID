@@ -1,8 +1,8 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { authClient } from "$lib/auth-client";
+  import { getLastSynced } from "$lib/context";
   import { cn } from "$lib/utils";
-  import { lastSynced } from "$stores/internal";
   import { Button, buttonVariants } from "$ui/button";
   import * as Form from "$ui/form";
   import { Input } from "$ui/input";
@@ -41,8 +41,9 @@
 
   const { form: formData, enhance, tainted, isTainted, submitting, timeout } = $derived(form);
 
+  const lastSynced = getLastSynced();
   const serverDateResult = $derived(await serverDate());
-  let syncDisabled = $derived(!page.data.primaryMcAccount.username && $lastSynced && new Date(serverDateResult.data).getTime() - $lastSynced.getTime() < 3 * 24 * 60 * 60 * 1000);
+  let syncDisabled = $derived(!page.data.primaryMcAccount.username && lastSynced.current && new Date(serverDateResult.data).getTime() - lastSynced.current.getTime() < 3 * 24 * 60 * 60 * 1000);
   let username = $state<string>(page.data.primaryMcAccount.username ?? $formData.name);
   let toastLoading = $state<number | string>();
   let syncingUser = $state<boolean>(false);
@@ -166,7 +167,7 @@
             </Tooltip.Trigger>
             <Tooltip.Content>
               You can sync again
-              {formatDistanceStrict(new Date(new Date(serverDateResult.data).getTime() + 3 * 24 * 60 * 60 * 1000), $lastSynced, { addSuffix: true, in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })}
+              {formatDistanceStrict(new Date(new Date(serverDateResult.data).getTime() + 3 * 24 * 60 * 60 * 1000), lastSynced.current, { addSuffix: true, in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })}
             </Tooltip.Content>
           </Tooltip.Root>
         {:else}
@@ -184,7 +185,7 @@
                     .then(({ data, success, message }) => {
                       if (!success) throw new Error(message ?? "Failed to sync user.");
                       username = data.name;
-                      lastSynced.set(new Date(serverDateResult.data));
+                      lastSynced.current = new Date(serverDateResult.data);
                       resolve(data);
                     })
                     .catch(reject)
