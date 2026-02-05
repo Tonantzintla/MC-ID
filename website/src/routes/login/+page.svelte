@@ -31,9 +31,7 @@
   });
 </script>
 
-<Header menuItems={[{ name: "Home", href: "/" }]} showLoginButtons={false} />
-
-<Tabs.Root bind:value class="mx-auto w-full max-w-md px-4 pt-24 md:pt-36">
+<Tabs.Root bind:value>
   <Tabs.List class="grid w-full grid-cols-2 gap-4 bg-background">
     {#each tabs as tab (tab.value)}
       {@const isActive = value === tab.value}

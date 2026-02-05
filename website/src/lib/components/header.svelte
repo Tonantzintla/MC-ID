@@ -1,5 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
+  import { page } from "$app/state";
   import { Button } from "$lib/components/ui/button";
   import { cn } from "$lib/utils";
   import Menu from "@lucide/svelte/icons/menu";
@@ -12,7 +13,16 @@
     href: string;
   };
 
-  const { menuItems, showLoginButtons = true }: { menuItems: MenuItem[]; showLoginButtons?: boolean } = $props();
+  const menuItems = $derived<MenuItem[]>(
+    [
+      { name: "Home", href: resolve("/") },
+      { name: "Discord", href: "https://discord.tonantzintla.org" },
+      { name: "Docs", href: "https://docs.mc-id.com" },
+      { name: "GitHub", href: "https://github.com/Tonantzintla/MC-ID" }
+    ].filter((item) => item.href !== page.url.pathname)
+  );
+
+  const showLoginButtons = $derived(!["/login", "/register"].includes(page.url.pathname));
 
   let menuState = $state(false);
   let isScrolled = $derived.by(() => {
@@ -52,25 +62,23 @@
             {/each}
           </ul>
         </div>
-        {#if showLoginButtons}
-          <div class={cn(["mb-6 w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border bg-background p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent", menuState ? "block lg:flex" : "hidden lg:flex"])}>
-            <div class="lg:hidden">
-              <ul class="space-y-6 text-base">
-                {#each menuItems as item, index (index)}
-                  <li>
-                    <Button href={item.href} variant="link" class="block text-muted-foreground duration-150 hover:text-accent-foreground">
-                      <span>{item.name}</span>
-                    </Button>
-                  </li>
-                {/each}
-              </ul>
-            </div>
-            <div class="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-              <Button variant="outline" size="sm" href="/login">Login</Button>
-              <Button href="/login" size="sm">Sign Up</Button>
-            </div>
+        <div class={cn(["mb-6 w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border bg-background p-6 shadow-2xl shadow-zinc-300/20 data-[show=false]:invisible md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent", menuState ? "block lg:flex" : "hidden lg:flex"])} data-show={showLoginButtons}>
+          <div class="lg:hidden">
+            <ul class="space-y-6 text-base">
+              {#each menuItems as item, index (index)}
+                <li>
+                  <Button href={item.href} variant="link" class="block text-muted-foreground duration-150 hover:text-accent-foreground">
+                    <span>{item.name}</span>
+                  </Button>
+                </li>
+              {/each}
+            </ul>
           </div>
-        {/if}
+          <div class="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
+            <Button variant="outline" size="sm" href="/login">Login</Button>
+            <Button href="/login" size="sm">Sign Up</Button>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
