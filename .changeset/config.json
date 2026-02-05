@@ -7,8 +7,5 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "mc-id-website",
-    "mc-id-docs"
-  ]
+  "ignore": []
 }
