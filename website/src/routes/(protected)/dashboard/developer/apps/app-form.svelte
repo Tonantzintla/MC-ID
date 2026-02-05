@@ -3,7 +3,6 @@
   import * as Accordion from "$lib/components/ui/accordion";
   import { Checkbox } from "$lib/components/ui/checkbox";
   import { Scope, scopes } from "$lib/scopes";
-  import { cn } from "$lib/utils";
   import * as Alert from "$ui/alert";
   import * as Avatar from "$ui/avatar";
   import { Button } from "$ui/button";
@@ -60,7 +59,7 @@
       validators: zodClient(appSchema),
       dataType: "json",
       timeoutMs: 2000,
-      validationMethod: "oninput",
+      validationMethod: "onblur",
       invalidateAll: isEdit ? "pessimistic" : undefined
     })
   );
@@ -312,8 +311,8 @@
   </Form.Field>
 
   <Accordion.Root type="single">
-    <Accordion.Item value="redirect-uris">
-      <Accordion.Trigger class={cn({ "text-destructive": $appErrors.redirectUris })}>Redirect URIs</Accordion.Trigger>
+    <Accordion.Item value="redirect-uris" class="group/redirect-uris">
+      <Accordion.Trigger class="group-has-data-fs-error/redirect-uris:text-destructive">Redirect URIs</Accordion.Trigger>
       <Accordion.Content>
         <Form.Fieldset form={appForm} name="redirectUris">
           <Form.Description>These are the URIs that your app can redirect to after a user authorizes it. Make sure to include all the URIs that your app will use.</Form.Description>
@@ -349,8 +348,8 @@
         </Form.Fieldset>
       </Accordion.Content>
     </Accordion.Item>
-    <Accordion.Item value="contact-emails">
-      <Accordion.Trigger class={cn({ "text-destructive": $appErrors.contacts })}>Contact Emails</Accordion.Trigger>
+    <Accordion.Item value="contact-emails" class="group/contact-emails">
+      <Accordion.Trigger class="group-has-data-fs-error/contact-emails:text-destructive">Contact Emails</Accordion.Trigger>
       <Accordion.Content>
         <Form.Fieldset form={appForm} name="contacts">
           <Form.Description>These are the email addresses that we can use to contact you about your app. They will not be shared with users.</Form.Description>
@@ -387,8 +386,8 @@
       </Accordion.Content>
     </Accordion.Item>
 
-    <Accordion.Item value="scopes">
-      <Accordion.Trigger class={cn({ "text-destructive": $appErrors.scopes })}>Scopes</Accordion.Trigger>
+    <Accordion.Item value="scopes" class="group/scopes">
+      <Accordion.Trigger class="group-has-data-fs-error/scopes:text-destructive">Scopes</Accordion.Trigger>
       <Accordion.Content>
         <Form.Fieldset form={appForm} name="scopes" class="space-y-0">
           <div class="mb-4">
@@ -429,8 +428,8 @@
       </Accordion.Content>
     </Accordion.Item>
 
-    <Accordion.Item value="metadata">
-      <Accordion.Trigger class={cn({ "text-destructive": $appErrors.description || $appErrors.tosUri || $appErrors.policyUri })}>Metadata</Accordion.Trigger>
+    <Accordion.Item value="metadata" class="group/metadata">
+      <Accordion.Trigger class="group-has-data-fs-error/metadata:text-destructive">Metadata</Accordion.Trigger>
       <Accordion.Content class="space-y-4">
         <Form.Field form={appForm} name="description">
           <Form.Control>

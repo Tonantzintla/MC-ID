@@ -26,7 +26,7 @@ export const load = (async (event) => {
         defaults: {
           name: app.client_name || "",
           uri: app.client_uri,
-          description: (app.metadata as { description?: string })?.description || "",
+          description: (app.description as string) || "",
           redirectUris: app.redirect_uris ?? [],
           id: app.client_id,
           contacts: app.contacts ?? [],
@@ -81,10 +81,10 @@ export const actions: Actions = {
             contacts: form.data.contacts,
             tos_uri: form.data.tosUri,
             policy_uri: form.data.policyUri,
-            logo_uri: form.data.logoUrl
-            // metadata: {
-            //   description: form.data.description
-            // }
+            logo_uri: form.data.logoUrl,
+            metadata: {
+              description: form.data.description
+            }
           }
         },
         // This endpoint requires session cookies.

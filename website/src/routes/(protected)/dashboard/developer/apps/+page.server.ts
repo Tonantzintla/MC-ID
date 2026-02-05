@@ -74,14 +74,14 @@ export const actions: Actions = {
           policy_uri: form.data.policyUri,
           type: "web",
           skip_consent: false,
-          logo_uri: form.data.logoUrl
-          // metadata: {
-          //   description: form.data.description,
-          //   owner_user_id: locals.user?.id ?? "",
-          //   trusted: false,
-          //   verified: false,
-          //   official: false
-          // }
+          logo_uri: form.data.logoUrl,
+          metadata: {
+            description: form.data.description,
+            owner_user_id: locals.user?.id ?? "",
+            trusted: false,
+            verified: false,
+            official: false
+          }
         }
       });
     } catch (err) {
