@@ -1,11 +1,11 @@
 package com.mcid.auth.api;
 
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
 import com.mcid.auth.api.exceptions.PlayerCodeNotFoundException;
 import com.mcid.auth.api.responses.PlayerCodeResponse;
 import com.mcid.auth.config.ConfigLoader;
+import org.slf4j.Logger;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -15,27 +15,25 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 public class ApiHandler {
-    private final URI apiEndpoint;
-    private final String apiKey;
-    private final Logger logger;
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private final URI apiEndpoint;
+    private final String apiKey;
 
-    public ApiHandler(ConfigLoader configLoader, Logger logger){
+    public ApiHandler(ConfigLoader configLoader, Logger logger) {
         String baseUrl = configLoader.getConfig().getString("api-endpoint");
         if (!baseUrl.endsWith("/")) {
             baseUrl += "/";
         }
         this.apiEndpoint = URI.create(baseUrl + "api/v1/plugin/");
-        this.apiKey=configLoader.getConfig().getString("api-key");
-        this.logger=logger;
+        this.apiKey = configLoader.getConfig().getString("api-key");
 
-        logger.info("Initialized API at: {}", apiEndpoint.toString());
+        logger.info("Initialized API at: {}", apiEndpoint);
 
     }
 
-    public CompletableFuture<PlayerCodeResponse> getPlayerCode(java.util.UUID playerUuid)  {
-        URI route = apiEndpoint.resolve("code/" + playerUuid.toString().replace("-",""));
+    public CompletableFuture<PlayerCodeResponse> getPlayerCode(java.util.UUID playerUuid) {
+        URI route = apiEndpoint.resolve("code/" + playerUuid.toString().replace("-", ""));
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(route)
@@ -47,10 +45,10 @@ public class ApiHandler {
 
         CompletableFuture<PlayerCodeResponse> playerCodeFuture = new CompletableFuture<>();
         httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString())
-                .thenAccept(response->{
-                    if(response.statusCode()==200){
+                .thenAccept(response -> {
+                    if (response.statusCode() == 200) {
                         try {
-                            PlayerCodeResponse data = objectMapper.readValue(response.body(),PlayerCodeResponse.class);
+                            PlayerCodeResponse data = objectMapper.readValue(response.body(), PlayerCodeResponse.class);
                             playerCodeFuture.complete(data);
                         } catch (JacksonException e) {
                             throw new RuntimeException(e);
@@ -61,7 +59,7 @@ public class ApiHandler {
                         throw new RuntimeException("API error: Status " + response.statusCode());
                     }
                 })
-                .exceptionally(err->{
+                .exceptionally(err -> {
                     playerCodeFuture.completeExceptionally(err);
                     return null;
                 });

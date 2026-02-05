@@ -18,8 +18,9 @@ import java.util.Optional;
 public class ConfigLoader {
     private final YamlDocument config;
     private final Logger logger;
-    public ConfigLoader(File dataFolder, Logger logger, ProxyServer proxy){
-        this.logger=logger;
+
+    public ConfigLoader(File dataFolder, Logger logger, ProxyServer proxy) {
+        this.logger = logger;
 
         YamlDocument finalConfig;
         try {
@@ -34,9 +35,8 @@ public class ConfigLoader {
             );
             finalConfig.update();
             finalConfig.save();
-        }
-        catch (IOException ex){
-            finalConfig =null;
+        } catch (IOException ex) {
+            finalConfig = null;
             logger.error("Failed to load the config file!\n This plugin is going to be disabled.");
             Optional<PluginContainer> container = proxy.getPluginManager().getPlugin("mc-id-auth");
             container.ifPresent(pluginContainer -> pluginContainer.getExecutorService().shutdown());
@@ -44,12 +44,12 @@ public class ConfigLoader {
         this.config = finalConfig;
     }
 
-    public YamlDocument getConfig(){
+    public YamlDocument getConfig() {
         return config;
     }
 
-    public void save(){
-        try{
+    public void save() {
+        try {
             config.save();
             this.logger.info("Successfully saved the configuration!");
         } catch (IOException e) {
@@ -57,12 +57,11 @@ public class ConfigLoader {
         }
     }
 
-    public void reload(){
-        try{
+    public void reload() {
+        try {
             config.reload();
             this.logger.info("Successfully reloaded the configuration!");
-        }
-        catch (IOException ex){
+        } catch (IOException ex) {
             this.logger.error("Couldn't reload the configuration.");
         }
     }
