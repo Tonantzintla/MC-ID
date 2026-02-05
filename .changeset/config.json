@@ -8,7 +8,7 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "website",
-    "docs"
+    "mc-id-website",
+    "mc-id-docs"
   ]
 }
