@@ -1,8 +1,7 @@
 package com.mcid.auth.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.velocitypowered.api.proxy.Player;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import com.mcid.auth.api.exceptions.PlayerCodeNotFoundException;
 import com.mcid.auth.api.responses.PlayerCodeResponse;
@@ -53,7 +52,7 @@ public class ApiHandler {
                         try {
                             PlayerCodeResponse data = objectMapper.readValue(response.body(),PlayerCodeResponse.class);
                             playerCodeFuture.complete(data);
-                        } catch (JsonProcessingException e) {
+                        } catch (JacksonException e) {
                             throw new RuntimeException(e);
                         }
                     } else if (response.statusCode() == 404) {
