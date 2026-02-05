@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const newPassword = z.string().min(8, "Passwords are at least 8 characters long");
-const confirmPassword = z.string().min(8, "Passwords are at least 8 characters long");
+const confirmPassword = newPassword;
 
 export const email = z.email("Invalid email address");
 
@@ -11,12 +11,12 @@ export const code = z.string().refine((x) => /^\d{6}$/.test(x), {
 
 export const loginFormSchema = z.object({
   email,
-  "current-password": z.string().min(8, "Passwords are at least 8 characters")
+  "current-password": newPassword
 });
 
 export const signupFormSchema = z
   .object({
-    email: z.email("Invalid email address"),
+    email,
     ["new-password"]: newPassword,
     ["confirm-password"]: confirmPassword
   })
@@ -27,3 +27,5 @@ export const signupFormSchema = z
 
 export type LoginFormSchema = typeof loginFormSchema;
 export type SignupFormSchema = typeof signupFormSchema;
+
+export { newPassword as password };

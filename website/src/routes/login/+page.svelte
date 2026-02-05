@@ -1,8 +1,11 @@
 <script lang="ts">
-  import Header from "$components/header.svelte";
+  import { page } from "$app/state";
   import ThemeSelector from "$components/theme-selector.svelte";
   import * as Tabs from "$ui/tabs";
+  import { untrack } from "svelte";
+  import { toast } from "svelte-sonner";
   import { cubicOut } from "svelte/easing";
+  import { SvelteURLSearchParams } from "svelte/reactivity";
   import { crossfade } from "svelte/transition";
   import type { PageProps } from "./$types";
   import LoginForm from "./login-form.svelte";
@@ -11,6 +14,9 @@
   let { data }: PageProps = $props();
 
   let value = $state<"login" | "sign-up">("login");
+
+  const queryParams = $derived(new SvelteURLSearchParams(page.url.searchParams));
+  const resetSuccess = $derived(queryParams.get("reset"));
 
   const tabs = [
     { title: "Login", value: "login" },
@@ -28,6 +34,15 @@
   const [send, receive] = crossfade({
     duration: 300,
     easing: cubicOut
+  });
+
+  $effect(() => {
+    untrack(() => {
+      if (resetSuccess === "success") {
+        // Show a toast or some notification about successful password reset
+        toast.success("Your password has been reset successfully. Please log in with your new password.");
+      }
+    });
   });
 </script>
 

@@ -139,10 +139,14 @@
       </Button>
     </div>
   </Card.Content>
-  <Card.Footer>
+  <Card.Footer class="flex flex-col items-center justify-center gap-y-2">
     <p class="w-full text-center text-sm">
       <span class="opacity-50">Don't have an account?</span>
       <Button variant="link" onclick={handleSignUpButtonClick} class={`inline-block p-0 underline underline-offset-2 opacity-50 transition-opacity duration-300 hover:opacity-100 ${$submitting ? "pointer-events-none cursor-default" : ""}`}>Sign up</Button>
+    </p>
+    <p class="w-full text-center text-sm">
+      <span class="opacity-50"> Forgot your password? </span>
+      <Button variant="link" href={resolve("/login/forgot-password")} class={`inline-block p-0 underline underline-offset-2 opacity-50 transition-opacity duration-300 hover:opacity-100 ${$submitting ? "pointer-events-none cursor-default" : ""}`}>Reset Password</Button>
     </p>
   </Card.Footer>
 </Card.Root>
