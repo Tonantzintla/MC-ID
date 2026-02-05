@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.0
+
+### Minor Changes
+
+- [`73104d7`](https://github.com/Tonantzintla/MC-ID/commit/73104d7c2c16e2387e51cb42aea6e56f7f0f46a1) Thanks [@DarthGigi](https://github.com/DarthGigi)! - Update dependencies and format code
+
 ## 3.2.0
 
 ### Minor Changes
