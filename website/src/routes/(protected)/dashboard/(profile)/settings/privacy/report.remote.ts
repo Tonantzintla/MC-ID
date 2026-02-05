@@ -1,5 +1,4 @@
 import { command, getRequestEvent } from "$app/server";
-import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import { oauthClientReport, reportReasonEnum } from "$lib/shared/db/schema/reports";
 import { deleteConsent } from "$src/routes/(protected)/dashboard/(profile)/settings/privacy/consented-apps.remote";
@@ -16,19 +15,16 @@ const reportSchema = z.object({
 });
 
 export const submitReport = command(reportSchema, async ({ clientId, reason, description, consentId }) => {
-  const { request } = getRequestEvent();
+  const { locals } = getRequestEvent();
+  const { user } = locals;
 
-  const session = await auth.api.getSession({
-    headers: request.headers
-  });
-
-  if (!session?.user?.id) {
+  if (!user?.id) {
     error(401, "Unauthorized");
   }
 
   try {
     await db.insert(oauthClientReport).values({
-      reporterId: session.user.id,
+      reporterId: user.id,
       clientId,
       reason,
       description: description || null
