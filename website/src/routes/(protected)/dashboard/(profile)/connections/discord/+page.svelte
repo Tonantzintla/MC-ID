@@ -1,13 +1,16 @@
 <script lang="ts">
+  import { invalidateAll } from "$app/navigation";
   import { authClient } from "$lib/auth-client";
-  import * as Avatar from "$lib/components/ui/avatar";
-  import { Button } from "$lib/components/ui/button";
+  import * as Avatar from "$ui/avatar";
+  import { Button } from "$ui/button";
+  import * as Empty from "$ui/empty";
   import { CopyButton } from "$ui/extras/copy-button";
+  import MessageCircleOffIcon from "@lucide/svelte/icons/message-circle-off";
   import UserRound from "@lucide/svelte/icons/user-round";
   import { toast } from "svelte-sonner";
   import type { PageProps } from "./$types";
 
-  let { data }: PageProps = $props();
+  const { data }: PageProps = $props();
 
   const account = $derived(data.discordAccount);
 </script>
@@ -17,7 +20,7 @@
     <div class="relative">
       <Avatar.Root class="relative z-20 aspect-video size-full max-h-64 overflow-clip rounded-none">
         <Avatar.Image class="pointer-events-none size-full object-cover select-none" src="https://cdn.discordapp.com/banners/{account.user.id}/{account.data?.banner}.webp?size=1024&animated=true" alt="{account.user?.name}'s Banner" />
-        <Avatar.Fallback class="size-full bg-muted/20">
+        <Avatar.Fallback class="size-full rounded-none bg-muted/20">
           {#snippet child({ props })}
             <div {...props}></div>
           {/snippet}
@@ -39,6 +42,8 @@
           <CopyButton text={account.user.id.toString()} variant="ghost" size="sm" class="-my-2 text-muted-foreground hover:text-foreground" />
         </div>
         <Button
+          class="mt-4"
+          variant="destructive"
           onclick={() =>
             toast.promise(
               authClient.unlinkAccount({
@@ -49,8 +54,7 @@
                 success: "Discord account unlinked",
                 error: "Failed to unlink Discord account",
                 finally: () => {
-                  // Refresh the page to update the state
-                  location.reload();
+                  invalidateAll();
                 }
               }
             )}>
@@ -60,15 +64,25 @@
     </div>
   </div>
 {:else}
-  <div class="flex w-full flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed py-20">
-    <p class="text-muted-foreground">No Discord account linked</p>
-    <Button
-      onclick={async () =>
-        await authClient.linkSocial({
-          provider: "discord",
-          callbackURL: location.href
-        })}>
-      Link Discord Account
-    </Button>
-  </div>
+  <Empty.Root class="border">
+    <Empty.Header>
+      <Empty.Media variant="icon">
+        <MessageCircleOffIcon />
+      </Empty.Media>
+      <Empty.Title>No Discord Account Linked</Empty.Title>
+      <Empty.Description>You haven't linked a Discord account yet. Get started by linking your Discord account.</Empty.Description>
+    </Empty.Header>
+    <Empty.Content>
+      <div class="flex gap-2">
+        <Button
+          onclick={async () =>
+            await authClient.linkSocial({
+              provider: "discord",
+              callbackURL: location.href
+            })}>
+          Link Discord Account
+        </Button>
+      </div>
+    </Empty.Content>
+  </Empty.Root>
 {/if}
