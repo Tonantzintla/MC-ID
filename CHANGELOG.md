@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.2.0
+
+### Minor Changes
+
+- [`a8bf617`](https://github.com/Tonantzintla/MC-ID/commit/a8bf617dccfc8c5e102c26e20a853c6de9956fae) Thanks [@DarthGigi](https://github.com/DarthGigi)! - Migrate to changesets from changelogen
 
 ## v3.1.0
 
@@ -55,7 +60,6 @@
 - Bump project version to 3.0.0 ([39d2f78](https://github.com/Tonantzintla/MC-ID/commit/39d2f78))
 
 ## v2.2.0
-
 
 ### 🚀 Enhancements
 
@@ -205,7 +209,6 @@
 
 ## v1.1.0
 
-
 ### 🚀 Enhancements
 
 - Some changes ([c13049e](https://github.com/Tonantzintla/MC-ID/commit/c13049e))
@@ -349,4 +352,3 @@
 ### ❤️ Contributors
 
 - DarthGigi ([@DarthGigi](https://github.com/DarthGigi))
-
