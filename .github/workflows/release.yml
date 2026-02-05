@@ -1,28 +1,32 @@
-name: Release
+name: Release Plugin
 
 on:
   push:
     branches:
       - main
     paths:
+      - ".changeset/**"
       - "plugin/**"
+      - "package.json"
+      - "CHANGELOG.md"
       - ".github/workflows/**"
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     permissions:
       contents: write
       packages: write
       id-token: write
+      pull-requests: write
 
     steps:
-      - name: Git checkout
+      - name: Checkout repo
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup PNPM
@@ -41,6 +45,9 @@ jobs:
           distribution: "temurin"
           cache: "gradle"
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
       - name: Install dependencies
         run: pnpm install
 
@@ -49,58 +56,10 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump Version & Generate Changelog
-        id: changelogen
-        run: pnpm run release
-
-      - name: Check if release created
-        id: check_release
-        run: |
-          if git describe --exact-match --tags HEAD >/dev/null 2>&1; then
-            echo "released=true" >> $GITHUB_OUTPUT
-          else
-            echo "released=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Get New Version
-        if: steps.check_release.outputs.released == 'true'
-        id: version
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Build Plugin
-        if: steps.check_release.outputs.released == 'true'
-        working-directory: ./plugin
-        run: ./gradlew build
-        env:
-          RELEASE_VERSION: ${{ steps.version.outputs.version }}
-
-      - name: Push Changes
-        if: steps.check_release.outputs.released == 'true'
-        run: git push --follow-tags origin main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate Release Notes Link
-        if: steps.check_release.outputs.released == 'true'
-        id: extract_notes
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          # Remove dots for the anchor (e.g. v3.0.3 -> v303)
-          ANCHOR="v${VERSION//./}"
-          echo "See full changelog: https://github.com/Tonantzintla/MC-ID/blob/main/CHANGELOG.md#${ANCHOR}" > RELEASE_NOTES.md
-
-      - name: Create GitHub Release
-        if: steps.check_release.outputs.released == 'true'
-        run: |
-          # Create a copy with a stable name
-          cp plugin/build/libs/*-all.jar plugin/build/libs/mc-id-auth-latest.jar
-
-          gh release create v${{ steps.version.outputs.version }} \
-            plugin/build/libs/*-all.jar \
-            plugin/build/libs/mc-id-auth-latest.jar \
-            --title "v${{ steps.version.outputs.version }}" \
-            --notes-file RELEASE_NOTES.md
+      - name: Create Release PR or Publish
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset version
+          publish: pnpm run changeset:publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -10,15 +10,18 @@
   },
   "packageManager": "pnpm@10.28.2",
   "scripts": {
-    "release": "changelogen --release"
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "node scripts/changeset-release.mjs",
+    "release": "changeset version"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.4.1",
     "@commitlint/config-conventional": "^20.4.1",
     "@commitlint/types": "^20.4.0",
     "@types/node": "^25.2.1",
-    "changelogen": "^0.6.2",
-    "simple-git-hooks": "^2.13.1"
+    "simple-git-hooks": "^2.13.1",
+    "@changesets/cli": "^2.29.8"
   },
   "simple-git-hooks": {
     "commit-msg": "pnpm exec commitlint --edit $1"
