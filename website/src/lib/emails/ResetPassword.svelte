@@ -12,9 +12,9 @@
 
 <Html class="bg-black">
   <Head />
-  <Preview preview={previewText} />
 
   <Body class="mx-auto my-auto bg-black px-2 font-sans">
+    <Preview preview={previewText} />
     <Container class="mx-auto my-[40px] max-w-[465px] rounded-xl border border-solid border-[#ffffff1a] bg-black p-[20px]">
       <Section>
         <Img src={`${baseUrl}/assets/images/MC-ID-White.png`} width="52" height="52" alt="MinionAH" class="mx-auto my-0" />
