@@ -66,52 +66,13 @@ export const actions: Actions = {
         });
       }
 
-      // const userData = await minecraftKy(`minecraft/profile/lookup/name/${form.data.mcusername}`).json<{
-      //   // https://minecraft.wiki/w/Mojang_API#Query_player's_UUID
-      //   id: string; // UUID of the player
-      //   name: string; // Name of the player, case sensitive.
-      //   legacy?: boolean; // Included in response if the account has not migrated to Mojang account.
-      //   demo?: boolean; // Included in response if the account does not own the game.
-      // }>();
-
-      // const data = await MCIDky.post("v1/codes/verify", {
-      //   headers: {
-      //     "Content-Type": "application/json"
-      //   },
-      //   body: JSON.stringify({
-      //     appId: APP_ID,
-      //     appSecret: APP_SECRET,
-      //     uuid: userData.id,
-      //     code: form.data.code
-      //   })
-      // }).json<{
-      //   id: string;
-      //   username: string;
-      // }>();
-
-      // if (!data) {
-      //   console.error("Failed to verify code for signup");
-      //   return fail(400, {
-      //     form,
-      //     error: "Failed to verify code for signup"
-      //   });
-      // }
-
-      // if (data.id !== userData.id || data.username !== userData.name) {
-      //   console.error("User data mismatch during signup verification");
-      //   return fail(400, {
-      //     form,
-      //     error: "User data mismatch during signup verification"
-      //   });
-      // }
-
       const _signupData = await auth.api.signUpEmail({
         body: {
           name: "",
           email: form.data.email,
           password: form.data["new-password"],
           rememberMe: true,
-          callbackURL: "/"
+          callbackURL: "/dashboard"
         }
       });
     } catch (err) {
