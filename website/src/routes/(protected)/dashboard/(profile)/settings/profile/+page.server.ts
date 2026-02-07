@@ -63,7 +63,6 @@ export const actions: Actions = {
       });
       if (locals.user) locals.user = undefined;
       if (locals.session) locals.session = undefined;
-      redirect(303, "/");
     } catch (err) {
       console.error("Error deleting account:", err);
       return fail(500, {
@@ -71,5 +70,6 @@ export const actions: Actions = {
         error: "Failed to delete your account. Please try again later."
       });
     }
+    redirect(303, "/");
   }
 };
