@@ -19,8 +19,8 @@ export const servicesUsingMCID: Service[] = [
     showName: true
   },
   {
-    src: "/assets/images/used-by/chub.webp",
-    name: "Chub",
+    src: "/assets/images/used-by/collectors-hub.webp",
+    name: "Collectors Hub",
     link: "https://discord.gg/collectorshub",
     showName: true
   }
