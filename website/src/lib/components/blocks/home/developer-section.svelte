@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button";
+  import { type Service, servicesUsingMCID } from "$lib/constants/used-by";
+  import * as Avatar from "$ui/avatar";
+  import { Button } from "$ui/button";
   import ArrowRight from "@lucide/svelte/icons/arrow-right";
   import Code from "@lucide/svelte/icons/code";
   import Lock from "@lucide/svelte/icons/lock";
@@ -93,3 +95,27 @@ export const auth = betterAuth({
     </div>
   </div>
 </section>
+<section class="bg-background py-16">
+  <div class="mx-auto max-w-5xl px-6">
+    <h2 class="text-center text-3xl font-bold tracking-tight lg:text-4xl">MC-ID is already being used by</h2>
+    <div class="mx-auto mt-10 flex max-w-4xl flex-wrap items-center justify-center gap-x-8 gap-y-8 sm:gap-x-12 sm:gap-y-12">
+      {#each servicesUsingMCID as service, index (index)}
+        {@render usedBy(service)}
+      {/each}
+    </div>
+  </div>
+</section>
+
+{#snippet usedBy({ src, name, link, showName = false }: Service)}
+  <a href={link} target="_blank" class="flex h-20 w-fit items-center justify-center gap-4 rounded-md border p-4 transition-opacity hover:opacity-80">
+    <Avatar.Root class="size-auto rounded-none">
+      <Avatar.Image class="max-h-14" {src} alt="{name} logo" />
+      <Avatar.Fallback>{name.slice(0, 2)}</Avatar.Fallback>
+    </Avatar.Root>
+    {#if showName}
+      <span class="text-xl font-medium tracking-tight">
+        {name}
+      </span>
+    {/if}
+  </a>
+{/snippet}
