@@ -1,6 +1,26 @@
+import { type ZxcvbnResult, zxcvbn } from "@zxcvbn-ts/core";
 import { z } from "zod";
 
-const newPassword = z.string().min(8, "Passwords are at least 8 characters long");
+const newPassword = z
+  .string()
+  .min(8, "Passwords are at least 8 characters long")
+  .refine((x) => /[A-Z]/.test(x), {
+    message: "Passwords must contain at least one uppercase letter"
+  })
+  .refine((x) => /[a-z]/.test(x), {
+    message: "Passwords must contain at least one lowercase letter"
+  })
+  .refine((x) => /\d/.test(x), {
+    message: "Passwords must contain at least one number"
+  })
+  .refine((x) => /[!@#$%^&*(),.?":{}|<>]/.test(x), {
+    message: "Passwords must contain at least one special character"
+  })
+  .refine((x) => {
+    const result: ZxcvbnResult = zxcvbn(x);
+    return result.score >= 3;
+  }, "Password is too weak");
+
 const confirmPassword = newPassword;
 
 export const email = z.email("Invalid email address");
