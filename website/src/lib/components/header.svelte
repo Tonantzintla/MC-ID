@@ -76,7 +76,7 @@
           </div>
           <div class="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
             <Button variant="outline" size="sm" href="/login">Login</Button>
-            <Button href="/login" size="sm">Sign Up</Button>
+            <Button href="/login?tab=sign-up" size="sm">Sign Up</Button>
           </div>
         </div>
       </div>

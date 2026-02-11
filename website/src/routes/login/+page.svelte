@@ -13,10 +13,11 @@
 
   let { data }: PageProps = $props();
 
-  let value = $state<"login" | "sign-up">("login");
-
   const queryParams = $derived(new SvelteURLSearchParams(page.url.searchParams));
   const resetSuccess = $derived(queryParams.get("reset"));
+  const tabParam = $derived(queryParams.get("tab"));
+
+  let value = $derived<"login" | "sign-up">(tabParam === "sign-up" ? "sign-up" : "login");
 
   const tabs = [
     { title: "Login", value: "login" },
