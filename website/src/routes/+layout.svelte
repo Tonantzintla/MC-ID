@@ -12,7 +12,7 @@
 
   const { children } = $props();
 
-  let position = $state<ToasterProps["position"]>("bottom-right");
+  const position = $state<ToasterProps["position"]>("top-center");
   let closeButton = $state<ToasterProps["closeButton"]>(true);
   let isHover = $state(new IsHover());
 
@@ -27,10 +27,8 @@
 <svelte:window
   onresize={() => {
     if (window.innerWidth < 768) {
-      position = "top-center";
       closeButton = false;
     } else {
-      position = "bottom-right";
       closeButton = true;
     }
   }} />
