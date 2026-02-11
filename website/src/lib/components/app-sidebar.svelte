@@ -139,7 +139,7 @@
   const sidebar = useSidebar();
   const sidebarsState = getSidebarsState();
 
-  let { ref = $bindable(null), collapsible = "offcanvas", ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
+  let { collapsible = "offcanvas", ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 </script>
 
 <Sidebar.Root {collapsible} {...restProps}>
