@@ -108,6 +108,10 @@ const options = {
       disableDefaultReference: true
     }),
     oauthProvider({
+      silenceWarnings: {
+        oauthAuthServerConfig: true,
+        openidConfig: true
+      },
       loginPage: "/login",
       consentPage: "/dashboard/oauth/authorize",
       // Note: Existing plain secrets need to be migrated to hashed format
