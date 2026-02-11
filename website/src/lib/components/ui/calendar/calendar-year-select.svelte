@@ -7,7 +7,7 @@
 </script>
 
 <span class={cn("relative flex rounded-md border border-input shadow-xs has-focus:border-ring has-focus:ring-[3px] has-focus:ring-ring/50", className)}>
-  <CalendarPrimitive.YearSelect bind:ref class="absolute inset-0 opacity-0" {...restProps}>
+  <CalendarPrimitive.YearSelect bind:ref class="absolute inset-0 opacity-0 dark:bg-popover dark:text-popover-foreground" {...restProps}>
     {#snippet child({ props, yearItems, selectedYearItem })}
       <select {...props} {value}>
         {#each yearItems as yearItem (yearItem.value)}
