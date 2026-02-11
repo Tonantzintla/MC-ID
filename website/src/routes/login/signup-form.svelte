@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { SCORE_NAMING } from "$lib/constants/password-score";
   import { Button } from "$ui/button";
   import * as Card from "$ui/card";
   import * as Password from "$ui/extras/password";
@@ -97,7 +98,14 @@
                 <Password.Input {...props} bind:value={$formData["new-password"]}>
                   <Password.ToggleVisibility />
                 </Password.Input>
-                <Password.Strength bind:strength />
+                <div class="flex flex-col gap-1">
+                  <Password.Strength bind:strength />
+                  {#if !!$formData["new-password"]}
+                    <span class="text-sm text-muted-foreground">
+                      {SCORE_NAMING[strength?.score ?? 0]}
+                    </span>
+                  {/if}
+                </div>
               </Password.Root>
               <Form.FieldErrors variant="single" />
             {/snippet}

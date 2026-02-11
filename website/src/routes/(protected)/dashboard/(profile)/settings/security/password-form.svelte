@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { SCORE_NAMING } from "$lib/constants/password-score";
   import * as Password from "$ui/extras/password";
   import * as Form from "$ui/form";
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
@@ -84,7 +85,14 @@
           <Password.Input {...props} bind:value={$formData["new-password"]} autocomplete="new-password">
             <Password.ToggleVisibility />
           </Password.Input>
-          <Password.Strength bind:strength />
+          <div class="flex flex-col gap-1">
+            <Password.Strength bind:strength />
+            {#if !!$formData["new-password"]}
+              <span class="text-sm text-muted-foreground">
+                {SCORE_NAMING[strength?.score ?? 0]}
+              </span>
+            {/if}
+          </div>
         </Password.Root>
         <div class="text-sm font-medium text-destructive">
           {#if $errors["new-password"]?.length}
