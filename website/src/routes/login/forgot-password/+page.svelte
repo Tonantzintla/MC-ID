@@ -15,25 +15,25 @@
 
   let toastLoading = $state<number | string>();
 
-  const form = $derived(
-    superForm(data.forgotPasswordForm, {
-      validators: zodClient(forgotPasswordSchema),
-      dataType: "json",
-      timeoutMs: 2000,
-      validationMethod: "onblur"
-    })
-  );
+  // svelte-ignore state_referenced_locally
+  const form = superForm(data.forgotPasswordForm, {
+    validators: zodClient(forgotPasswordSchema),
+    dataType: "json",
+    timeoutMs: 2000,
+    validationMethod: "onblur"
+  });
 
   const { form: formData, enhance, tainted, isTainted, submitting, timeout } = $derived(form);
 
   $effect(() => {
-    timeout.subscribe((value) => {
+    const unsubscribe = timeout.subscribe((value) => {
       if (value) {
         toast.loading("It's taking longer than expected to send the password reset email...", {
           id: toastLoading
         });
       }
     });
+    return () => unsubscribe();
   });
 </script>
 
@@ -55,7 +55,7 @@
         },
         onUpdate: async ({ result }) => {
           if (result.type === "success") {
-            toast.success("Password reset email sent successfully!");
+            toast.success(result.data.success ?? "Password reset email sent successfully!");
           } else {
             toast.error(result.data.error ?? "Failed to send password reset email. Please check your email address.");
           }
