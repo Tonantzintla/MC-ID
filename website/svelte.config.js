@@ -34,7 +34,15 @@ const config = {
     }),
 
     csp: {
-      mode: "hash"
+      mode: "auto",
+      directives: {
+        "script-src": ["self", "unsafe-inline", "wasm-unsafe-eval"],
+        "style-src": ["self", "unsafe-inline"],
+        "img-src": ["self", "data:", "https://mc-id.com", "https://nmsr.nickac.dev", "https://cdn.discordapp.com", "https://*"],
+        "connect-src": ["self", "https://mc-id.com"],
+        "font-src": ["self"],
+        "worker-src": ["self"]
+      }
     },
 
     csrf: {
