@@ -2,7 +2,7 @@ file-version: 2
 api-endpoint: http://localhost:3000
 api-key: ABC123
 
-# Optional heartbeat monitoring via kener.sh
+# Optional heartbeat monitoring
 # Set enabled to true and provide your heartbeat URL to activate
 heartbeat:
   enabled: false
