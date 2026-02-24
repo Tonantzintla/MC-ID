@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.mcid.auth.api.ApiHandler;
 import com.mcid.auth.api.exceptions.PlayerCodeNotFoundException;
 import com.mcid.auth.config.ConfigLoader;
+import com.mcid.auth.heartbeat.HeartbeatHandler;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
@@ -23,6 +24,7 @@ public class Auth {
     private final Logger logger;
     private final Path dataDir;
     private ApiHandler apiHandler;
+    private HeartbeatHandler heartbeatHandler;
 
     @Inject
     public Auth(ProxyServer proxy, Logger logger, @DataDirectory Path dataDir) {
@@ -38,6 +40,10 @@ public class Auth {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         ConfigLoader config = new ConfigLoader(dataDir.toFile(), this.logger, proxy);
         this.apiHandler = new ApiHandler(config, this.logger);
+
+        if (config.getConfig().getBoolean("heartbeat.enabled", false)) {
+            this.heartbeatHandler = new HeartbeatHandler(config, this.logger);
+        }
     }
 
     @Subscribe
