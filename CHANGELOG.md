@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.1
+
+### Patch Changes
+
+- [`57698b4`](https://github.com/Tonantzintla/MC-ID/commit/57698b46856042bfa3c00d1107875ea796244ffd) Thanks [@DarthGigi](https://github.com/DarthGigi)! - feat: add heartbeat option
+
 ## 3.3.0
 
 ### Minor Changes
