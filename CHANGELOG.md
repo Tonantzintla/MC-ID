@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.3.2
+
+### Patch Changes
+
+- [`8fca227`](https://github.com/Tonantzintla/MC-ID/commit/8fca2270d6a7247e415bcb19f091b3ba06454ba5) Thanks [@DarthGigi](https://github.com/DarthGigi)! - Improve the MC-ID plugin verification flow with safer API handling, clearer player messages, and more reliable plugin lifecycle behavior.
+
+- [`9d58063`](https://github.com/Tonantzintla/MC-ID/commit/9d5806397ee2e5a5d3540af4970989f3972aa6e8) Thanks [@DarthGigi](https://github.com/DarthGigi)! - Upgrade the Minecraft plugin build to Java 25, refresh Gradle and dependency versions, and align CI with the new toolchain.
+
 ## 3.3.1
 
 ### Patch Changes
