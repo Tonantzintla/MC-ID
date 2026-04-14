@@ -18,6 +18,7 @@ ENV PORT=3000
 WORKDIR /app/website
 COPY --from=build /app/website/build ./build
 COPY --from=build /app/website/package.json ./package.json
+COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/website/node_modules ./node_modules
 COPY --from=build /app/website/drizzle.config.ts ./drizzle.config.ts
 COPY --from=build /app/website/drizzle ./drizzle

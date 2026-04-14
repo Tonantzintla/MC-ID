@@ -3,8 +3,8 @@ set -eu
 
 if [ "${SKIP_DB_MIGRATIONS:-false}" != "true" ]; then
   echo "Running database migrations..."
-  npm run db:migrate
+  pnpm dlx drizzle-kit migrate --config=drizzle.config.ts
 fi
 
 echo "Starting SvelteKit app..."
-exec node build
+exec pnpm start
