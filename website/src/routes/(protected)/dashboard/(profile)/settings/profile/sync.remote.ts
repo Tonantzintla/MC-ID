@@ -38,11 +38,16 @@ export const syncUser = query(z.string(), async (uuid) => {
     };
   } catch (err) {
     if (err instanceof HTTPError) {
+      const errorData = err.data;
+
       if (err.response.status === 404) {
-        console.error(`Couldn't find any player with UUID ${uuid}`);
+        console.error(`Couldn't find any player with UUID ${uuid}`, errorData);
         error(404, `Couldn't find any player with the UUID ${uuid}`);
       }
-      console.error(`HTTP error while syncing user with UUID ${uuid}:`, err);
+      console.error(`HTTP error while syncing user with UUID ${uuid}:`, {
+        status: err.response.status,
+        errorData
+      });
       error(400, `Something went wrong while syncing user with UUID ${uuid}`);
     }
     console.error(`Error requesting code for UUID ${uuid}:`, err);

@@ -3,6 +3,7 @@ import { MCIDky, minecraftKy } from "$lib/customKy";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import { minecraftAccount } from "$lib/shared/db/schema";
+import { readErrorBody } from "$lib/utils";
 import { error } from "@sveltejs/kit";
 import { and, eq, sql } from "drizzle-orm";
 import { HTTPError } from "ky";
@@ -60,7 +61,7 @@ export const requestCode = command(requestCodeSchema, async ({ username }) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await readErrorBody(response);
       console.error(`Failed to request code for username ${username}:`, errorData);
       error(400, `Failed to request code for username ${username}`);
     }
@@ -71,11 +72,16 @@ export const requestCode = command(requestCodeSchema, async ({ username }) => {
     };
   } catch (err) {
     if (err instanceof HTTPError) {
+      const errorData = err.data;
+
       if (err.response.status === 404) {
-        console.error(`Couldn't find any player with name ${username}`);
+        console.error(`Couldn't find any player with name ${username}`, errorData);
         error(404, `Couldn't find any player with the name ${username}`);
       }
-      console.error(`HTTP error requesting code for username ${username}:`, err);
+      console.error(`HTTP error requesting code for username ${username}:`, {
+        status: err.response.status,
+        errorData
+      });
       error(400, `Something went wrong while requesting code for the username ${username}`);
     }
     console.error(`Error requesting code for username ${username}:`, err);

@@ -2,6 +2,7 @@ import { MCIDky, minecraftKy } from "$lib/customKy";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import { minecraftAccount } from "$lib/shared/db/schema";
+import { readErrorBody } from "$lib/utils";
 import type { Actions } from "@sveltejs/kit";
 import { fail } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
@@ -47,7 +48,7 @@ export const actions: Actions = {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await readErrorBody(response);
         console.error(`Failed to verify code for username ${username}:`, errorData);
 
         return fail(400, {
@@ -87,14 +88,19 @@ export const actions: Actions = {
       };
     } catch (err) {
       if (err instanceof HTTPError) {
+        const errorData = err.data;
+
         if (err.response.status === 404) {
-          console.error(`Couldn't find any player with name ${username}`);
+          console.error(`Couldn't find any player with name ${username}`, errorData);
           return fail(404, {
             form,
             error: `Couldn't find any player with the name ${username}`
           });
         }
-        console.error(`HTTP error requesting code for username ${username}:`, err);
+        console.error(`HTTP error requesting code for username ${username}:`, {
+          status: err.response.status,
+          errorData
+        });
         return fail(400, {
           form,
           error: `Something went wrong while requesting code for the username ${username}`

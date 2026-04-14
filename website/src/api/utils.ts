@@ -44,7 +44,12 @@ export async function getUsernameFromMcid(uuid: string): Promise<string | null> 
         logger.info("Minecraft user not found in Mojang API", { uuid, duration });
         return null;
       }
-      logger.error("Mojang API HTTP error", error, { uuid, duration, status: error.response.status });
+      logger.error("Mojang API HTTP error", error, {
+        uuid,
+        duration,
+        status: error.response.status,
+        errorData: error.data
+      });
 
       throw new ORPCError("MOJANG_API_ERROR", {
         message: "Error fetching data from Mojang API",
@@ -88,7 +93,12 @@ export async function getMcidFromUsername(username: string): Promise<string | nu
         logger.info("Username not found in Mojang API", { username, duration });
         return null;
       }
-      logger.error("Mojang API HTTP error", error, { username, duration, status: error.response.status });
+      logger.error("Mojang API HTTP error", error, {
+        username,
+        duration,
+        status: error.response.status,
+        errorData: error.data
+      });
 
       throw new ORPCError("MOJANG_API_ERROR", {
         message: "Error fetching data from Mojang API",
