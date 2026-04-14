@@ -21,6 +21,7 @@ const { PUBLIC_BASE_URL } = publicEnv;
 const { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, ADDRESS_HEADER, BETTER_AUTH_SECRET } = privateEnv;
 
 const BUILD_TIME_AUTH_SECRET = "build-time-placeholder-secret-for-sveltekit-build";
+const BUILD_TIME_BASE_URL = "http://localhost:3000";
 
 function getBetterAuthSecret() {
   if (BETTER_AUTH_SECRET) return BETTER_AUTH_SECRET;
@@ -29,9 +30,17 @@ function getBetterAuthSecret() {
   throw new Error("BETTER_AUTH_SECRET is required at runtime.");
 }
 
+function getBaseURL() {
+  if (PUBLIC_BASE_URL) return PUBLIC_BASE_URL;
+  if (building) return BUILD_TIME_BASE_URL;
+
+  throw new Error("PUBLIC_BASE_URL is required at runtime.");
+}
+
+const baseURL = getBaseURL();
 const options = {
   appName: "MC-ID",
-  baseURL: PUBLIC_BASE_URL,
+  baseURL,
   secret: getBetterAuthSecret(),
   database: drizzleAdapter(db, {
     provider: "pg"
@@ -70,7 +79,7 @@ const options = {
     },
     sendResetPassword: async ({ user, url }) => {
       if (dev) return; // Skip sending emails in development
-      const result = await EmailService.sendPasswordResetEmail(user.email, url, PUBLIC_BASE_URL);
+      const result = await EmailService.sendPasswordResetEmail(user.email, url, baseURL);
 
       if (!result.success) {
         console.error("Failed to send reset password email:", result.error);
@@ -82,7 +91,7 @@ const options = {
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       if (dev) return; // Skip sending emails in development
-      const result = await EmailService.sendVerificationEmail(user.email, url, PUBLIC_BASE_URL);
+      const result = await EmailService.sendVerificationEmail(user.email, url, baseURL);
 
       if (!result.success) {
         console.error("Failed to send verification email:", result.error);
@@ -105,14 +114,14 @@ const options = {
   plugins: [
     sveltekitCookies(getRequestEvent),
     passkey({
-      rpID: new URL(PUBLIC_BASE_URL || "http://localhost:3000").hostname,
+      rpID: new URL(baseURL).hostname,
       rpName: "MC-ID",
-      origin: PUBLIC_BASE_URL || "http://localhost:3000"
+      origin: baseURL
     }),
     jwt({
       disableSettingJwtHeader: true,
       jwt: {
-        issuer: PUBLIC_BASE_URL // Sets OAuth issuer to https://mc-id.com instead of /api/auth
+        issuer: baseURL // Sets OAuth issuer to https://mc-id.com instead of /api/auth
       }
     }),
     openAPI({
