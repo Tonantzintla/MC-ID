@@ -11,7 +11,7 @@ export const resetSecret = command(z.string(), async (client_id) => {
       body: {
         client_id
       },
-      headers: request.headers,
+      headers: request.headers
     });
 
     return {

@@ -15,7 +15,7 @@ export const load = (async (event) => {
         client_id: params.id // required
       },
       // This endpoint requires session cookies.
-      headers: request.headers,
+      headers: request.headers
     });
 
     if (!app) error(404, "App not found");
@@ -87,7 +87,7 @@ export const actions: Actions = {
           }
         },
         // This endpoint requires session cookies.
-        headers: request.headers,
+        headers: request.headers
       });
 
       return {
@@ -117,7 +117,7 @@ export const actions: Actions = {
           client_id: form.data.id // required
         },
         // This endpoint requires session cookies.
-        headers: request.headers,
+        headers: request.headers
       });
     } catch (err) {
       console.error("Error during app deletion:", err);

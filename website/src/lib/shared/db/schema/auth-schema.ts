@@ -251,7 +251,7 @@ export const userRelations = relations(user, ({ many }) => ({
 export const sessionRelations = relations(session, ({ one, many }) => ({
   user: one(user, {
     fields: [session.userId],
-    references: [user.id],
+    references: [user.id]
   }),
   oauthRefreshTokens: many(oauthRefreshToken),
   oauthAccessTokens: many(oauthAccessToken)

@@ -136,7 +136,7 @@ html.dark .shiki span {
   input,
   textarea,
   select {
-    @apply data-[com-onepassword-filled]:bg-clip-text;
+    @apply data-com-onepassword-filled:bg-clip-text;
   }
 }
 
