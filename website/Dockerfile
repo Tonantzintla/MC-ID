@@ -1,34 +1,34 @@
 FROM node:24-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-WORKDIR /app
-RUN npm install -g pnpm
-
-# --- Dependency Stage ---
 FROM base AS deps
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY website/package.json ./website/package.json
+RUN pnpm --dir website install --frozen-lockfile --ignore-scripts
 
-# --- Build Stage ---
 FROM base AS build
-COPY --from=deps /app/node_modules ./node_modules
+WORKDIR /app
+COPY --from=deps /app/website/node_modules ./website/node_modules
 COPY . .
-ARG BETTER_AUTH_SECRET
-ENV BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET
+WORKDIR /app/website
 RUN pnpm svelte-kit sync
 RUN pnpm build
 
-# --- Production Stage ---
-FROM node:24-alpine AS production
+FROM base AS production
 ENV NODE_ENV=production
-WORKDIR /app
-COPY --from=build /app/build ./build
-COPY --from=build /app/package.json /app/pnpm-lock.yaml ./
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/drizzle.config.ts ./
-COPY --from=build /app/drizzle ./drizzle
-
-EXPOSE 3000
-COPY entrypoint.sh ./
+ENV HOST=0.0.0.0
+ENV PORT=3000
+WORKDIR /app/website
+COPY --from=build /app/website/build ./build
+COPY --from=build /app/website/package.json ./package.json
+COPY --from=build /app/website/node_modules ./node_modules
+COPY --from=build /app/website/drizzle.config.ts ./drizzle.config.ts
+COPY --from=build /app/website/drizzle ./drizzle
+COPY --from=build /app/website/entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
+EXPOSE 3000
 ENTRYPOINT ["./entrypoint.sh"]
