@@ -22,6 +22,7 @@ jobs:
       contents: read
     env:
       DOKPLOY_DEPLOY_HOOK: ${{ secrets.DOKPLOY_DEPLOY_HOOK }}
+    environment: production
 
     steps:
       - name: Checkout repository
