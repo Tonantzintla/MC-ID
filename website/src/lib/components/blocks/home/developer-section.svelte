@@ -108,9 +108,9 @@ export const auth = betterAuth({
 
 {#snippet usedBy({ src, name, link, showName = false }: Service)}
   <a href={link} target="_blank" class="flex h-20 w-fit items-center justify-center gap-4 rounded-md border p-4 transition-opacity hover:opacity-80">
-    <Avatar.Root class="size-auto rounded-none">
-      <Avatar.Image class="max-h-14" {src} alt="{name} logo" />
-      <Avatar.Fallback>{name.slice(0, 2)}</Avatar.Fallback>
+    <Avatar.Root class="size-auto rounded-none after:rounded-none after:border-0">
+      <Avatar.Image class="max-h-14 rounded-none" {src} alt="{name} logo" />
+      <Avatar.Fallback class="rounded-none">{name.slice(0, 2)}</Avatar.Fallback>
     </Avatar.Root>
     {#if showName}
       <span class="text-xl font-medium tracking-tight">

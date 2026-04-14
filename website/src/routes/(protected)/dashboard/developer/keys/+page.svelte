@@ -124,9 +124,9 @@
       <Trash2 class="opacity-50 transition-opacity duration-300 group-hover:opacity-100 hover:text-destructive" />
     </Button>
     <div class="bg-(--bgColor,transparent)" style="--bgColor: {avatar.toJson().extra.primaryBackgroundColor}">
-      <Avatar.Root class="pointer-events-none mx-auto flex size-40 flex-shrink-0 justify-center rounded-none select-none">
-        <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full" />
-        <Avatar.Fallback>{apiKey.name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+      <Avatar.Root class="pointer-events-none mx-auto flex size-40 flex-shrink-0 justify-center rounded-none select-none after:rounded-none after:border-0">
+        <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full rounded-none" />
+        <Avatar.Fallback class="rounded-none">{apiKey.name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
     </div>
     <Card.Header class="my-0 items-center justify-center px-6 py-0 text-center">

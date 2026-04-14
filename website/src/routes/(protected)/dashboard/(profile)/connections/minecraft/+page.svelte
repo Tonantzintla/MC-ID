@@ -255,15 +255,15 @@
 {#snippet mcAccountItem(account: PrimaryMcAccount & { primary: boolean })}
   <Item.Root variant="outline" class="overflow-clip">
     <Item.Media class="pointer-events-none relative select-none group-has-data-[slot=item-description]/item:translate-y-0 group-has-data-[slot=item-description]/item:self-center">
-      <Avatar.Root class="size-16 rounded-none">
-        <Avatar.Image src="https://nmsr.nickac.dev/face/{account.uuid}" alt={account.username} />
-        <Avatar.Fallback class="rounded-lg">
+      <Avatar.Root class="size-16 rounded-none after:rounded-none after:border-0">
+        <Avatar.Image src="https://nmsr.nickac.dev/face/{account.uuid}" alt={account.username} class="rounded-none" />
+        <Avatar.Fallback class="rounded-none">
           {account.username.slice(0, 2).toUpperCase()}
         </Avatar.Fallback>
       </Avatar.Root>
-      <Avatar.Root class="absolute -z-10 size-16 rounded-none opacity-80 blur-2xl">
-        <Avatar.Image src="https://nmsr.nickac.dev/face/{account.uuid}" alt={account.username} />
-        <Avatar.Fallback class="rounded-lg">
+      <Avatar.Root class="absolute -z-10 size-16 rounded-none opacity-80 blur-2xl after:rounded-none after:border-0">
+        <Avatar.Image src="https://nmsr.nickac.dev/face/{account.uuid}" alt={account.username} class="rounded-none" />
+        <Avatar.Fallback class="rounded-none">
           {account.username.slice(0, 2).toUpperCase()}
         </Avatar.Fallback>
       </Avatar.Root>

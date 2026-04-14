@@ -184,9 +184,9 @@
   class="relative mx-auto flex h-1/2 flex-col justify-center space-y-4 self-center px-4 md:px-0">
   {#if isEdit}
     <div class="flex items-center justify-center">
-      <Avatar.Root class="pointer-events-none flex h-16 w-16 items-center justify-center select-none">
-        <Avatar.Image src={avatar} alt="App Avatar" class="h-16 w-16 rounded-full" />
-        <Avatar.Fallback>{$appFormData.name.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+      <Avatar.Root class="pointer-events-none flex h-16 w-16 items-center justify-center rounded-none select-none after:rounded-none after:border-0">
+        <Avatar.Image src={avatar} alt="App Avatar" class="h-16 w-16 rounded-none" />
+        <Avatar.Fallback class="rounded-none">{$appFormData.name.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
     </div>
 

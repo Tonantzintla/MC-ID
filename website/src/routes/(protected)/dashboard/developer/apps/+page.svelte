@@ -52,15 +52,15 @@
   <Button href="apps/{app.client_id}" class="contents cursor-pointer">
     <Card.Root class="gap-0 space-y-2 truncate p-0 pb-2">
       {#if app.logo_uri}
-        <Avatar.Root class="pointer-events-none size-40 w-full rounded-none select-none">
-          <Avatar.Image src={app.logo_uri} alt="App Logo" class="size-full object-contain" />
-          <Avatar.Fallback>{app.client_name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+        <Avatar.Root class="pointer-events-none size-40 w-full rounded-none select-none after:rounded-none after:border-0">
+          <Avatar.Image src={app.logo_uri} alt="App Logo" class="size-full rounded-none object-contain" />
+          <Avatar.Fallback class="rounded-none">{app.client_name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
         </Avatar.Root>
       {:else}
         <div class="bg-(--bgColor,transparent)" style="--bgColor: {avatar.toJson().extra.primaryBackgroundColor}">
-          <Avatar.Root class="pointer-events-none mx-auto flex size-40 shrink-0 justify-center rounded-none select-none">
-            <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full" />
-            <Avatar.Fallback>{app.client_name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+          <Avatar.Root class="pointer-events-none mx-auto flex size-40 shrink-0 justify-center rounded-none select-none after:rounded-none after:border-0">
+            <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full rounded-none" />
+            <Avatar.Fallback class="rounded-none">{app.client_name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
           </Avatar.Root>
         </div>
       {/if}

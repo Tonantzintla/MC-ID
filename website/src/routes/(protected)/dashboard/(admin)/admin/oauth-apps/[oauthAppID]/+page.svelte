@@ -109,9 +109,9 @@
       <Item.Root variant="outline">
         <Item.Header class="justify-start">Owner</Item.Header>
         <Item.Media variant="image" class="rounded-none">
-          <Avatar.Root class="size-10 rounded-none">
-            <Avatar.Image src={`https://nmsr.nickac.dev/face/${oauthApp.minecraftAccount?.uuid}`} alt={oauthApp.minecraftAccount?.username} />
-            <Avatar.Fallback>
+          <Avatar.Root class="size-10 rounded-none after:rounded-none after:border-0">
+            <Avatar.Image src={`https://nmsr.nickac.dev/face/${oauthApp.minecraftAccount?.uuid}`} alt={oauthApp.minecraftAccount?.username} class="rounded-none" />
+            <Avatar.Fallback class="rounded-none">
               {oauthApp.minecraftAccount?.username.slice(0, 2).toUpperCase()}
             </Avatar.Fallback>
           </Avatar.Root>

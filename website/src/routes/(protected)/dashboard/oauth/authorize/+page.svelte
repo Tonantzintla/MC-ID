@@ -75,8 +75,8 @@
             <Ellipsis class="opacity-30" />
           </div>
 
-          <Avatar.Root class="pointer-events-none size-16 rounded-none sm:size-24">
-            <Avatar.Image src={`https://nmsr.nickac.dev/face/${primaryMcAccount.uuid}`} alt={user.name} />
+          <Avatar.Root class="pointer-events-none size-16 rounded-none after:rounded-none after:border-0 sm:size-24">
+            <Avatar.Image src={`https://nmsr.nickac.dev/face/${primaryMcAccount.uuid}`} alt={user.name} class="rounded-none" />
             <Avatar.Fallback class="rounded-none">{user.name.slice(0, 2).toUpperCase()}</Avatar.Fallback>
           </Avatar.Root>
         </div>

@@ -21,9 +21,9 @@
       <DropdownMenu.Trigger>
         {#snippet child({ props })}
           <Sidebar.MenuButton size="lg" class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" {...props}>
-            <Avatar.Root class="size-8 rounded-none">
-              <Avatar.Image src="https://nmsr.nickac.dev/face/{primaryMcAccount?.uuid}" alt={primaryMcAccount?.username} />
-              <Avatar.Fallback class="rounded-lg">
+            <Avatar.Root class="size-8 rounded-none after:rounded-none after:border-0">
+              <Avatar.Image src="https://nmsr.nickac.dev/face/{primaryMcAccount?.uuid}" alt={primaryMcAccount?.username} class="rounded-none" />
+              <Avatar.Fallback class="rounded-none">
                 {primaryMcAccount?.username.slice(0, 2).toUpperCase() || "TON"}
               </Avatar.Fallback>
             </Avatar.Root>
@@ -39,9 +39,9 @@
       <DropdownMenu.Content class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-lg" side={sidebar.isMobile ? "bottom" : "right"} align="end" sideOffset={4}>
         <DropdownMenu.Label class="p-0 font-normal">
           <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-            <Avatar.Root class="size-8 rounded-none">
-              <Avatar.Image src="https://nmsr.nickac.dev/face/{primaryMcAccount?.uuid}" alt={primaryMcAccount?.username} />
-              <Avatar.Fallback class="rounded-lg">
+            <Avatar.Root class="size-8 rounded-none after:rounded-none after:border-0">
+              <Avatar.Image src="https://nmsr.nickac.dev/face/{primaryMcAccount?.uuid}" alt={primaryMcAccount?.username} class="rounded-none" />
+              <Avatar.Fallback class="rounded-none">
                 {primaryMcAccount?.username.slice(0, 2).toUpperCase() || "TON"}
               </Avatar.Fallback>
             </Avatar.Root>

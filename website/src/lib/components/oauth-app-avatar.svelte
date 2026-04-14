@@ -30,12 +30,12 @@
   let loadingStatus = $state<AvatarRootProps["loadingStatus"]>("loading");
 </script>
 
-<Avatar.Root bind:loadingStatus class={cn(classList)}>
-  <Avatar.Image src={avatar} alt="App Avatar" class="size-full" />
+<Avatar.Root bind:loadingStatus class={cn("rounded-none after:rounded-none after:border-0", classList)}>
+  <Avatar.Image src={avatar} alt="App Avatar" class="size-full rounded-none" />
   <Avatar.Fallback class="rounded-none">
     {#if logo_uri && loadingStatus === "error"}
-      <Avatar.Root class={cn(classList)}>
-        <Avatar.Image src={preMadeAvatar} alt="App Avatar" class="size-full" />
+      <Avatar.Root class={cn("rounded-none after:rounded-none after:border-0", classList)}>
+        <Avatar.Image src={preMadeAvatar} alt="App Avatar" class="size-full rounded-none" />
         <Avatar.Fallback class="rounded-none">{client_name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
     {:else}
