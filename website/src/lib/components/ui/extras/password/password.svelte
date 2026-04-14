@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { cn } from "$lib/utils";
   import { box } from "svelte-toolbelt";
-  import { usePassword } from "./password.svelte.js";
-  import type { PasswordRootProps } from "./types";
+  import { usePassword } from "$ui/extras/password/password.svelte.js";
+  import type { PasswordRootProps } from "$ui/extras/password/types";
+  import { cn } from "$lib/utils.js";
 
   let { ref = $bindable(null), hidden = $bindable(true), minScore = 3, class: className, children }: PasswordRootProps = $props();
 

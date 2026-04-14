@@ -5,4 +5,4 @@
   let { ref = $bindable(null), class: className, ...restProps }: CommandPrimitive.SeparatorProps = $props();
 </script>
 
-<CommandPrimitive.Separator bind:ref data-slot="command-separator" class={cn("-mx-1 h-px bg-border", className)} {...restProps} />
+<CommandPrimitive.Separator bind:ref data-slot="command-separator" class={cn("my-1.5 h-px bg-border/50", className)} {...restProps} />

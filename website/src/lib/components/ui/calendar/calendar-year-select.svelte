@@ -16,9 +16,9 @@
           </option>
         {/each}
       </select>
-      <span class="flex h-8 items-center gap-1 rounded-md ps-2 pe-1 text-sm font-medium select-none [&>svg]:size-3.5 [&>svg]:text-muted-foreground" aria-hidden="true">
+      <span class="flex h-(--cell-size) items-center gap-1 rounded-md ps-2 pe-1 text-sm font-medium select-none [&>svg]:size-3.5 [&>svg]:text-muted-foreground" aria-hidden="true">
         {yearItems.find((item) => item.value === value)?.label || selectedYearItem.label}
-        <ChevronDownIcon class="size-4" />
+        <ChevronDownIcon class={cn("size-4", className)} />
       </span>
     {/snippet}
   </CalendarPrimitive.YearSelect>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as Sheet from "$components/ui/sheet/index.js";
+  import * as Sheet from "$ui/sheet/index.js";
   import { cn, type WithElementRef } from "$lib/utils.js";
   import type { HTMLAttributes } from "svelte/elements";
   import { SIDEBAR_WIDTH_MOBILE } from "./constants.js";
@@ -28,7 +28,7 @@
   </div>
 {:else if sidebar.isMobile}
   <Sheet.Root bind:open={() => sidebar.openMobile, (v) => sidebar.setOpenMobile(v)} {...restProps}>
-    <Sheet.Content data-sidebar="sidebar" data-slot="sidebar" data-mobile="true" class="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden" style="--sidebar-width: {SIDEBAR_WIDTH_MOBILE};" {side}>
+    <Sheet.Content bind:ref data-sidebar="sidebar" data-slot="sidebar" data-mobile="true" class={cn("w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden", className)} style="--sidebar-width: {SIDEBAR_WIDTH_MOBILE};" {side}>
       <Sheet.Header class="sr-only">
         <Sheet.Title>Sidebar</Sheet.Title>
         <Sheet.Description>Displays the mobile sidebar.</Sheet.Description>
@@ -41,7 +41,7 @@
 {:else}
   <div bind:this={ref} class="group peer hidden text-sidebar-foreground md:block" data-state={sidebar.state} data-collapsible={sidebar.state === "collapsed" ? collapsible : ""} data-variant={variant} data-side={side} data-slot="sidebar">
     <!-- This is what handles the sidebar gap on desktop -->
-    <div data-slot="sidebar-gap" class={cn("relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear", "group-data-[collapsible=offcanvas]:w-0", "group-data-[side=right]:rotate-180", variant === "floating" || variant === "inset" ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]" : "group-data-[collapsible=icon]:w-(--sidebar-width-icon)")}></div>
+    <div data-slot="sidebar-gap" class={cn("relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear", "group-data-[collapsible=offcanvas]:w-0", "group-data-[side=right]:rotate-180", variant === "floating" || variant === "inset" ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]" : "group-data-[collapsible=icon]:w-(--sidebar-width-icon)")}></div>
     <div
       data-slot="sidebar-container"
       class={cn(
@@ -52,7 +52,7 @@
         className
       )}
       {...restProps}>
-      <div data-sidebar="sidebar" data-slot="sidebar-inner" class="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-sm">
+      <div data-sidebar="sidebar" data-slot="sidebar-inner" class="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-2xl group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border">
         {@render children?.()}
       </div>
     </div>

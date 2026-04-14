@@ -21,7 +21,7 @@
 </script>
 
 <ScrollAreaPrimitive.Root bind:ref data-slot="scroll-area" class={cn("relative", className)} {...restProps}>
-  <ScrollAreaPrimitive.Viewport bind:ref={viewportRef} data-slot="scroll-area-viewport" class="size-full rounded-[inherit] ring-ring/10 outline-ring/50 transition-[color,box-shadow] focus-visible:ring-4 focus-visible:outline-1 dark:ring-ring/20 dark:outline-ring/40">
+  <ScrollAreaPrimitive.Viewport bind:ref={viewportRef} data-slot="scroll-area-viewport" class="cn-scroll-area-viewport size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1">
     {@render children?.()}
   </ScrollAreaPrimitive.Viewport>
   {#if orientation === "vertical" || orientation === "both"}

@@ -15,4 +15,4 @@
   } = $props();
 </script>
 
-<CommandPrimitive.Root bind:this={api} bind:value bind:ref data-slot="command" class={cn("flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground", className)} {...restProps} />
+<CommandPrimitive.Root bind:this={api} bind:value bind:ref data-slot="command" class={cn("flex size-full flex-col overflow-hidden rounded-4xl bg-popover p-1 text-popover-foreground", className)} {...restProps} />

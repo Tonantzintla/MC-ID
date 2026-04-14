@@ -5,6 +5,6 @@
   let { ref = $bindable(null), class: className, children, ...restProps }: WithElementRef<HTMLAttributes<HTMLTableRowElement>> = $props();
 </script>
 
-<tr bind:this={ref} data-slot="table-row" class={cn("border-b transition-colors data-[state=selected]:bg-muted hover:[&,&>svelte-css-wrapper]:[&>th,td]:bg-muted/50", className)} {...restProps}>
+<tr bind:this={ref} data-slot="table-row" class={cn("border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", className)} {...restProps}>
   {@render children?.()}
 </tr>

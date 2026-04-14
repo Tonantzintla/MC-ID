@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Toggle } from "$components/ui/extras/toggle";
-  import { cn } from "$lib/utils";
+  import { Toggle } from "$ui/extras/toggle";
   import EyeIcon from "@lucide/svelte/icons/eye";
   import EyeOffIcon from "@lucide/svelte/icons/eye-off";
-  import { usePasswordToggleVisibility } from "./password.svelte.js";
-  import type { PasswordToggleVisibilityProps } from "./types.js";
+  import { usePasswordToggleVisibility } from "$ui/extras/password/password.svelte.js";
+  import type { PasswordToggleVisibilityProps } from "$ui/extras/password/types.js";
+  import { cn } from "$lib/utils.js";
 
   let { ref = $bindable(null), class: className }: PasswordToggleVisibilityProps = $props();
 
@@ -16,9 +16,9 @@
   aria-label={state.root.opts.hidden.current ? "Show password" : "Hide password"}
   bind:pressed={state.root.opts.hidden.current}
   class={cn(
-    "absolute top-1/2 right-0 size-9 min-w-0 -translate-y-1/2 p-0 hover:!bg-transparent data-[state=off]:text-muted-foreground hover:data-[state=off]:text-accent-foreground data-[state=on]:bg-transparent data-[state=on]:text-muted-foreground hover:data-[state=on]:text-accent-foreground",
+    "absolute top-1/2 right-0.5 size-8 min-w-0 -translate-y-1/2 bg-transparent p-0 text-muted-foreground hover:!bg-transparent hover:text-foreground data-[state=on]:bg-transparent data-[state=on]:text-foreground",
     {
-      "right-9 max-w-6": state.root.passwordState.copyMounted
+      "right-8.5": state.root.passwordState.copyMounted
     },
     className
   )}

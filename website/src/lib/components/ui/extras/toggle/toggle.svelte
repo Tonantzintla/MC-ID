@@ -2,16 +2,16 @@
   import { type VariantProps, tv } from "tailwind-variants";
 
   export const toggleVariants = tv({
-    base: "hover:bg-muted hover:text-muted-foreground data-[state=on]:bg-accent data-[state=on]:text-accent-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    base: "focus-visible:border-ring focus-visible:ring-ring/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 group/toggle inline-flex items-center justify-center gap-1 rounded-4xl border border-transparent bg-input/50 text-sm font-medium whitespace-nowrap text-muted-foreground transition-[color,box-shadow,background-color] outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 hover:bg-input/80 hover:text-foreground data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     variants: {
       variant: {
-        default: "bg-transparent",
-        outline: "border-input hover:bg-accent hover:text-accent-foreground border bg-transparent shadow-xs"
+        default: "",
+        outline: "border-border bg-background text-foreground hover:bg-muted dark:bg-transparent dark:hover:bg-input/30 data-[state=on]:bg-muted"
       },
       size: {
-        default: "h-9 min-w-9 px-2",
-        sm: "h-8 min-w-8 px-1.5",
-        lg: "h-10 min-w-10 px-2.5"
+        default: "h-9 min-w-9 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
+        sm: "h-8 min-w-8 rounded-[min(var(--radius-lg),1rem)] px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        lg: "h-10 min-w-10 px-3.5 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3"
       }
     },
     defaultVariants: {
@@ -26,8 +26,8 @@
 </script>
 
 <script lang="ts">
-  import { cn } from "$lib/utils";
   import { Toggle as TogglePrimitive } from "bits-ui";
+  import { cn } from "$lib/utils.js";
 
   let {
     ref = $bindable(null),
