@@ -1,2 +1,7 @@
+packages:
+  - "docs"
+  - "website"
+
 allowBuilds:
+  esbuild: true
   simple-git-hooks: true
