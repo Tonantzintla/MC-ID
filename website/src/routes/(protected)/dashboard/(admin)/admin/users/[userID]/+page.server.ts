@@ -9,7 +9,6 @@ export const load = (async ({ request, params }) => {
   const { userID } = params;
   const users = await auth.api.listUsers({
     headers: request.headers,
-    request,
     query: {
       filterField: "id",
       filterValue: userID

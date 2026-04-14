@@ -26,7 +26,6 @@ export const load = (async ({ url, request }) => {
     },
     // This endpoint requires session cookies.
     headers: request.headers,
-    request
   });
 
   if (!oauthClientPublic) {

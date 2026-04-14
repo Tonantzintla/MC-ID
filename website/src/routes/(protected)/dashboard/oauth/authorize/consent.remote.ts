@@ -16,7 +16,6 @@ export const consent = command(consentSchema, async ({ accept, scopes, oauth_que
   try {
     const response = await auth.api.oauth2Consent({
       headers: request.headers,
-      request,
       body: {
         accept,
         scope: scopes?.join(" "),

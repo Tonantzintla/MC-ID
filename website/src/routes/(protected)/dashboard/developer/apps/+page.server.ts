@@ -59,7 +59,6 @@ export const actions: Actions = {
       const clientScopes = [Scope.OPENID, ...form.data.scopes, Scope.OFFLINE_ACCESS];
       createdApp = await auth.api.adminCreateOAuthClient({
         headers: request.headers,
-        request,
         body: {
           redirect_uris: form.data.redirectUris,
           token_endpoint_auth_method: "client_secret_basic",

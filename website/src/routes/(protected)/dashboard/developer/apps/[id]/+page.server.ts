@@ -16,7 +16,6 @@ export const load = (async (event) => {
       },
       // This endpoint requires session cookies.
       headers: request.headers,
-      request
     });
 
     if (!app) error(404, "App not found");
@@ -89,7 +88,6 @@ export const actions: Actions = {
         },
         // This endpoint requires session cookies.
         headers: request.headers,
-        request
       });
 
       return {
@@ -120,7 +118,6 @@ export const actions: Actions = {
         },
         // This endpoint requires session cookies.
         headers: request.headers,
-        request
       });
     } catch (err) {
       console.error("Error during app deletion:", err);

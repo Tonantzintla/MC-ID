@@ -12,7 +12,6 @@ export const resetSecret = query(z.string(), async (client_id) => {
         client_id
       },
       headers: request.headers,
-      request // Pass the full request object for ctx.request
     });
 
     return {
