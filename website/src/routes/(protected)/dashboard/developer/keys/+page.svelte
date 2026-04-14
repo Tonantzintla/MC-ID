@@ -46,11 +46,15 @@
       <Alert.Description>You must verify your email address before you can create API keys. Please check your inbox for a verification email.</Alert.Description>
     </Alert.Root>
   {/if}
-  <Alert.Root>
-    <AlertCircle class="h-4 w-4" />
-    <Alert.Title>Heads up!</Alert.Title>
-    <Alert.Description class="mb-2">API keys are for when you want to access our API directly, aka Headless mode.</Alert.Description>
-    <Alert.Description>Headless mode is not recommended for most users. <br /> Check our documentation for the differences between Headless and our standard mode.</Alert.Description>
+  <Alert.Root class="flex items-start gap-3">
+    <AlertCircle class="mt-0.5 h-4 w-4 shrink-0" />
+    <div class="min-w-0 space-y-1.5">
+      <Alert.Title>Heads up!</Alert.Title>
+      <Alert.Description>
+        <p>API keys are for when you want to access our API directly, aka Headless mode.</p>
+        <p>Headless mode is not recommended for most users. Check our documentation for the differences between Headless and our standard mode.</p>
+      </Alert.Description>
+    </div>
   </Alert.Root>
   <Card.Root class="w-full bg-background data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[disabled=true]:select-none" data-disabled={!emailVerified}>
     <Card.Header>
