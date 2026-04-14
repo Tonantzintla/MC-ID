@@ -4,8 +4,7 @@
   import type { HTMLAttributes } from "svelte/elements";
   import type { WithChildren, WithoutChildren } from "bits-ui";
 
-export type CopyButtonPropsWithoutHTML = WithChildren<
-  {
+  export type CopyButtonPropsWithoutHTML = WithChildren<{
     size?: ButtonProps["size"];
     variant?: ButtonProps["variant"];
     ref?: HTMLButtonElement | null;
@@ -13,8 +12,7 @@ export type CopyButtonPropsWithoutHTML = WithChildren<
     icon?: Snippet<[]>;
     animationDuration?: number;
     onCopy?: (status: "success" | "failure" | undefined) => void;
-    }
-  >;
+  }>;
 
   export type CopyButtonProps = CopyButtonPropsWithoutHTML & WithoutChildren<HTMLAttributes<HTMLButtonElement>>;
 </script>
