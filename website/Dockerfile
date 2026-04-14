@@ -3,19 +3,13 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
-FROM base AS deps
-WORKDIR /app
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY website/package.json ./website/package.json
-RUN pnpm --dir website install --frozen-lockfile --ignore-scripts
-
 FROM base AS build
 WORKDIR /app
-COPY --from=deps /app/website/node_modules ./website/node_modules
 COPY . .
 WORKDIR /app/website
-RUN pnpm svelte-kit sync
-RUN pnpm build
+RUN pnpm install --frozen-lockfile --ignore-scripts --lockfile-dir .. --ignore-workspace
+RUN pnpm exec svelte-kit sync
+RUN pnpm run build
 
 FROM base AS production
 ENV NODE_ENV=production
