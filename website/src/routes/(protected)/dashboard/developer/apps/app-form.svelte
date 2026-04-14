@@ -250,12 +250,14 @@
                       reject(new Error("App ID is required to reset the secret."));
                       return;
                     }
-                    resetSecret($appFormData.id)
-                      .then(({ secret, success }) => {
-                        if (!success) throw new Error("Failed to reset secret.");
-                        appSecret = secret;
-                        resolve(data);
-                      })
+                    (async () => {
+                      const { secret, success } = await resetSecret($appFormData.id);
+
+                      if (!success) throw new Error("Failed to reset secret.");
+
+                      appSecret = secret;
+                      resolve(data);
+                    })()
                       .catch(reject)
                       .finally(() => {
                         resettingSecret = false;

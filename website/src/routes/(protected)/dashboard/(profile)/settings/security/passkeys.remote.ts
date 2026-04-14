@@ -1,4 +1,4 @@
-import { getRequestEvent, query } from "$app/server";
+import { command, getRequestEvent, query } from "$app/server";
 import { auth } from "$lib/server/auth";
 import { error } from "@sveltejs/kit";
 import { z } from "zod/v4-mini";
@@ -24,7 +24,7 @@ export const getPasskeys = query(async () => {
 
 const updatePasskeySchema = z.object({ id: z.string(), name: z.optional(z.string()) });
 
-export const updatePasskey = query(updatePasskeySchema, async (newData) => {
+export const updatePasskey = command(updatePasskeySchema, async (newData) => {
   const { request } = getRequestEvent();
   try {
     const data = await auth.api.updatePasskey({
@@ -47,7 +47,7 @@ export const updatePasskey = query(updatePasskeySchema, async (newData) => {
   }
 });
 
-export const deletePasskey = query(z.string(), async (id) => {
+export const deletePasskey = command(z.string(), async (id) => {
   const { request } = getRequestEvent();
   try {
     await auth.api.deletePasskey({

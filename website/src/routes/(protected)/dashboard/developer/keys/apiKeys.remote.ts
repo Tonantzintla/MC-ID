@@ -1,4 +1,4 @@
-import { getRequestEvent, query } from "$app/server";
+import { command, getRequestEvent, query } from "$app/server";
 import { auth } from "$lib/server/auth";
 import { error } from "@sveltejs/kit";
 import { z } from "zod/v4-mini";
@@ -22,7 +22,7 @@ export const getApiKeys = query(async () => {
   }
 });
 
-export const deleteApiKey = query(z.string(), async (id) => {
+export const deleteApiKey = command(z.string(), async (id) => {
   const { request } = getRequestEvent();
   try {
     await auth.api.deleteApiKey({

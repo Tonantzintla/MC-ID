@@ -181,13 +181,15 @@
               syncingUser = true;
               toast.promise(
                 new Promise((resolve, reject) => {
-                  syncUser(page.data.primaryMcAccount.uuid ?? $formData.uuid)
-                    .then(({ data, success, message }) => {
-                      if (!success) throw new Error(message ?? "Failed to sync user.");
-                      username = data.name;
-                      lastSynced.current = new Date(serverDateResult.data);
-                      resolve(data);
-                    })
+                  (async () => {
+                    const { data, success, message } = await syncUser(page.data.primaryMcAccount.uuid ?? $formData.uuid);
+
+                    if (!success) throw new Error(message ?? "Failed to sync user.");
+
+                    username = data.name;
+                    lastSynced.current = new Date(serverDateResult.data);
+                    resolve(data);
+                  })()
                     .catch(reject)
                     .finally(() => {
                       syncingUser = false;

@@ -1,9 +1,9 @@
-import { getRequestEvent, query } from "$app/server";
+import { command, getRequestEvent } from "$app/server";
 import { auth } from "$lib/server/auth";
 import { error } from "@sveltejs/kit";
 import { z } from "zod/v4-mini";
 
-export const resetSecret = query(z.string(), async (client_id) => {
+export const resetSecret = command(z.string(), async (client_id) => {
   const { locals, request } = getRequestEvent();
   if (!locals.user) error(401, "Unauthorized");
   try {

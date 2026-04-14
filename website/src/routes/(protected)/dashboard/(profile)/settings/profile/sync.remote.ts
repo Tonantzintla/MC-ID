@@ -1,11 +1,11 @@
-import { getRequestEvent, query } from "$app/server";
+import { command, getRequestEvent, query } from "$app/server";
 import { minecraftKy } from "$lib/customKy";
 import { auth } from "$lib/server/auth";
 import { error } from "@sveltejs/kit";
 import { HTTPError } from "ky";
 import { z } from "zod/v4-mini";
 
-export const syncUser = query(z.string(), async (uuid) => {
+export const syncUser = command(z.string(), async (uuid) => {
   const { request, locals } = getRequestEvent();
   try {
     const response = await minecraftKy(`minecraft/profile/lookup/${uuid}`);
