@@ -10,6 +10,7 @@ on:
       - "package.json"
       - "CHANGELOG.md"
       - ".github/workflows/**"
+      - "pnpm-workspace.yaml"
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
