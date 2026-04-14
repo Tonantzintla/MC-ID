@@ -7,6 +7,7 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
+.idea/
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
@@ -106,6 +107,7 @@ fabric.properties
 # Cache file creation bug
 # See https://youtrack.jetbrains.com/issue/JBR-2257
 .idea/$CACHE_FILE$
+opencode.json
 
 # CodeStream plugin
 # https://plugins.jetbrains.com/plugin/12206-codestream
