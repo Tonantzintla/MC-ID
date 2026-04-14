@@ -10,11 +10,12 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class HeartbeatHandler {
     private final HttpClient httpClient = HttpClient.newHttpClient();
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(new HeartbeatThreadFactory());
     private final URI heartbeatUrl;
     private final Logger logger;
 
@@ -48,5 +49,14 @@ public class HeartbeatHandler {
 
     public void shutdown() {
         scheduler.shutdown();
+    }
+
+    private static final class HeartbeatThreadFactory implements ThreadFactory {
+        @Override
+        public Thread newThread(Runnable runnable) {
+            Thread thread = new Thread(runnable, "mc-id-heartbeat");
+            thread.setDaemon(true);
+            return thread;
+        }
     }
 }

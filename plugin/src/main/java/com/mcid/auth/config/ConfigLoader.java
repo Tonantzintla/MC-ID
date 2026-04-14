@@ -1,7 +1,5 @@
 package com.mcid.auth.config;
 
-import com.velocitypowered.api.plugin.PluginContainer;
-import com.velocitypowered.api.proxy.ProxyServer;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
@@ -13,18 +11,16 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
 
 public class ConfigLoader {
     private final YamlDocument config;
     private final Logger logger;
 
-    public ConfigLoader(File dataFolder, Logger logger, ProxyServer proxy) {
+    public ConfigLoader(File dataFolder, Logger logger) {
         this.logger = logger;
 
-        YamlDocument finalConfig;
         try {
-            finalConfig = YamlDocument.create(new File(dataFolder, "config.yml"),
+            this.config = YamlDocument.create(new File(dataFolder, "config.yml"),
                     Objects.requireNonNull(getClass().getResourceAsStream("/config.yml")),
                     GeneralSettings.DEFAULT,
                     LoaderSettings.builder().setAutoUpdate(true).build(),
@@ -33,15 +29,12 @@ public class ConfigLoader {
                             .setVersioning(new BasicVersioning("file-version"))
                             .setOptionSorting(UpdaterSettings.OptionSorting.SORT_BY_DEFAULTS).build()
             );
-            finalConfig.update();
-            finalConfig.save();
+            this.config.update();
+            this.config.save();
         } catch (IOException ex) {
-            finalConfig = null;
-            logger.error("Failed to load the config file!\n This plugin is going to be disabled.");
-            Optional<PluginContainer> container = proxy.getPluginManager().getPlugin("mc-id-auth");
-            container.ifPresent(pluginContainer -> pluginContainer.getExecutorService().shutdown());
+            logger.error("Failed to load the config file.", ex);
+            throw new IllegalStateException("Failed to load config.yml", ex);
         }
-        this.config = finalConfig;
     }
 
     public YamlDocument getConfig() {
@@ -67,4 +60,3 @@ public class ConfigLoader {
     }
 
 }
-
