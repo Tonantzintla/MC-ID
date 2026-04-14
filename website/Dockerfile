@@ -7,7 +7,7 @@ FROM base AS build
 WORKDIR /app
 COPY . .
 WORKDIR /app/website
-RUN pnpm install --frozen-lockfile --ignore-scripts --lockfile-dir .. --ignore-workspace
+RUN pnpm install --frozen-lockfile --ignore-scripts --lockfile-dir .. --ignore-workspace --config.node-linker=hoisted
 RUN pnpm exec svelte-kit sync
 RUN pnpm run build
 
@@ -19,7 +19,6 @@ WORKDIR /app/website
 COPY --from=build /app/website/build ./build
 COPY --from=build /app/website/package.json ./package.json
 COPY --from=build /app/node_modules /app/node_modules
-COPY --from=build /app/website/node_modules ./node_modules
 COPY --from=build /app/website/drizzle.config.ts ./drizzle.config.ts
 COPY --from=build /app/website/drizzle ./drizzle
 COPY --from=build /app/website/entrypoint.sh ./entrypoint.sh

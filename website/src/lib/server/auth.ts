@@ -18,7 +18,7 @@ import { sveltekitCookies } from "better-auth/svelte-kit";
 import { db } from "./db";
 
 const { PUBLIC_BASE_URL } = publicEnv;
-const { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, ADDRESS_HEADER, BETTER_AUTH_SECRET } = privateEnv;
+const { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, ADDRESS_HEADER, BETTER_AUTH_SECRET, BETTER_AUTH_URL } = privateEnv;
 
 const BUILD_TIME_AUTH_SECRET = "build-time-placeholder-secret-for-sveltekit-build";
 const BUILD_TIME_BASE_URL = "http://localhost:3000";
@@ -32,9 +32,10 @@ function getBetterAuthSecret() {
 
 function getBaseURL() {
   if (PUBLIC_BASE_URL) return PUBLIC_BASE_URL;
+  if (BETTER_AUTH_URL) return BETTER_AUTH_URL;
   if (building) return BUILD_TIME_BASE_URL;
 
-  throw new Error("PUBLIC_BASE_URL is required at runtime.");
+  throw new Error("PUBLIC_BASE_URL or BETTER_AUTH_URL is required at runtime.");
 }
 
 const baseURL = getBaseURL();
