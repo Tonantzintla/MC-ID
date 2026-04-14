@@ -11,7 +11,7 @@ export const mcUsersRelations = relations(mcuser, ({ many }) => ({
 export const appsRelations = relations(apikey, ({ many, one }) => ({
   verificationCodes: many(verificationCodes),
   user: one(user, {
-    fields: [apikey.userId],
+    fields: [apikey.referenceId],
     references: [user.id]
   })
 }));

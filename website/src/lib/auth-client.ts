@@ -1,8 +1,9 @@
 import { env } from "$env/dynamic/public";
 import type { Auth } from "$lib/server/auth";
+import { apiKeyClient } from "@better-auth/api-key/client";
 import { oauthProviderClient } from "@better-auth/oauth-provider/client";
 import { passkeyClient } from "@better-auth/passkey/client";
-import { adminClient, apiKeyClient, customSessionClient } from "better-auth/client/plugins";
+import { adminClient, customSessionClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/svelte";
 
 const { PUBLIC_BASE_URL } = env;

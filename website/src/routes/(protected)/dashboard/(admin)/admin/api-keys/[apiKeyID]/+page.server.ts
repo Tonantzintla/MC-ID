@@ -11,7 +11,7 @@ export const load = (async ({ params }) => {
   const { apiKeyID } = params;
   const apiKey = await db.query.apikey.findFirst({
     where: (key, { eq }) => eq(key.id, apiKeyID),
-    columns: { start: false, key: false, userId: false },
+    columns: { start: false, key: false },
     with: {
       user: {
         columns: {},

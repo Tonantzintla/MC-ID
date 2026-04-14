@@ -69,9 +69,11 @@ export const authMiddleware = (requiredPermissions?: Permissions) =>
     }
 
     if (key.error) {
+      const errorMessage = typeof key.error.message === "string" ? key.error.message : key.error.message?.message;
+
       throw errors.FORBIDDEN({
-        message: key.error.message || "Something went wrong during API key validation",
-        data: { reason: key.error.message }
+        message: errorMessage || "Something went wrong during API key validation",
+        data: { reason: errorMessage }
       });
     }
 

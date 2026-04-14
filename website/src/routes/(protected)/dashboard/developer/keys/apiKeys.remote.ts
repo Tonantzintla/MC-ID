@@ -6,19 +6,19 @@ import { z } from "zod/v4-mini";
 export const getApiKeys = query(async () => {
   const { request } = getRequestEvent();
   try {
-    const apiKeys = await auth.api.listApiKeys({
+    const result = await auth.api.listApiKeys({
       // This endpoint requires session cookies.
       headers: request.headers
     });
 
-    if (!apiKeys || !Array.isArray(apiKeys)) {
+    if (!result || !Array.isArray(result.apiKeys)) {
       error(404, "No API keys found");
     }
 
-    return apiKeys;
+    return result.apiKeys;
   } catch (err) {
     console.error("Error requesting API keys", err);
-    error(500, "Failed to retrieve passkeys");
+    error(500, "Failed to retrieve API keys");
   }
 });
 

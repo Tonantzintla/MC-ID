@@ -24,7 +24,7 @@ export const consent = command(consentSchema, async ({ accept, scopes, oauth_que
       }
     });
 
-    redirectURI = response.uri;
+    redirectURI = response.url;
   } catch (err) {
     console.error("OAuth Consent Error:", err);
     error(500, "Something went wrong during consent processing.");

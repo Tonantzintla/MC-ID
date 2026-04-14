@@ -114,6 +114,7 @@ export const oauthClient = pgTable("oauth_client", {
   disabled: boolean("disabled").default(false),
   skipConsent: boolean("skip_consent"),
   enableEndSession: boolean("enable_end_session"),
+  subjectType: text("subject_type"),
   scopes: text("scopes").array(),
   userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at"),
@@ -134,6 +135,7 @@ export const oauthClient = pgTable("oauth_client", {
   responseTypes: text("response_types").array(),
   public: boolean("public"),
   type: text("type"),
+  requirePKCE: boolean("require_pkce"),
   referenceId: text("reference_id"),
   metadata: jsonb("metadata")
 });
@@ -151,15 +153,16 @@ export const oauthRefreshToken = pgTable("oauth_refresh_token", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   referenceId: text("reference_id"),
-  expiresAt: timestamp("expires_at"),
-  createdAt: timestamp("created_at"),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull(),
   revoked: timestamp("revoked"),
+  authTime: timestamp("auth_time"),
   scopes: text("scopes").array().notNull()
 });
 
 export const oauthAccessToken = pgTable("oauth_access_token", {
   id: text("id").primaryKey(),
-  token: text("token").unique(),
+  token: text("token").notNull().unique(),
   clientId: text("client_id")
     .notNull()
     .references(() => oauthClient.clientId, { onDelete: "cascade" }),
@@ -171,8 +174,8 @@ export const oauthAccessToken = pgTable("oauth_access_token", {
   refreshId: text("refresh_id").references(() => oauthRefreshToken.id, {
     onDelete: "cascade"
   }),
-  expiresAt: timestamp("expires_at"),
-  createdAt: timestamp("created_at"),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull(),
   scopes: text("scopes").array().notNull()
 });
 
@@ -184,21 +187,20 @@ export const oauthConsent = pgTable("oauth_consent", {
   userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
   referenceId: text("reference_id"),
   scopes: text("scopes").array().notNull(),
-  createdAt: timestamp("created_at"),
-  updatedAt: timestamp("updated_at")
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull()
 });
 
 export const apikey = pgTable(
   "apikey",
   {
     id: text("id").primaryKey(),
+    configId: text("config_id").default("default").notNull(),
     name: text("name"),
     start: text("start"),
+    referenceId: text("reference_id").notNull(),
     prefix: text("prefix"),
     key: text("key").notNull(),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
     refillInterval: integer("refill_interval"),
     refillAmount: integer("refill_amount"),
     lastRefillAt: timestamp("last_refill_at"),
@@ -215,7 +217,7 @@ export const apikey = pgTable(
     permissions: text("permissions"),
     metadata: text("metadata")
   },
-  (table) => [index("apikey_key_idx").on(table.key), index("apikey_userId_idx").on(table.userId)]
+  (table) => [index("apikey_configId_idx").on(table.configId), index("apikey_referenceId_idx").on(table.referenceId), index("apikey_key_idx").on(table.key)]
 );
 
 export const minecraftAccount = pgTable("minecraft_account", {
@@ -243,14 +245,13 @@ export const userRelations = relations(user, ({ many }) => ({
   oauthRefreshTokens: many(oauthRefreshToken),
   oauthAccessTokens: many(oauthAccessToken),
   oauthConsents: many(oauthConsent),
-  apikeys: many(apikey),
   minecraftAccounts: many(minecraftAccount)
 }));
 
 export const sessionRelations = relations(session, ({ one, many }) => ({
   user: one(user, {
     fields: [session.userId],
-    references: [user.id]
+    references: [user.id],
   }),
   oauthRefreshTokens: many(oauthRefreshToken),
   oauthAccessTokens: many(oauthAccessToken)
@@ -323,13 +324,6 @@ export const oauthConsentRelations = relations(oauthConsent, ({ one }) => ({
   }),
   user: one(user, {
     fields: [oauthConsent.userId],
-    references: [user.id]
-  })
-}));
-
-export const apikeyRelations = relations(apikey, ({ one }) => ({
-  user: one(user, {
-    fields: [apikey.userId],
     references: [user.id]
   })
 }));

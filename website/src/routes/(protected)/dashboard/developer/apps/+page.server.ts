@@ -15,8 +15,7 @@ export const load = (async (event) => {
 
   try {
     const apps = await auth.api.getOAuthClients({
-      headers: request.headers,
-      request
+      headers: request.headers
     });
 
     return {

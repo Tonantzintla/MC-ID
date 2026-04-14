@@ -3,7 +3,7 @@ import type { PageServerLoad } from "./$types";
 
 export const load = (async () => {
   const rawApiKeys = await db.query.apikey.findMany({
-    columns: { start: false, key: false, userId: false },
+    columns: { start: false, key: false },
     with: {
       user: {
         columns: {},

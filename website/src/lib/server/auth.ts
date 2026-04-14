@@ -1,4 +1,4 @@
-import { dev } from "$app/environment";
+import { building, dev } from "$app/environment";
 import { getRequestEvent } from "$app/server";
 import { env as privateEnv } from "$env/dynamic/private";
 import { env as publicEnv } from "$env/dynamic/public";
@@ -7,21 +7,32 @@ import { EmailService } from "$lib/server/email-service";
 import { getAdditionalUserInfo } from "$lib/server/getAdditionalUserInfo";
 import { hashOptions } from "$lib/server/hash-options";
 import { generateRandomSecret } from "$lib/server/secret-generator";
+import { apiKey } from "@better-auth/api-key";
 import { oauthProvider } from "@better-auth/oauth-provider";
 import { passkey } from "@better-auth/passkey";
 import { hash as argon2Hash, verify as argon2Verify } from "@node-rs/argon2";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth, type BetterAuthOptions } from "better-auth/minimal";
-import { admin, apiKey, customSession, jwt, openAPI } from "better-auth/plugins";
+import { admin, customSession, jwt, openAPI } from "better-auth/plugins";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { db } from "./db";
 
 const { PUBLIC_BASE_URL } = publicEnv;
-const { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, ADDRESS_HEADER } = privateEnv;
+const { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, ADDRESS_HEADER, BETTER_AUTH_SECRET } = privateEnv;
+
+const BUILD_TIME_AUTH_SECRET = "build-time-placeholder-secret-for-sveltekit-build";
+
+function getBetterAuthSecret() {
+  if (BETTER_AUTH_SECRET) return BETTER_AUTH_SECRET;
+  if (building) return BUILD_TIME_AUTH_SECRET;
+
+  throw new Error("BETTER_AUTH_SECRET is required at runtime.");
+}
 
 const options = {
   appName: "MC-ID",
   baseURL: PUBLIC_BASE_URL,
+  secret: getBetterAuthSecret(),
   database: drizzleAdapter(db, {
     provider: "pg"
   }),
