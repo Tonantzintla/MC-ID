@@ -8,8 +8,10 @@ WORKDIR /app
 COPY . .
 WORKDIR /app/website
 RUN pnpm install --frozen-lockfile --ignore-scripts --lockfile-dir .. --ignore-workspace --config.node-linker=hoisted
-RUN pnpm exec svelte-kit sync
-RUN pnpm run build
+# Call binaries directly to avoid pnpm 11.x's verify-deps-before-run check,
+# which triggers an interactive node_modules purge that aborts in Docker (no TTY).
+RUN ../node_modules/.bin/svelte-kit sync
+RUN ../node_modules/.bin/vite build
 
 FROM base AS production
 ENV NODE_ENV=production
