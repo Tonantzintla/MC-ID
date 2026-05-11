@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Body, Button, Container, Head, Heading, Hr, Html, Img, Link, Preview, Section, Text } from "better-svelte-email";
+  import { Body, Button, Container, Head, Heading, Hr, Html, Img, Link, Preview, Section, Text } from "@better-svelte-email/components";
 
   export interface VerifyEmailProps {
     verifyUrl: string;

@@ -3,7 +3,6 @@ import { sveltekit } from "@sveltejs/kit/vite";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import { defineConfig, searchForWorkspaceRoot } from "vite";
-import devtoolsJson from "vite-plugin-devtools-json";
 
 export default defineConfig({
   server: {
@@ -11,7 +10,7 @@ export default defineConfig({
       allow: [searchForWorkspaceRoot(process.cwd()), path.resolve("..")]
     }
   },
-  plugins: [enhancedImages(), tailwindcss(), sveltekit(), devtoolsJson()],
+  plugins: [enhancedImages(), tailwindcss(), sveltekit()],
   resolve: {
     alias: {
       $ui: path.resolve("./src/lib/components/ui"),

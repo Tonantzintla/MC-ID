@@ -13,18 +13,19 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",
-    "@astrojs/starlight": "^0.38.3",
+    "@astrojs/starlight": "^0.39.2",
     "@astrojs/starlight-tailwind": "^5.0.0",
-    "@tailwindcss/vite": "^4.2.3",
-    "astro": "^6.1.8",
+    "@tailwindcss/vite": "^4.3.0",
+    "astro": "^6.3.1",
     "sharp": "^0.34.5",
-    "tailwindcss": "^4.2.3",
+    "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
-    "wrangler": "^4.84.0"
+    "vite": "^7.3.2",
+    "wrangler": "^4.90.0"
   },
   "devDependencies": {
     "prettier": "^3.8.3",
     "prettier-plugin-astro": "^0.14.1",
-    "prettier-plugin-tailwindcss": "^0.7.2"
+    "prettier-plugin-tailwindcss": "^0.8.0"
   }
 }

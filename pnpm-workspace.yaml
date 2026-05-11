@@ -2,7 +2,6 @@ packages:
   - "."
   - "docs"
   - "website"
-
 allowBuilds:
   esbuild: true
   sharp: true

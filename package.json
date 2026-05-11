@@ -15,12 +15,12 @@
     "release": "changeset version"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
-    "@commitlint/cli": "^20.5.0",
-    "@commitlint/config-conventional": "^20.5.0",
-    "@commitlint/types": "^20.5.0",
-    "@types/node": "^25.6.0",
+    "@commitlint/cli": "^21.0.0",
+    "@commitlint/config-conventional": "^21.0.0",
+    "@commitlint/types": "^21.0.0",
+    "@types/node": "^25.6.2",
     "simple-git-hooks": "^2.13.1"
   },
   "simple-git-hooks": {
