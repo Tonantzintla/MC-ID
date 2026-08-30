@@ -21,5 +21,10 @@
     <UserRound />
   </div>
 {:else}
-  <img loading="lazy" class="{className} rounded-full" src={data.image} alt="User Icon" onerror={() => (errored = true)} />
+  <img
+    loading="lazy"
+    class="{className} rounded-full"
+    src={data.image}
+    alt="User Icon"
+    onerror={() => (errored = true)} />
 {/if}

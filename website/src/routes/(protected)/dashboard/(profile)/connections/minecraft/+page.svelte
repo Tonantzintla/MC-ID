@@ -47,6 +47,17 @@
 
   const { form: formData, enhance, tainted, isTainted, submitting, timeout } = $derived(form);
 
+  const remoteErrorMessage = (error: unknown, fallback: string) => {
+    if (error instanceof Error) return error.message;
+    if (typeof error === "object" && error !== null && "body" in error) {
+      const body = error.body;
+      if (typeof body === "object" && body !== null && "message" in body && typeof body.message === "string") {
+        return body.message;
+      }
+    }
+    return fallback;
+  };
+
   const handleRequestCode = async () => {
     if (!mcUsername.success) return;
     loadingRequest = true;
@@ -61,8 +72,10 @@
       }
     } catch (error) {
       console.error(error);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const errorMessage = error instanceof Error ? error.message : ((error as any)?.body?.message ?? "An unknown error occurred while requesting the verification code.");
+      const errorMessage = remoteErrorMessage(
+        error,
+        "An unknown error occurred while requesting the verification code."
+      );
       toast.error(errorMessage);
       loadingRequest = false;
     }
@@ -80,8 +93,7 @@
       }
     } catch (error) {
       console.error(error);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const errorMessage = error instanceof Error ? error.message : ((error as any)?.body?.message ?? "An unknown error occurred while requesting the verification code.");
+      const errorMessage = remoteErrorMessage(error, "An unknown error occurred while unlinking the account.");
       toast.error(errorMessage);
       loadingRequest = false;
     }
@@ -100,8 +112,7 @@
       }
     } catch (error) {
       console.error(error);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const errorMessage = error instanceof Error ? error.message : ((error as any)?.body?.message ?? "An unknown error occurred while requesting the verification code.");
+      const errorMessage = remoteErrorMessage(error, "An unknown error occurred while setting the primary account.");
       toast.error(errorMessage);
       loadingRequest = false;
     }
@@ -149,11 +160,18 @@
         <Card.Description class="space-y-1">
           <p>
             Start Minecraft and connect to
-            <CopyButton text="auth.mc-id.com" variant="ghost" size="sm" class="inline-flex h-auto flex-row-reverse overflow-visible px-0 text-muted-foreground hover:text-foreground dark:hover:bg-transparent">
+            <CopyButton
+              text="auth.mc-id.com"
+              variant="ghost"
+              size="sm"
+              class="inline-flex h-auto flex-row-reverse overflow-visible px-0 text-muted-foreground hover:text-foreground dark:hover:bg-transparent">
               <div class="rounded-sm bg-accent p-0.5 font-mono">auth.mc-id.com</div>
             </CopyButton>
           </p>
-          <p>You'll get kicked from the server and provided with a code, enter the 6-digit code below to link your Minecraft account.</p>
+          <p>
+            You'll get kicked from the server and provided with a code, enter the 6-digit code below to link your
+            Minecraft account.
+          </p>
         </Card.Description>
       </Card.Header>
       <Card.Content class="space-y-2">
@@ -190,7 +208,12 @@
           <Form.Field {form} name="code">
             <Form.Control>
               {#snippet children({ props })}
-                <InputOTP.Root maxlength={6} pattern={REGEXP_ONLY_DIGITS} bind:value={$formData.code} {...props} class="my-6 justify-center">
+                <InputOTP.Root
+                  maxlength={6}
+                  pattern={REGEXP_ONLY_DIGITS}
+                  bind:value={$formData.code}
+                  {...props}
+                  class="my-6 justify-center">
                   {#snippet children({ cells })}
                     <InputOTP.Group>
                       {#each cells.slice(0, 3) as cell, index (index)}
@@ -240,7 +263,10 @@
         <Card.Description>We couldn't load your Minecraft accounts. Please try again later.</Card.Description>
       </Card.Header>
       <Card.Content>
-        <Button onclick={async () => await allMinecraftAccounts.refresh()} disabled={allMinecraftAccounts.loading} variant="secondary">
+        <Button
+          onclick={async () => await allMinecraftAccounts.refresh()}
+          disabled={allMinecraftAccounts.loading}
+          variant="secondary">
           {#if allMinecraftAccounts.loading}
             <Spinner />
           {:else}
@@ -254,7 +280,8 @@
 
 {#snippet mcAccountItem(account: PrimaryMcAccount & { primary: boolean })}
   <Item.Root variant="outline" class="overflow-clip">
-    <Item.Media class="pointer-events-none relative select-none group-has-data-[slot=item-description]/item:translate-y-0 group-has-data-[slot=item-description]/item:self-center">
+    <Item.Media
+      class="pointer-events-none relative select-none group-has-data-[slot=item-description]/item:translate-y-0 group-has-data-[slot=item-description]/item:self-center">
       <Avatar.Root class="size-16 rounded-none after:rounded-none after:border-0">
         <Avatar.Image src="https://nmsr.nickac.dev/face/{account.uuid}" alt={account.username} class="rounded-none" />
         <Avatar.Fallback class="rounded-none">
@@ -273,7 +300,11 @@
         {account.username}
       </Item.Title>
       <Item.Description class="flex flex-row items-center gap-0">
-        <CopyButton text={account.uuid} variant="ghost" size="sm" class="h-auto flex-row-reverse overflow-visible px-0 text-muted-foreground hover:text-foreground dark:hover:bg-transparent">
+        <CopyButton
+          text={account.uuid}
+          variant="ghost"
+          size="sm"
+          class="h-auto flex-row-reverse overflow-visible px-0 text-muted-foreground hover:text-foreground dark:hover:bg-transparent">
           <div class="rounded-sm bg-popover p-0.5 font-mono">{account.uuid}</div>
         </CopyButton>
       </Item.Description>
@@ -290,7 +321,9 @@
           </Popover.Trigger>
           <Popover.Content class="space-y-2">
             {#if account.primary}
-              <p class="text-sm">This is your primary Minecraft account. You cannot unlink it unless you set another account as primary.</p>
+              <p class="text-sm">
+                This is your primary Minecraft account. You cannot unlink it unless you set another account as primary.
+              </p>
             {:else}
               <p class="text-sm">Are you sure you want to unlink this Minecraft account?</p>
               <Button variant="outline" size="sm" class="w-full" onclick={async () => await handleUnlink(account.uuid)}>
@@ -312,7 +345,9 @@
           <Popover.Trigger>
             {#snippet child({ props })}
               <Button variant="outline" size="sm" {...props}>
-                <Crown data-primary={account.primary} class=" data-[primary=true]:fill-yellow-300 data-[primary=true]:text-yellow-300" />
+                <Crown
+                  data-primary={account.primary}
+                  class=" data-[primary=true]:fill-yellow-300 data-[primary=true]:text-yellow-300" />
               </Button>
             {/snippet}
           </Popover.Trigger>
@@ -321,8 +356,15 @@
               <p class="text-sm">This is already your primary Minecraft account.</p>
             {:else}
               <p class="text-sm">Are you sure you want to make this Minecraft account your primary account?</p>
-              <Button variant="outline" size="sm" class="w-full" disabled={account.primary} onclick={async () => await handleMakePrimary(account.uuid)}>
-                Make Primary <Crown data-primary={account.primary} class="data-[primary=true]:fill-yellow-300 data-[primary=true]:text-yellow-300" />
+              <Button
+                variant="outline"
+                size="sm"
+                class="w-full"
+                disabled={account.primary}
+                onclick={async () => await handleMakePrimary(account.uuid)}>
+                Make Primary <Crown
+                  data-primary={account.primary}
+                  class="data-[primary=true]:fill-yellow-300 data-[primary=true]:text-yellow-300" />
               </Button>
             {/if}
           </Popover.Content>

@@ -2,7 +2,20 @@
   import Pagination from "$components/data-table/pagination.svelte";
   import Table from "$components/data-table/table.svelte";
   import { createSvelteTable } from "$ui/data-table";
-  import { getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, type ColumnDef, type ColumnFiltersState, type PaginationState, type RowSelectionState, type SortingState, type VisibilityState } from "@tanstack/table-core";
+  import {
+    getCoreRowModel,
+    getFacetedRowModel,
+    getFacetedUniqueValues,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    type ColumnDef,
+    type ColumnFiltersState,
+    type PaginationState,
+    type RowSelectionState,
+    type SortingState,
+    type VisibilityState
+  } from "@tanstack/table-core";
   import DataTableToolbar from "./data-table-toolbar.svelte";
 
   type DataTableProps<TData, TValue> = {

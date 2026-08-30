@@ -5,7 +5,7 @@ import { defaultPermissions, getUsernameFromMcid, logger } from "$api/utils";
 import { resolve } from "$app/paths";
 import { verificationCodes } from "$lib/shared/db/schema";
 import { ORPCError } from "@orpc/server";
-import { and, desc, eq, gte } from "drizzle-orm";
+import { and, eq, gte } from "drizzle-orm";
 import { z } from "zod";
 
 const VerifyCodeInput = z
@@ -81,38 +81,27 @@ export const verifyCode = base
 
       const apiKey = context.apiKeyData;
 
-      // Find the verification code
-      const codeRecord = await db.query.verificationCodes.findFirst({
-        where: (vc) => and(eq(vc.code, input.code), eq(vc.appApiKeyId, apiKey.id), gte(vc.expiration, new Date())),
-        with: { user: true },
-        orderBy: (vc) => [desc(vc.createdAt)]
-      });
+      // Atomically claim this exact, unexpired code. DELETE ... RETURNING ensures
+      // concurrent verification attempts cannot both accept the same code.
+      const [codeRecord] = await db
+        .delete(verificationCodes)
+        .where(
+          and(
+            eq(verificationCodes.code, input.code),
+            eq(verificationCodes.appApiKeyId, apiKey.id),
+            eq(verificationCodes.mcuserId, input.uuid),
+            gte(verificationCodes.expiration, new Date())
+          )
+        )
+        .returning({ id: verificationCodes.id, userId: verificationCodes.mcuserId });
 
       if (!codeRecord) {
         logger.warn("Code verification failed - code not found or expired", {
           uuid: input.uuid,
-          code: input.code
+          codeProvided: true
         });
         throw errors.CODE_EXPIRED();
       }
-
-      // Verify the user UUID matches
-      if (codeRecord.user.id !== input.uuid) {
-        logger.warn("Code verification failed - UUID mismatch", {
-          expectedUuid: input.uuid,
-          actualUuid: codeRecord.user.id,
-          code: input.code
-        });
-        throw errors.FORBIDDEN({
-          message: "The provided code belongs to a different user",
-          data: {
-            reason: "UUID mismatch"
-          }
-        });
-      }
-
-      // Delete the used code
-      await db.delete(verificationCodes).where(eq(verificationCodes.code, input.code));
 
       // Get the current username from Mojang (in case it changed)
       const username = await getUsernameFromMcid(input.uuid);
@@ -131,7 +120,7 @@ export const verifyCode = base
       logger.userAction("code_verified", input.uuid, { username });
 
       return {
-        userId: codeRecord.user.id,
+        userId: codeRecord.userId,
         username
       };
     } catch (err) {

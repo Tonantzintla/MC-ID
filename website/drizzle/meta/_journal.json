@@ -29,6 +29,13 @@
       "when": 1776172887952,
       "tag": "0003_classy_deadpool",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788093701662,
+      "tag": "0004_better-auth-1.7",
+      "breakpoints": true
     }
   ]
 }

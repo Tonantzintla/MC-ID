@@ -9,4 +9,7 @@ if (dev) {
   if (!USESEND_BASE_URL) throw new Error("USESEND_BASE_URL is not set");
 }
 
-export const usesend = USESEND_API_KEY && USESEND_BASE_URL ? new UseSend(USESEND_API_KEY || "USESEND_API_KEY", USESEND_BASE_URL || "http://localhost:3000") : null;
+export const usesend =
+  USESEND_API_KEY && USESEND_BASE_URL
+    ? new UseSend(USESEND_API_KEY || "USESEND_API_KEY", USESEND_BASE_URL || "http://localhost:3000")
+    : null;

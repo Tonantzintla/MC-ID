@@ -47,8 +47,12 @@
   let banModalOpen = $state(false);
 
   const initialRoles = $derived(user?.role ? (user.role.split(",") as UserRole[]) : []);
-  const canSaveRoles = $derived<boolean>(JSON.stringify(value.slice().sort()) !== JSON.stringify(initialRoles.slice().sort()));
-  const selectContent = $derived<string[]>(roles.filter((role) => value.includes(role.value)).map((role) => role.label));
+  const canSaveRoles = $derived<boolean>(
+    JSON.stringify(value.slice().sort()) !== JSON.stringify(initialRoles.slice().sort())
+  );
+  const selectContent = $derived<string[]>(
+    roles.filter((role) => value.includes(role.value)).map((role) => role.label)
+  );
   const banDurationInSeconds = $derived.by<number>(() => {
     if (calendarValue) {
       // The number of seconds until the ban expires. If not provided, the ban will never expire.
@@ -228,7 +232,8 @@
               <AlertDialog.Header>
                 <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
                 <AlertDialog.Description>
-                  This action will unban the user <span class="font-semibold">{user.name}</span> and restore their access to their account.
+                  This action will unban the user <span class="font-semibold">{user.name}</span> and restore their access
+                  to their account.
                 </AlertDialog.Description>
               </AlertDialog.Header>
               <AlertDialog.Footer>
@@ -317,7 +322,11 @@
                               calendarInputValue = v;
                               const date = parseDate(v, undefined, { forwardDate: true });
                               if (date) {
-                                calendarValue = new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+                                calendarValue = new CalendarDate(
+                                  date.getFullYear(),
+                                  date.getMonth() + 1,
+                                  date.getDate()
+                                );
                               } else {
                                 calendarValue = undefined;
                               }
@@ -370,7 +379,9 @@
 
                 <AlertDialog.Footer>
                   <AlertDialog.Cancel type="button">Cancel</AlertDialog.Cancel>
-                  <AlertDialog.Action disabled={!isTainted($tainted) || $submitting} class="transition-all duration-300">
+                  <AlertDialog.Action
+                    disabled={!isTainted($tainted) || $submitting}
+                    class="transition-all duration-300">
                     {#snippet child({ props })}
                       <Form.Button {...props}>
                         {#if !$submitting}

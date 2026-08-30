@@ -11,9 +11,13 @@
   <div class="@container mx-auto max-w-5xl px-6">
     <div class="text-center">
       <h2 class="text-4xl font-semibold text-balance lg:text-5xl">Built with privacy and security in mind</h2>
-      <p class="mt-4">MC-ID is designed to prioritize your privacy and security, ensuring that your account and data is protected while you enjoy a seamless user experience.</p>
+      <p class="mt-4">
+        MC-ID is designed to prioritize your privacy and security, ensuring that your account and data is protected
+        while you enjoy a seamless user experience.
+      </p>
     </div>
-    <Card class="mx-auto mt-8 grid max-w-sm divide-y overflow-hidden shadow-card/5 *:text-center md:mt-16 @min-4xl:max-w-full @min-4xl:grid-cols-3 @min-4xl:divide-x @min-4xl:divide-y-0">
+    <Card
+      class="mx-auto mt-8 grid max-w-sm divide-y overflow-hidden shadow-card/5 *:text-center md:mt-16 @min-4xl:max-w-full @min-4xl:grid-cols-3 @min-4xl:divide-x @min-4xl:divide-y-0">
       {@render featureCard({
         title: "Private",
         icon: HatGlasses,
@@ -35,7 +39,15 @@
   </div>
 </section>
 
-{#snippet featureCard({ title, icon: IconComponent, description }: { title: string; icon: typeof IconType; description: string })}
+{#snippet featureCard({
+  title,
+  icon: IconComponent,
+  description
+}: {
+  title: string;
+  icon: typeof IconType;
+  description: string;
+})}
   <div class="group shadow-card/5">
     <CardHeader class="pb-3">
       <CardDecorator>

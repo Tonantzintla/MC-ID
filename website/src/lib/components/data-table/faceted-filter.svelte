@@ -82,7 +82,11 @@
                 const filterValues = Array.from(selectedValues);
                 column?.setFilterValue(filterValues.length ? filterValues : undefined);
               }}>
-              <div class={cn("me-2 flex size-4 items-center justify-center rounded-sm border border-primary", isSelected ? "bg-primary text-primary-foreground" : "opacity-50 [&_svg]:invisible")}>
+              <div
+                class={cn(
+                  "me-2 flex size-4 items-center justify-center rounded-sm border border-primary",
+                  isSelected ? "bg-primary text-primary-foreground" : "opacity-50 [&_svg]:invisible"
+                )}>
                 <CheckIcon class="size-4" />
               </div>
               {#if option.icon}
@@ -102,7 +106,8 @@
         {#if selectedValues.size > 0}
           <Command.Separator />
           <Command.Group>
-            <Command.Item onSelect={() => column?.setFilterValue(undefined)} class="justify-center text-center">Clear filters</Command.Item>
+            <Command.Item onSelect={() => column?.setFilterValue(undefined)} class="justify-center text-center"
+              >Clear filters</Command.Item>
           </Command.Group>
         {/if}
       </Command.List>

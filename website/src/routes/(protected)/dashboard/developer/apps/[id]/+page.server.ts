@@ -1,6 +1,7 @@
 import { Scope } from "$lib/scopes";
 import { auth } from "$lib/server/auth";
-import { error, fail, redirect, type Actions } from "@sveltejs/kit";
+import type { MCIDOAuthClient } from "$lib/types/oauth";
+import { error, fail, isHttpError, redirect, type Actions } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 as zod } from "sveltekit-superforms/adapters";
 import { appSchema, deleteAppSchema } from "../schema";
@@ -10,13 +11,13 @@ export const load = (async (event) => {
   const { locals, params, request } = event;
   if (!locals.user) error(401, "Unauthorized");
   try {
-    const app = await auth.api.getOAuthClient({
+    const app = (await auth.api.getOAuthClient({
       query: {
         client_id: params.id // required
       },
       // This endpoint requires session cookies.
       headers: request.headers
-    });
+    })) as MCIDOAuthClient;
 
     if (!app) error(404, "App not found");
 
@@ -43,6 +44,7 @@ export const load = (async (event) => {
       })
     };
   } catch (err) {
+    if (isHttpError(err)) throw err;
     console.error("Error during app editing:", err);
     error(500, "Something went wrong trying to edit your app");
   }

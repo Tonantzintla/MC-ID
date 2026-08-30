@@ -14,7 +14,10 @@
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
   import { signupFormSchema, type SignupFormSchema } from "./schema";
 
-  const { data, handleSignInButtonClick }: { data: { signupForm: SuperValidated<Infer<SignupFormSchema>> }; handleSignInButtonClick: () => void } = $props();
+  const {
+    data,
+    handleSignInButtonClick
+  }: { data: { signupForm: SuperValidated<Infer<SignupFormSchema>> }; handleSignInButtonClick: () => void } = $props();
 
   let toastLoading = $state<number | string>();
   let strength = $state<ZxcvbnResult>();
@@ -78,7 +81,9 @@
         }
       }}
       class="relative mx-auto grid h-1/2 max-w-md grid-cols-1 grid-rows-1 px-4 md:px-0">
-      <div class="col-start-1 col-end-1 row-start-1 row-end-1 w-full space-y-6" out:fly={{ duration: 300, easing: cubicInOut, x: "-100%" }}>
+      <div
+        class="col-start-1 col-end-1 row-start-1 row-end-1 w-full space-y-6"
+        out:fly={{ duration: 300, easing: cubicInOut, x: "-100%" }}>
         <Form.Field {form} name="email" class="w-full">
           <Form.Control>
             {#snippet children({ props })}
@@ -93,7 +98,8 @@
           <Form.Control>
             {#snippet children({ props })}
               <Form.Label for={props.name}>Password</Form.Label>
-              <Form.Description>Your password must be at least 8 characters long and contain a mix of letters, numbers, and symbols.</Form.Description>
+              <Form.Description
+                >Your password must be at least 8 characters long and contain a mix of letters, numbers, and symbols.</Form.Description>
               <Password.Root>
                 <Password.Input {...props} bind:value={$formData["new-password"]}>
                   <Password.ToggleVisibility />
@@ -116,7 +122,8 @@
           <Form.Control>
             {#snippet children({ props })}
               <Form.Label for={props.name}>Confirm Password</Form.Label>
-              <Form.Description>Please re-enter your password to confirm it matches the one you entered above.</Form.Description>
+              <Form.Description
+                >Please re-enter your password to confirm it matches the one you entered above.</Form.Description>
               <Password.Root>
                 <Password.Input {...props} bind:value={$formData["confirm-password"]}>
                   <Password.ToggleVisibility />
@@ -140,7 +147,11 @@
   <Card.Footer>
     <p class="w-full text-center text-sm">
       <span class="opacity-50">Already have an account?</span>
-      <Button variant="link" onclick={handleSignInButtonClick} class="inline-block p-0 underline underline-offset-2 opacity-50 transition-opacity duration-300 hover:opacity-100">Sign in</Button>
+      <Button
+        variant="link"
+        onclick={handleSignInButtonClick}
+        class="inline-block p-0 underline underline-offset-2 opacity-50 transition-opacity duration-300 hover:opacity-100"
+        >Sign in</Button>
     </p>
   </Card.Footer>
 </Card.Root>

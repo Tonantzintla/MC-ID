@@ -43,7 +43,12 @@ export const requestCode = command(requestCodeSchema, async ({ username }) => {
       demo?: boolean; // Included in response if the account does not own the game.
     }>();
 
-    const hasAccount = await db.$count(minecraftAccount, and(eq(minecraftAccount.uuid, userData.id), eq(minecraftAccount.userId, locals.user.id))).then((count) => count > 0);
+    const hasAccount = await db
+      .$count(
+        minecraftAccount,
+        and(eq(minecraftAccount.uuid, userData.id), eq(minecraftAccount.userId, locals.user.id))
+      )
+      .then((count) => count > 0);
 
     if (hasAccount) {
       console.info(`An account with the username ${username} is already linked.`);

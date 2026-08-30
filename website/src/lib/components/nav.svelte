@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { resolve } from "$app/paths";
   import { page } from "$app/state";
   import type { NavItem } from "$components/app-sidebar.svelte";
   import * as Sidebar from "$components/ui/sidebar/index.js";
@@ -25,7 +24,8 @@
       {#snippet child({ props })}
         <Collapsible.Trigger {...props}>
           <div class="w-full">{title}</div>
-          <ChevronRightIcon class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible-title:rotate-90" />
+          <ChevronRightIcon
+            class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible-title:rotate-90" />
         </Collapsible.Trigger>
       {/snippet}
     </Sidebar.GroupLabel>
@@ -39,25 +39,34 @@
                   <Sidebar.MenuItem>
                     <Sidebar.MenuButton isActive={page.url.pathname.endsWith(item.url)} tooltipContent={item.name}>
                       {#snippet child({ props })}
-                        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve @typescript-eslint/no-explicit-any -->
-                        <a href={item.target === "_blank" ? item.url : resolve(item.url as any)} {...props} target={item.target}>
+                        <!-- eslint-disable svelte/no-navigation-without-resolve -->
+                        <a href={item.url} {...props} target={item.target}>
                           <item.icon />
                           <span>{item.name}</span>
                         </a>
+                        <!-- eslint-enable svelte/no-navigation-without-resolve -->
                       {/snippet}
                     </Sidebar.MenuButton>
                   </Sidebar.MenuItem>
                 {:else}
-                  <Collapsible.Root open={item.subItems.find((subItem) => page.url.pathname.includes(subItem.url)) !== undefined} class="group/collapsible">
+                  <Collapsible.Root
+                    open={item.subItems.find((subItem) => page.url.pathname.includes(subItem.url)) !== undefined}
+                    class="group/collapsible">
                     {#snippet child({ props })}
                       <Sidebar.MenuItem {...props}>
                         <Collapsible.Trigger>
                           {#snippet child({ props })}
-                            <Sidebar.MenuButton {...props} isActive={item.subItems.find((subItem) => page.url.pathname.includes(subItem.url)) !== undefined} tooltipContent={item.name} class="group-data-[state=open]/collapsible:data-[active=true]:bg-transparent">
+                            <Sidebar.MenuButton
+                              {...props}
+                              isActive={item.subItems.find((subItem) => page.url.pathname.includes(subItem.url)) !==
+                                undefined}
+                              tooltipContent={item.name}
+                              class="group-data-[state=open]/collapsible:data-[active=true]:bg-transparent">
                               <item.icon />
 
                               <span>{item.name}</span>
-                              <ChevronRightIcon class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                              <ChevronRightIcon
+                                class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                             </Sidebar.MenuButton>
                           {/snippet}
                         </Collapsible.Trigger>
@@ -70,11 +79,12 @@
                                     <Sidebar.MenuSubItem>
                                       <Sidebar.MenuSubButton isActive={page.url.pathname.endsWith(subItem.url)}>
                                         {#snippet child({ props })}
-                                          <!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
-                                          <a href={resolve(subItem.url as any)} {...props} target={subItem.target}>
+                                          <!-- eslint-disable svelte/no-navigation-without-resolve -->
+                                          <a href={subItem.url} {...props} target={subItem.target}>
                                             <subItem.icon />
                                             <span>{subItem.title}</span>
                                           </a>
+                                          <!-- eslint-enable svelte/no-navigation-without-resolve -->
                                         {/snippet}
                                       </Sidebar.MenuSubButton>
                                     </Sidebar.MenuSubItem>

@@ -56,7 +56,8 @@
           {/if}
         {:else if dataEmpty}
           <Empty.Title>No Authorization Request</Empty.Title>
-          <Empty.Description>There is no pending authorization request. If you were redirected here by an application, please try again.</Empty.Description>
+          <Empty.Description
+            >There is no pending authorization request. If you were redirected here by an application, please try again.</Empty.Description>
         {/if}
       </Empty.Header>
       {#if dataEmpty}
@@ -69,14 +70,21 @@
     <Card.Root>
       <Card.Header>
         <div class="pointer-events-none flex flex-nowrap items-center justify-center gap-4 select-none">
-          <OauthAppAvatar client_id={oauthClient?.client_id || ""} client_name={oauthClient?.client_name} logo_uri={oauthClient?.logo_uri} class="pointer-events-none size-16 rounded-none sm:size-24" />
+          <OauthAppAvatar
+            client_id={oauthClient?.client_id || ""}
+            client_name={oauthClient?.client_name}
+            logo_uri={oauthClient?.logo_uri}
+            class="pointer-events-none size-16 rounded-none sm:size-24" />
 
           <div class="flex size-12 items-center justify-center sm:size-24">
             <Ellipsis class="opacity-30" />
           </div>
 
           <Avatar.Root class="pointer-events-none size-16 rounded-none after:rounded-none after:border-0 sm:size-24">
-            <Avatar.Image src={`https://nmsr.nickac.dev/face/${primaryMcAccount.uuid}`} alt={user.name} class="rounded-none" />
+            <Avatar.Image
+              src={`https://nmsr.nickac.dev/face/${primaryMcAccount.uuid}`}
+              alt={user.name}
+              class="rounded-none" />
             <Avatar.Fallback class="rounded-none">{user.name.slice(0, 2).toUpperCase()}</Avatar.Fallback>
           </Avatar.Root>
         </div>
@@ -111,7 +119,10 @@
               This will allow the developer of {oauthClient?.client_name} to:
             </p>
             {#each scopes as scope (scope.value)}
-              {@render scopeItem({ canAccess: requestedScopes!.includes(scope.value), description: scope.consentDescription })}
+              {@render scopeItem({
+                canAccess: requestedScopes!.includes(scope.value),
+                description: scope.consentDescription
+              })}
             {/each}
           </Item.Group>
 
@@ -124,13 +135,19 @@
                 })}
               {/if}
               {#if oauthClient.client_uri}
-                {@render additionalItem({ IconComponent: Info, description: `For more information about this app, please visit: <a href="${oauthClient.client_uri}" class="underline" target="_blank" rel="noopener noreferrer">${oauthClient.client_uri}</a>` })}
+                {@render additionalItem({
+                  IconComponent: Info,
+                  description: `For more information about this app, please visit: <a href="${oauthClient.client_uri}" class="underline" target="_blank" rel="noopener noreferrer">${oauthClient.client_uri}</a>`
+                })}
               {/if}
             </div>
           {/if}
 
           <div class="rounded-lg bg-accent p-4">
-            {@render additionalItem({ IconComponent: ExternalLink, description: `Once you authorize, you will be redirected <strong>outside of MC-ID</strong>.` })}
+            {@render additionalItem({
+              IconComponent: ExternalLink,
+              description: `Once you authorize, you will be redirected <strong>outside of MC-ID</strong>.`
+            })}
             {@render additionalItem({
               IconComponent: Scale,
               description: `The developer of ${oauthClient?.client_name}${oauthClient?.client_name?.endsWith("s") ? "'" : "'s"} ${oauthClient?.policy_uri ? `<a href="${oauthClient.policy_uri}" class="underline" target="_blank" rel="noopener noreferrer">privacy policy</a>` : "privacy policy"} and ${oauthClient?.tos_uri ? `<a href="${oauthClient.tos_uri}" class="underline" target="_blank" rel="noopener noreferrer">terms of service</a>` : "terms of service"} apply to this application`
@@ -141,8 +158,16 @@
             <p class="text-sm text-muted-foreground">
               Apps can <strong><i>never</i></strong> do the following:
             </p>
-            {@render additionalItem({ IconComponent: ChevronRight, description: "Make changes to your MC-ID or Microsoft account (e.g., change your email, password, or other settings) or log into your account" })}
-            {@render additionalItem({ IconComponent: ChevronRight, description: "Make changes to your Minecraft profile (e.g., change your skin or other settings) or log into your account" })}
+            {@render additionalItem({
+              IconComponent: ChevronRight,
+              description:
+                "Make changes to your MC-ID or Microsoft account (e.g., change your email, password, or other settings) or log into your account"
+            })}
+            {@render additionalItem({
+              IconComponent: ChevronRight,
+              description:
+                "Make changes to your Minecraft profile (e.g., change your skin or other settings) or log into your account"
+            })}
           </Item.Group>
         </Card.Content>
       </ScrollArea>

@@ -1,27 +1,31 @@
+import type { ZxcvbnResult } from "@zxcvbn-ts/core";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "svelte-toolbelt";
-import type { ZxcvbnResult } from "@zxcvbn-ts/core";
 
 type ZxcvbnCoreModule = typeof import("@zxcvbn-ts/core");
-type ZxcvbnRunner = ZxcvbnCoreModule["zxcvbn"];
+type ZxcvbnRunner = InstanceType<ZxcvbnCoreModule["ZxcvbnFactory"]>;
 
 let zxcvbnRunnerPromise: Promise<ZxcvbnRunner> | null = null;
 
 const loadZxcvbnRunner = async (): Promise<ZxcvbnRunner> => {
   if (zxcvbnRunnerPromise) return zxcvbnRunnerPromise;
 
-  return Promise.all([import("@zxcvbn-ts/core"), import("@zxcvbn-ts/language-common"), import("@zxcvbn-ts/language-en")])
+  return Promise.all([
+    import("@zxcvbn-ts/core"),
+    import("@zxcvbn-ts/language-common"),
+    import("@zxcvbn-ts/language-en")
+  ])
     .then(([core, common, en]) => {
-      core.zxcvbnOptions.setOptions({
+      const options = {
         translations: en.translations,
         graphs: common.adjacencyGraphs,
         dictionary: {
           ...common.dictionary,
           ...en.dictionary
         }
-      });
+      };
 
-      return core.zxcvbn;
+      return new core.ZxcvbnFactory(options);
     })
     .catch((error: unknown) => {
       zxcvbnRunnerPromise = null;
@@ -78,7 +82,7 @@ class PasswordRootState {
 
     try {
       const zxcvbn = await loadZxcvbnRunner();
-      const result = zxcvbn(password);
+      const result = zxcvbn.check(password);
       if (requestId !== this.#requestId) return;
 
       this.strength = result;
@@ -121,7 +125,11 @@ class PasswordInputState {
       if (!this.root.passwordState.strengthMounted) return;
 
       // if the password is empty, we let the `required` attribute handle the validation
-      if (this.root.passwordState.value !== "" && !this.root.strengthLoading && (this.root.strength?.score ?? 0) < this.root.opts.minScore.current) {
+      if (
+        this.root.passwordState.value !== "" &&
+        !this.root.strengthLoading &&
+        (this.root.strength?.score ?? 0) < this.root.opts.minScore.current
+      ) {
         this.opts.ref.current?.setCustomValidity("Password is too weak");
       } else {
         this.opts.ref.current?.setCustomValidity("");
@@ -130,7 +138,11 @@ class PasswordInputState {
   }
 
   props = $derived.by(() => ({
-    "aria-invalid": !this.root.strengthLoading && (this.root.strength?.score ?? 0) < this.root.opts.minScore.current && this.root.passwordState.tainted && this.root.passwordState.strengthMounted
+    "aria-invalid":
+      !this.root.strengthLoading &&
+      (this.root.strength?.score ?? 0) < this.root.opts.minScore.current &&
+      this.root.passwordState.tainted &&
+      this.root.passwordState.strengthMounted
   }));
 }
 

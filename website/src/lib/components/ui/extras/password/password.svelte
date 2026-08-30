@@ -1,10 +1,16 @@
 <script lang="ts">
-  import { box } from "svelte-toolbelt";
+  import { cn } from "$lib/utils.js";
   import { usePassword } from "$ui/extras/password/password.svelte.js";
   import type { PasswordRootProps } from "$ui/extras/password/types";
-  import { cn } from "$lib/utils.js";
+  import { box } from "svelte-toolbelt";
 
-  let { ref = $bindable(null), hidden = $bindable(true), minScore = 3, class: className, children }: PasswordRootProps = $props();
+  let {
+    ref = $bindable(null),
+    hidden = $bindable(true),
+    minScore = 3,
+    class: className,
+    children
+  }: PasswordRootProps = $props();
 
   usePassword({
     hidden: box.with(

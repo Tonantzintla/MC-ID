@@ -8,7 +8,7 @@
   import { setContext } from "svelte";
   import SvelteSeo from "svelte-seo";
   import { Toaster, type ToasterProps } from "svelte-sonner";
-  import "../app.css";
+  import "./layout.css";
 
   const { children } = $props();
 
@@ -17,7 +17,8 @@
   let isHover = $state(new IsHover());
 
   const ogTitle = "MC-ID" as const;
-  const ogDescription = "MC-ID is a unified account system for Minecraft services, providing a seamless login experience across multiple platforms." as const;
+  const ogDescription =
+    "MC-ID is a unified account system for Minecraft services, providing a seamless login experience across multiple platforms." as const;
 
   setContext("isHover", isHover);
   initSidebarsState();

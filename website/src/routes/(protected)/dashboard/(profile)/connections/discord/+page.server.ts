@@ -17,5 +17,11 @@ export const load = (async ({ request }) => {
   }
   return {
     discordAccount: discordInfo
+      ? {
+          ...discordInfo,
+          accountId: discord!.accountId,
+          data: discordInfo.data as { avatar?: string; banner?: string; username?: string }
+        }
+      : undefined
   };
 }) satisfies PageServerLoad;

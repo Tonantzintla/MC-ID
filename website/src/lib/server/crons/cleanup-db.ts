@@ -1,5 +1,12 @@
 import { db } from "$lib/server/db";
-import { apikey, oauthAccessToken, oauthRefreshToken, session, verification, verificationCodes } from "$lib/shared/db/schema";
+import {
+  apikey,
+  oauthAccessToken,
+  oauthRefreshToken,
+  session,
+  verification,
+  verificationCodes
+} from "$lib/shared/db/schema";
 import { and, isNotNull, lt, or } from "drizzle-orm";
 import cron from "node-cron";
 
@@ -19,13 +26,17 @@ export const cleanupDbCron = cron.createTask(
         db.delete(session).where(and(isNotNull(session.expiresAt), lt(session.expiresAt, triggerTime))),
 
         // Cleanup verification codes
-        db.delete(verificationCodes).where(and(isNotNull(verificationCodes.expiration), lt(verificationCodes.expiration, triggerTime))),
+        db
+          .delete(verificationCodes)
+          .where(and(isNotNull(verificationCodes.expiration), lt(verificationCodes.expiration, triggerTime))),
 
         // Cleanup verifications
         db.delete(verification).where(and(isNotNull(verification.expiresAt), lt(verification.expiresAt, triggerTime))),
 
         // Cleanup expired OAuth access tokens
-        db.delete(oauthAccessToken).where(and(isNotNull(oauthAccessToken.expiresAt), lt(oauthAccessToken.expiresAt, triggerTime))),
+        db
+          .delete(oauthAccessToken)
+          .where(and(isNotNull(oauthAccessToken.expiresAt), lt(oauthAccessToken.expiresAt, triggerTime))),
 
         // Cleanup expired or revoked OAuth refresh tokens
         db.delete(oauthRefreshToken).where(

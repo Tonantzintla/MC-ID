@@ -1,11 +1,8 @@
 {
-  "editor.tabSize": 2,
-  "editor.detectIndentation": false,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "always",
-    "source.organizeImports": "explicit"
+    "source.fixAll.eslint": "always"
   },
   "files.associations": {
     "*.css": "tailwindcss",
@@ -14,9 +11,11 @@
   "git.autofetch": true,
   "svelte.enable-ts-plugin": true,
   "svelte.plugin.svelte.defaultScriptLanguage": "ts",
-  "tailwindCSS.classAttributes": ["class", "class:*", "class:name"],
+  "tailwindCSS.classAttributes": ["class", "class:*", "class:name", "className"],
   "tailwindCSS.classFunctions": ["clsx", "cn"],
   "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.colorDecorators": true,
+  "tailwindCSS.experimental.configFile": "./src/routes/layout.css",
   "tailwindCSS.includeLanguages": {
     "html": "html",
     "plaintext": "html",
@@ -24,10 +23,10 @@
     "typescript": "typescript",
     "svelte": "html"
   },
-  "javascript.updateImportsOnFileMove.enabled": "prompt",
-  "typescript.updateImportsOnFileMove.enabled": "prompt",
+  "js/ts.updateImportsOnFileMove.enabled": "prompt",
   "eslint.validate": ["javascript", "typescript", "svelte"],
   "prettier.documentSelectors": ["**/*.svelte"],
+  "oxc.fmt.configPath": ".oxfmtrc.json",
   "workbench.editor.customLabels.patterns": {
     // Page
     "**/routes/**/*/+page.svelte": "${dirname} - Page",

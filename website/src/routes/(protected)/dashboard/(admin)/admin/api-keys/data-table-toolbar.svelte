@@ -35,7 +35,9 @@
         <Select.Group>
           <Select.Label>Filter Column</Select.Label>
           <Select.Separator />
-          {#each table.getAllColumns().filter((col) => typeof col.accessorFn !== "undefined" && col.getCanFilter()) as column (column.id)}
+          {#each table
+            .getAllColumns()
+            .filter((col) => typeof col.accessorFn !== "undefined" && col.getCanFilter()) as column (column.id)}
             <Select.Item value={column.id} class="capitalize">
               {column.id}
             </Select.Item>

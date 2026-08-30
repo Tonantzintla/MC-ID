@@ -66,7 +66,7 @@ const protectedHandler = (async ({ event, resolve }) => {
       redirect(307, "/dashboard");
     }
   }
-  if (!locals.primaryMcAccount) {
+  if (!locals.primaryMcAccount && url.pathname !== "/logout") {
     if (route.id?.includes(protectedRouteGroupName) && !url.pathname.startsWith("/dashboard/connections/minecraft")) {
       console.info("Redirecting to Minecraft connections setup as no primary Minecraft account is linked.");
       redirect(307, "/dashboard/connections/minecraft");
@@ -88,7 +88,10 @@ const headersHandler = (async ({ event, resolve }) => {
     // Security headers for web endpoints
     response.headers.set("X-Frame-Options", "SAMEORIGIN");
     response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-    response.headers.set("Permissions-Policy", "accelerometer=(), autoplay=(), camera=(), encrypted-media=(), fullscreen=(), gyroscope=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(self), sync-xhr=(), usb=(), xr-spatial-tracking=(), geolocation=()");
+    response.headers.set(
+      "Permissions-Policy",
+      "accelerometer=(), autoplay=(), camera=(), encrypted-media=(), fullscreen=(), gyroscope=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(self), sync-xhr=(), usb=(), xr-spatial-tracking=(), geolocation=()"
+    );
 
     // Cross-Origin policies
     response.headers.set("Cross-Origin-Embedder-Policy", "unsafe-none");
@@ -101,4 +104,9 @@ const headersHandler = (async ({ event, resolve }) => {
   return response;
 }) satisfies Handle;
 
-export const handle = sequence(betterAuthHandler, betterAuthSessionHandler, protectedHandler, headersHandler) satisfies Handle;
+export const handle = sequence(
+  betterAuthHandler,
+  betterAuthSessionHandler,
+  protectedHandler,
+  headersHandler
+) satisfies Handle;

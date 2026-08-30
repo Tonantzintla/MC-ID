@@ -68,9 +68,28 @@
     })
   );
 
-  const { form: updateOauthAppFormData, enhance: updateOauthAppEnhance, tainted: updateOauthAppTainted, isTainted: updateOauthAppIsTainted, submitting: updateOauthAppSubmitting, timeout: updateOauthAppTimeout } = $derived(updateOauthAppForm);
-  const { form: deleteOauthAppFormData, enhance: deleteOauthAppEnhance, submitting: deleteOauthAppSubmitting, timeout: deleteOauthAppTimeout } = $derived(deleteOauthAppForm);
-  const { form: handleReportFormData, enhance: handleReportEnhance, tainted: handleReportTainted, isTainted: handleReportIsTainted, submitting: handleReportSubmitting, timeout: handleReportTimeout } = $derived(handleReportForm);
+  const {
+    form: updateOauthAppFormData,
+    enhance: updateOauthAppEnhance,
+    tainted: updateOauthAppTainted,
+    isTainted: updateOauthAppIsTainted,
+    submitting: updateOauthAppSubmitting,
+    timeout: updateOauthAppTimeout
+  } = $derived(updateOauthAppForm);
+  const {
+    form: deleteOauthAppFormData,
+    enhance: deleteOauthAppEnhance,
+    submitting: deleteOauthAppSubmitting,
+    timeout: deleteOauthAppTimeout
+  } = $derived(deleteOauthAppForm);
+  const {
+    form: handleReportFormData,
+    enhance: handleReportEnhance,
+    tainted: handleReportTainted,
+    isTainted: handleReportIsTainted,
+    submitting: handleReportSubmitting,
+    timeout: handleReportTimeout
+  } = $derived(handleReportForm);
 
   $effect(() => {
     updateOauthAppTimeout.subscribe((value) => {
@@ -110,7 +129,10 @@
         <Item.Header class="justify-start">Owner</Item.Header>
         <Item.Media variant="image" class="rounded-none">
           <Avatar.Root class="size-10 rounded-none after:rounded-none after:border-0">
-            <Avatar.Image src={`https://nmsr.nickac.dev/face/${oauthApp.minecraftAccount?.uuid}`} alt={oauthApp.minecraftAccount?.username} class="rounded-none" />
+            <Avatar.Image
+              src={`https://nmsr.nickac.dev/face/${oauthApp.minecraftAccount?.uuid}`}
+              alt={oauthApp.minecraftAccount?.username}
+              class="rounded-none" />
             <Avatar.Fallback class="rounded-none">
               {oauthApp.minecraftAccount?.username.slice(0, 2).toUpperCase()}
             </Avatar.Fallback>
@@ -134,7 +156,11 @@
                 </p>
               {/if}
               {#if oauthApp.minecraftAccount?.userId}
-                <Button variant="outline" href={resolve("/(protected)/dashboard/(admin)/admin/users/[userID]", { userID: oauthApp.minecraftAccount?.userId })}>Show User</Button>
+                <Button
+                  variant="outline"
+                  href={resolve("/(protected)/dashboard/(admin)/admin/users/[userID]", {
+                    userID: oauthApp.minecraftAccount?.userId
+                  })}>Show User</Button>
               {/if}
             </Item.Description>
           {/if}
@@ -151,7 +177,11 @@
           {/if}
         </Item.Header>
         <Item.Media variant="image" class="rounded-none">
-          <OauthAppAvatar client_id={oauthApp.clientId} client_name={oauthApp.name} logo_uri={oauthApp.icon} class="pointer-events-none size-10 rounded-none" />
+          <OauthAppAvatar
+            client_id={oauthApp.clientId}
+            client_name={oauthApp.name}
+            logo_uri={oauthApp.icon}
+            class="pointer-events-none size-10 rounded-none" />
         </Item.Media>
         {#if oauthApp.createdAt || oauthApp.updatedAt}
           <Item.Content class="gap-2">
@@ -176,10 +206,12 @@
         {#each Object.entries(oauthApp) as [key, value], index (index)}
           {#if !["id", "clientId", "name", "icon", "disabled", "createdAt", "updatedAt", "minecraftAccount", "oauthClientReports"].includes(key)}
             <Collapsible.Root class="group/data my-4 w-full">
-              <Collapsible.Trigger class="w-full rounded-md border p-4 text-left transition-all duration-150 ease-out group-data-[state=open]/data:rounded-b-none group-data-[state=open]/data:border-b-transparent">
+              <Collapsible.Trigger
+                class="w-full rounded-md border p-4 text-left transition-all duration-150 ease-out group-data-[state=open]/data:rounded-b-none group-data-[state=open]/data:border-b-transparent">
                 <div class="flex w-full items-center justify-between">
                   {key}
-                  <ChevronRightIcon class="inline-block size-5 text-muted-foreground transition-transform duration-150 ease-out group-data-[state=open]/data:rotate-90" />
+                  <ChevronRightIcon
+                    class="inline-block size-5 text-muted-foreground transition-transform duration-150 ease-out group-data-[state=open]/data:rotate-90" />
                 </div>
               </Collapsible.Trigger>
               <Collapsible.Content forceMount class="-mt-px rounded-b-md border border-t-0 p-4">
@@ -264,7 +296,9 @@
               </Form.Field>
               <AlertDialog.Footer>
                 <AlertDialog.Cancel type="button">Cancel</AlertDialog.Cancel>
-                <AlertDialog.Action disabled={!updateOauthAppIsTainted($updateOauthAppTainted) || $updateOauthAppSubmitting} class="transition-all duration-300">
+                <AlertDialog.Action
+                  disabled={!updateOauthAppIsTainted($updateOauthAppTainted) || $updateOauthAppSubmitting}
+                  class="transition-all duration-300">
                   {#snippet child({ props })}
                     <Form.Button {...props}>
                       {#if !$updateOauthAppSubmitting}
@@ -313,7 +347,9 @@
               <AlertDialog.Header>
                 <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
                 <AlertDialog.Description>
-                  This action cannot be undone. This will permanently delete the OAuth App <span class="font-semibold">{oauthApp.name}</span>.
+                  This action cannot be undone. This will permanently delete the OAuth App <span class="font-semibold"
+                    >{oauthApp.name}</span
+                  >.
                 </AlertDialog.Description>
               </AlertDialog.Header>
               <AlertDialog.Footer>
@@ -347,7 +383,8 @@
         {#if oauthApp.oauthClientReports.length > 0}
           {#each oauthApp.oauthClientReports as report (report.id)}
             <Collapsible.Root class="group/data my-4 w-full">
-              <Collapsible.Trigger class="w-full rounded-md border px-4 pt-4 text-left transition-all duration-150 ease-out group-data-[state=open]/data:rounded-b-none group-data-[state=open]/data:border-b-transparent">
+              <Collapsible.Trigger
+                class="w-full rounded-md border px-4 pt-4 text-left transition-all duration-150 ease-out group-data-[state=open]/data:rounded-b-none group-data-[state=open]/data:border-b-transparent">
                 <div class="flex w-full items-center justify-between">
                   <div class="flex flex-col">
                     <span>
@@ -364,13 +401,21 @@
                       Reason: <Badge variant="outline">{report.reason}</Badge>
                     </span>
                     <span class="capitalize">
-                      Status: <Badge variant={report.status === "resolved" || report.status === "dismissed" ? "default" : report.status === "under_review" ? "secondary" : report.status === "pending" ? "outline" : "default"}>{report.status}</Badge>
+                      Status: <Badge
+                        variant={report.status === "resolved" || report.status === "dismissed"
+                          ? "default"
+                          : report.status === "under_review"
+                            ? "secondary"
+                            : report.status === "pending"
+                              ? "outline"
+                              : "default"}>{report.status}</Badge>
                     </span>
                     <span>
                       Created <DateTooltip date={report.createdAt} />
                     </span>
                   </div>
-                  <ChevronRightIcon class="inline-block size-5 text-muted-foreground transition-transform duration-150 ease-out group-data-[state=open]/data:rotate-90" />
+                  <ChevronRightIcon
+                    class="inline-block size-5 text-muted-foreground transition-transform duration-150 ease-out group-data-[state=open]/data:rotate-90" />
                 </div>
               </Collapsible.Trigger>
               <Collapsible.Content forceMount class="-mt-px rounded-b-md border border-t-0 px-4 pb-4">
@@ -446,7 +491,9 @@
                                   toast.success("Report handled successfully!");
                                   handleReportModalOpen = false;
                                 } else {
-                                  toast.error(result.data.error ?? "Failed to update the report. Please check your inputs.");
+                                  toast.error(
+                                    result.data.error ?? "Failed to update the report. Please check your inputs."
+                                  );
                                 }
                               },
                               onError: async () => {
@@ -457,7 +504,8 @@
                             <AlertDialog.Header>
                               <AlertDialog.Title>Handle Report</AlertDialog.Title>
                               <AlertDialog.Description>
-                                This action will update the report <span class="font-semibold">{report.id}</span> for <span class="font-semibold">{oauthApp.name}</span>.
+                                This action will update the report <span class="font-semibold">{report.id}</span> for
+                                <span class="font-semibold">{oauthApp.name}</span>.
                               </AlertDialog.Description>
                             </AlertDialog.Header>
                             <Form.Field form={handleReportForm} name="status">
@@ -472,7 +520,10 @@
                                     <Select.Content class="capitalize">
                                       {#each REPORT_STATUSES as reportStatus, idx (idx)}
                                         {@const label = reportStatus.replace("_", " ")}
-                                        <Select.Item value={reportStatus} {label} disabled={reportStatus === $handleReportFormData.status}>
+                                        <Select.Item
+                                          value={reportStatus}
+                                          {label}
+                                          disabled={reportStatus === $handleReportFormData.status}>
                                           {label}
                                         </Select.Item>
                                       {/each}
@@ -494,7 +545,9 @@
                             </Form.Field>
                             <AlertDialog.Footer>
                               <AlertDialog.Cancel type="button">Cancel</AlertDialog.Cancel>
-                              <AlertDialog.Action disabled={!handleReportIsTainted($handleReportTainted) || $handleReportSubmitting} class="transition-all duration-300">
+                              <AlertDialog.Action
+                                disabled={!handleReportIsTainted($handleReportTainted) || $handleReportSubmitting}
+                                class="transition-all duration-300">
                                 {#snippet child({ props })}
                                   <Form.Button {...props}>
                                     {#if !$handleReportSubmitting}

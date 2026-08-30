@@ -31,7 +31,10 @@ export const actions: Actions = {
     }
 
     try {
-      auth.api.changePassword({ body: { newPassword, currentPassword, revokeOtherSessions: true }, headers: request.headers });
+      await auth.api.changePassword({
+        body: { newPassword, currentPassword, revokeOtherSessions: true },
+        headers: request.headers
+      });
       return { form, success: true };
     } catch (err) {
       console.error("Error updating password:", err);

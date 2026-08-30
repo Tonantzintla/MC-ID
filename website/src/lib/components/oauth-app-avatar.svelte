@@ -1,9 +1,8 @@
 <script lang="ts">
+  import { createBotttsNeutralAvatar } from "$lib/avatar";
   import { cn } from "$lib/utils";
   import * as Avatar from "$ui/avatar";
   import type { OAuthClient } from "@better-auth/oauth-provider";
-  import { botttsNeutral } from "@dicebear/collection";
-  import { createAvatar } from "@dicebear/core";
   import type { AvatarRootProps } from "bits-ui";
 
   type Props = {
@@ -15,12 +14,7 @@
 
   const { client_id, client_name, logo_uri, class: classList }: Props = $props();
 
-  const preMadeAvatar = $derived(
-    createAvatar(botttsNeutral, {
-      size: 128,
-      seed: client_id
-    }).toDataUri()
-  );
+  const preMadeAvatar = $derived(createBotttsNeutralAvatar(client_id).toDataUri());
 
   const avatar = $derived.by(() => {
     if (logo_uri) return `/api/internal/image-proxy?url=${encodeURIComponent(logo_uri)}`;

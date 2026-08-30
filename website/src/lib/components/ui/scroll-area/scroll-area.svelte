@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { cn, type WithoutChild } from "$utils.js";
   import { ScrollArea as ScrollAreaPrimitive } from "bits-ui";
   import { Scrollbar } from "./index.js";
-  import { cn, type WithoutChild } from "$lib/utils.js";
 
   let {
     ref = $bindable(null),
@@ -21,7 +21,10 @@
 </script>
 
 <ScrollAreaPrimitive.Root bind:ref data-slot="scroll-area" class={cn("relative", className)} {...restProps}>
-  <ScrollAreaPrimitive.Viewport bind:ref={viewportRef} data-slot="scroll-area-viewport" class="cn-scroll-area-viewport size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1">
+  <ScrollAreaPrimitive.Viewport
+    bind:ref={viewportRef}
+    data-slot="scroll-area-viewport"
+    class="cn-scroll-area-viewport size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1">
     {@render children?.()}
   </ScrollAreaPrimitive.Viewport>
   {#if orientation === "vertical" || orientation === "both"}

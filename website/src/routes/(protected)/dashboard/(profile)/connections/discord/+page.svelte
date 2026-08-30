@@ -15,19 +15,27 @@
   const account = $derived(data.discordAccount);
 </script>
 
-{#if account}
+{#if account && account.user.id}
   <div class="relative isolate flex w-full flex-col overflow-clip rounded-lg border-2 bg-card">
     <div class="relative">
       <Avatar.Root class="relative z-20 aspect-video size-full max-h-64 overflow-clip rounded-none after:border-0">
-        <Avatar.Image class="pointer-events-none size-full rounded-none object-cover select-none" src="https://cdn.discordapp.com/banners/{account.user.id}/{account.data?.banner}?size=512&animated=true" alt="{account.user?.name}'s Banner" />
+        <Avatar.Image
+          class="pointer-events-none size-full rounded-none object-cover select-none"
+          src="https://cdn.discordapp.com/banners/{account.user.id}/{account.data?.banner}?size=512&animated=true"
+          alt="{account.user?.name}'s Banner" />
         <Avatar.Fallback class="size-full rounded-none bg-muted/20">
           {#snippet child({ props })}
             <div {...props}></div>
           {/snippet}
         </Avatar.Fallback>
       </Avatar.Root>
-      <Avatar.Root class="pointer-events-none absolute bottom-0 left-4 z-30 size-44 translate-y-16 overflow-hidden rounded-full bg-card p-2 select-none after:border-0">
-        <Avatar.Image loading="lazy" class="rounded-full" src="https://cdn.discordapp.com/avatars/{account.user.id}/{account.data?.avatar}?size=256&animated=true" alt="User's Discord Avatar" />
+      <Avatar.Root
+        class="pointer-events-none absolute bottom-0 left-4 z-30 size-44 translate-y-16 overflow-hidden rounded-full bg-card p-2 select-none after:border-0">
+        <Avatar.Image
+          loading="lazy"
+          class="rounded-full"
+          src="https://cdn.discordapp.com/avatars/{account.user.id}/{account.data?.avatar}?size=256&animated=true"
+          alt="User's Discord Avatar" />
         <Avatar.Fallback class="flex items-center justify-center rounded-full bg-black bg-blend-darken select-none">
           <UserRound />
         </Avatar.Fallback>
@@ -39,7 +47,11 @@
         <span class="text-sm">{account.data?.username}</span>
         <div class="flex flex-row items-center gap-1">
           <p class="text-sm text-muted-foreground">{account.user.id}</p>
-          <CopyButton text={account.user.id.toString()} variant="ghost" size="sm" class="-my-2 text-muted-foreground hover:text-foreground" />
+          <CopyButton
+            text={String(account.user.id)}
+            variant="ghost"
+            size="sm"
+            class="-my-2 text-muted-foreground hover:text-foreground" />
         </div>
         <Button
           class="mt-4"
@@ -47,7 +59,7 @@
           onclick={() =>
             toast.promise(
               authClient.unlinkAccount({
-                providerId: "discord"
+                accountId: account.accountId
               }),
               {
                 loading: "Unlinking Discord account...",
@@ -70,7 +82,8 @@
         <MessageCircleOffIcon />
       </Empty.Media>
       <Empty.Title>No Discord Account Linked</Empty.Title>
-      <Empty.Description>You haven't linked a Discord account yet. Get started by linking your Discord account.</Empty.Description>
+      <Empty.Description
+        >You haven't linked a Discord account yet. Get started by linking your Discord account.</Empty.Description>
     </Empty.Header>
     <Empty.Content>
       <div class="flex gap-2">

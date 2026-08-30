@@ -1,12 +1,23 @@
 import { command, getRequestEvent, query } from "$app/server";
 import { minecraftKy } from "$lib/customKy";
 import { auth } from "$lib/server/auth";
-import { error } from "@sveltejs/kit";
+import { db } from "$lib/server/db";
+import { minecraftAccount } from "$lib/shared/db/schema";
+import { error, isHttpError } from "@sveltejs/kit";
+import { and, eq } from "drizzle-orm";
 import { HTTPError } from "ky";
 import { z } from "zod/v4-mini";
 
 export const syncUser = command(z.string(), async (uuid) => {
   const { request, locals } = getRequestEvent();
+  if (!locals.user) error(401, "Unauthorized");
+
+  const ownedAccount = await db.query.minecraftAccount.findFirst({
+    where: and(eq(minecraftAccount.uuid, uuid), eq(minecraftAccount.userId, locals.user.id)),
+    columns: { uuid: true }
+  });
+  if (!ownedAccount) error(403, "You can only synchronize a Minecraft account linked to your user");
+
   try {
     const response = await minecraftKy(`minecraft/profile/lookup/${uuid}`);
     const userData = await response.json<{
@@ -37,6 +48,7 @@ export const syncUser = command(z.string(), async (uuid) => {
       message: "User synced successfully"
     };
   } catch (err) {
+    if (isHttpError(err)) throw err;
     if (err instanceof HTTPError) {
       const errorData = err.data;
 

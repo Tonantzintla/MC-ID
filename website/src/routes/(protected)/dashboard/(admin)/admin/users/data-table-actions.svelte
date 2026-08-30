@@ -22,11 +22,19 @@
       <DropdownMenu.Label>Actions</DropdownMenu.Label>
       <DropdownMenu.Item>
         {#snippet child({ props })}
-          <a href={resolve("/(protected)/dashboard/(admin)/admin/users/[userID]", { userID: id })} {...props}> View user </a>
+          <a href={resolve("/(protected)/dashboard/(admin)/admin/users/[userID]", { userID: id })} {...props}>
+            View user
+          </a>
         {/snippet}
       </DropdownMenu.Item>
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
-    <DropdownMenu.Item onclick={() => toast.promise(navigator.clipboard.writeText(id), { loading: "Copying user ID...", success: "User ID copied to clipboard", error: "Failed to copy user ID" })}>Copy user ID</DropdownMenu.Item>
+    <DropdownMenu.Item
+      onclick={() =>
+        toast.promise(navigator.clipboard.writeText(id), {
+          loading: "Copying user ID...",
+          success: "User ID copied to clipboard",
+          error: "Failed to copy user ID"
+        })}>Copy user ID</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>

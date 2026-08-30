@@ -42,7 +42,11 @@
       {table.getPageCount()}
     </div>
     <div class="flex items-center space-x-2">
-      <Button variant="outline" class="hidden p-0 lg:flex" onclick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
+      <Button
+        variant="outline"
+        class="hidden p-0 lg:flex"
+        onclick={() => table.setPageIndex(0)}
+        disabled={!table.getCanPreviousPage()}>
         <span class="sr-only">Go to first page</span>
         <ChevronsLeftIcon />
       </Button>
@@ -54,7 +58,11 @@
         <span class="sr-only">Go to next page</span>
         <ChevronRightIcon />
       </Button>
-      <Button variant="outline" class="hidden p-0 lg:flex" onclick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
+      <Button
+        variant="outline"
+        class="hidden p-0 lg:flex"
+        onclick={() => table.setPageIndex(table.getPageCount() - 1)}
+        disabled={!table.getCanNextPage()}>
         <span class="sr-only">Go to last page</span>
         <ChevronsRightIcon />
       </Button>

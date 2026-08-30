@@ -1,6 +1,6 @@
 <script lang="ts">
+  import { cn } from "$utils.js";
   import { Command as CommandPrimitive, useId } from "bits-ui";
-  import { cn } from "$lib/utils.js";
 
   let {
     ref = $bindable(null),
@@ -14,7 +14,15 @@
   } = $props();
 </script>
 
-<CommandPrimitive.Group bind:ref data-slot="command-group" class={cn("overflow-hidden p-1.5 text-foreground **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:py-2 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground", className)} value={value ?? heading ?? `----${useId()}`} {...restProps}>
+<CommandPrimitive.Group
+  bind:ref
+  data-slot="command-group"
+  class={cn(
+    "overflow-hidden p-1.5 text-foreground **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:py-2 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground",
+    className
+  )}
+  value={value ?? heading ?? `----${useId()}`}
+  {...restProps}>
   {#if heading}
     <CommandPrimitive.GroupHeading class="px-2 py-1.5 text-xs font-medium text-muted-foreground">
       {heading}

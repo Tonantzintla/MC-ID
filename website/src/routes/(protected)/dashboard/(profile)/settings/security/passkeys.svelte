@@ -15,7 +15,10 @@
 <div class="relative mx-auto flex h-1/2 flex-col justify-center space-y-4 self-center px-4 md:px-0">
   <div class="space-y-2">
     <Label for="passkeys">Passkeys</Label>
-    <p class="text-sm text-muted-foreground">Passkeys are a secure and convenient way to log in without passwords. They use cryptographic keys stored on your device, making them resistant to phishing and other attacks.</p>
+    <p class="text-sm text-muted-foreground">
+      Passkeys are a secure and convenient way to log in without passwords. They use cryptographic keys stored on your
+      device, making them resistant to phishing and other attacks.
+    </p>
 
     <div class="space-y-2">
       <svelte:boundary>
@@ -68,7 +71,8 @@
                 );
               }}
               aria-label="Delete Passkey">
-              <CircleMinus class="text-destructive opacity-50 transition-opacity duration-300 group-hover:opacity-100" />
+              <CircleMinus
+                class="text-destructive opacity-50 transition-opacity duration-300 group-hover:opacity-100" />
             </Button>
           </div>
         {/each}

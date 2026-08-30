@@ -181,7 +181,9 @@ MC-ID allows developers to authenticate Minecraft players in their applications 
 });
 
 const handle: RequestHandler = async ({ request }) => {
-  const context = request.headers.get("Authorization") ? { user: { id: "test", name: "John Doe", email: "john@doe.com" } } : {};
+  const context = request.headers.get("Authorization")
+    ? { user: { id: "test", name: "John Doe", email: "john@doe.com" } }
+    : {};
 
   const { response } = await handler.handle(request, {
     prefix: "/api",

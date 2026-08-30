@@ -70,7 +70,9 @@
             <XIcon />
           </Empty.Media>
           <Empty.Title>Invalid or Missing Token</Empty.Title>
-          <Empty.Description>The token provided is either invalid or missing. Please check the link you received or request a new password reset.</Empty.Description>
+          <Empty.Description
+            >The token provided is either invalid or missing. Please check the link you received or request a new
+            password reset.</Empty.Description>
         </Empty.Header>
         <Empty.Content>
           <div class="flex gap-2">
@@ -102,12 +104,15 @@
           }
         }}
         class="relative mx-auto grid h-1/2 max-w-md grid-cols-1 grid-rows-1 px-4 md:px-0">
-        <div class="col-start-1 col-end-1 row-start-1 row-end-1 w-full space-y-6" out:fly={{ duration: 300, easing: cubicInOut, x: "-100%" }}>
+        <div
+          class="col-start-1 col-end-1 row-start-1 row-end-1 w-full space-y-6"
+          out:fly={{ duration: 300, easing: cubicInOut, x: "-100%" }}>
           <Form.Field {form} name="new-password" class="w-full">
             <Form.Control>
               {#snippet children({ props })}
                 <Form.Label for={props.name}>Password</Form.Label>
-                <Form.Description>Your password must be at least 8 characters long and contain a mix of letters, numbers, and symbols.</Form.Description>
+                <Form.Description
+                  >Your password must be at least 8 characters long and contain a mix of letters, numbers, and symbols.</Form.Description>
                 <Password.Root>
                   <Password.Input {...props} bind:value={$formData["new-password"]}>
                     <Password.ToggleVisibility />
@@ -130,7 +135,8 @@
             <Form.Control>
               {#snippet children({ props })}
                 <Form.Label for={props.name}>Confirm Password</Form.Label>
-                <Form.Description>Please re-enter your password to confirm it matches the one you entered above.</Form.Description>
+                <Form.Description
+                  >Please re-enter your password to confirm it matches the one you entered above.</Form.Description>
                 <Password.Root>
                   <Password.Input {...props} bind:value={$formData["confirm-password"]}>
                     <Password.ToggleVisibility />

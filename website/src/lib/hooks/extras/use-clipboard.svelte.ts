@@ -3,9 +3,11 @@ type Options = {
   delay: number;
 };
 
-/** Use this hook to copy text to the clipboard and show a copied state.
+/**
+ * Use this hook to copy text to the clipboard and show a copied state.
  *
  * ## Usage
+ *
  * ```svelte
  * <script lang="ts">
  * 		import { UseClipboard } from "$lib/hooks/use-clipboard.svelte";
@@ -23,7 +25,6 @@ type Options = {
  *     {/if}
  * </button>
  * ```
- *
  */
 export class UseClipboard {
   #copiedStatus = $state<"success" | "failure">();
@@ -34,11 +35,13 @@ export class UseClipboard {
     this.delay = delay;
   }
 
-  /** Copies the given text to the users clipboard.
+  /**
+   * Copies the given text to the users clipboard.
    *
    * ## Usage
+   *
    * ```ts
-   * clipboard.copy('Hello, World!');
+   * clipboard.copy("Hello, World!");
    * ```
    *
    * @param text
@@ -59,13 +62,12 @@ export class UseClipboard {
     return this.#copiedStatus;
   }
 
-  /** true when the user has just copied to the clipboard. */
+  /** True when the user has just copied to the clipboard. */
   get copied() {
     return this.#copiedStatus === "success";
   }
 
-  /**	Indicates whether a copy has occurred
-   * and gives a status of either `success` or `failure`. */
+  /** Indicates whether a copy has occurred and gives a status of either `success` or `failure`. */
   get status() {
     return this.#copiedStatus;
   }

@@ -62,7 +62,8 @@
     <Form.Control>
       {#snippet children({ props })}
         <Form.Label for={props.name}>Current Password</Form.Label>
-        <Form.Description>If you want to change your password, you need to enter your current password first.</Form.Description>
+        <Form.Description
+          >If you want to change your password, you need to enter your current password first.</Form.Description>
         <Password.Root>
           <Password.Input {...props} bind:value={$formData["current-password"]} autocomplete="current-password">
             <Password.ToggleVisibility />
@@ -80,7 +81,8 @@
     <Form.Control>
       {#snippet children({ props })}
         <Form.Label for={props.name}>New Password</Form.Label>
-        <Form.Description>Your new password must be at least 8 characters long and contain a mix of letters, numbers, and symbols.</Form.Description>
+        <Form.Description
+          >Your new password must be at least 8 characters long and contain a mix of letters, numbers, and symbols.</Form.Description>
         <Password.Root>
           <Password.Input {...props} bind:value={$formData["new-password"]} autocomplete="new-password">
             <Password.ToggleVisibility />
@@ -122,7 +124,10 @@
     </Form.Control>
   </Form.Field>
 
-  <Form.Button disabled={!isTainted($tainted) || $submitting} class="transition-all duration-300" variant={!isTainted($tainted) ? "secondary" : "default"}>
+  <Form.Button
+    disabled={!isTainted($tainted) || $submitting}
+    class="transition-all duration-300"
+    variant={!isTainted($tainted) ? "secondary" : "default"}>
     {#if !$submitting}
       Update Password
     {:else}

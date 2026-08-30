@@ -3,14 +3,14 @@
 
   export type ButtonProps = ButtonPrimitiveProps & {
     loading?: boolean;
-    onClickPromise?: (e: Parameters<MouseEventHandler<HTMLButtonElement>>[0] | Parameters<MouseEventHandler<HTMLAnchorElement>>[0]) => Promise<void>;
+    onClickPromise?: (
+      e: Parameters<MouseEventHandler<HTMLButtonElement>>[0] | Parameters<MouseEventHandler<HTMLAnchorElement>>[0]
+    ) => Promise<void>;
   };
 
   export type Size = "default" | "xs" | "sm" | "lg";
 
-  /**
-   * Map sizes to their icon/normal size variant
-   */
+  /** Map sizes to their icon/normal size variant */
   export const sizeMap = {
     default: {
       icon: "icon",
@@ -34,10 +34,20 @@
 </script>
 
 <script lang="ts">
+  import { cn } from "$lib/utils.js";
   import { Button, type ButtonProps as ButtonPrimitiveProps } from "$ui/extras/button";
   import { Spinner } from "$ui/extras/spinner";
 
-  let { ref = $bindable(null), loading: loadingProp = false, onClickPromise, onclick, disabled, children, ...restProps }: ButtonProps = $props();
+  let {
+    ref = $bindable(null),
+    loading: loadingProp = false,
+    onClickPromise,
+    onclick,
+    disabled,
+    class: className,
+    children,
+    ...restProps
+  }: ButtonProps = $props();
 
   let pending = $state(false);
 
@@ -46,6 +56,7 @@
 
 <Button
   bind:ref
+  class={cn(loading && "[&_svg:not([data-loading-icon])]:hidden", className)}
   disabled={loading || disabled}
   onclick={async (e) => {
     onclick?.(e as never);
@@ -61,7 +72,7 @@
   }}
   {...restProps}>
   {#if loading}
-    <Spinner data-icon="inline-start" />
+    <Spinner data-icon="inline-start" data-loading-icon />
   {/if}
   {@render children?.()}
 </Button>

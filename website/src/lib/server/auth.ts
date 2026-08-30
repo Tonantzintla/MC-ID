@@ -44,7 +44,8 @@ const options = {
   baseURL,
   secret: getBetterAuthSecret(),
   database: drizzleAdapter(db, {
-    provider: "pg"
+    provider: "pg",
+    transaction: true
   }),
   account: {
     accountLinking: {
@@ -113,7 +114,6 @@ const options = {
   },
   disabledPaths: ["/token"],
   plugins: [
-    sveltekitCookies(getRequestEvent),
     passkey({
       rpID: new URL(baseURL).hostname,
       rpName: "MC-ID",
@@ -181,7 +181,8 @@ export const auth = betterAuth({
         },
         session
       };
-    }, options)
+    }, options),
+    sveltekitCookies(getRequestEvent)
   ]
 });
 

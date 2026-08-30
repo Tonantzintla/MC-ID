@@ -1,32 +1,45 @@
 <script lang="ts" module>
-  import type { Snippet } from "svelte";
   import type { ButtonProps } from "$ui/extras/button";
-  import type { HTMLAttributes } from "svelte/elements";
   import type { WithChildren, WithoutChildren } from "bits-ui";
+  import type { Snippet } from "svelte";
+  import type { HTMLAttributes } from "svelte/elements";
 
-  export type CopyButtonPropsWithoutHTML = WithChildren<{
-    size?: ButtonProps["size"];
-    variant?: ButtonProps["variant"];
-    ref?: HTMLButtonElement | null;
-    text: string;
-    icon?: Snippet<[]>;
-    animationDuration?: number;
-    onCopy?: (status: "success" | "failure" | undefined) => void;
-  }>;
+  export type CopyButtonPropsWithoutHTML = WithChildren<
+    Pick<ButtonProps, "size" | "variant"> & {
+      ref?: HTMLButtonElement | null;
+      text: string;
+      icon?: Snippet<[]>;
+      animationDuration?: number;
+      onCopy?: (status: "success" | "failure" | undefined) => void;
+    }
+  >;
 
   export type CopyButtonProps = CopyButtonPropsWithoutHTML & WithoutChildren<HTMLAttributes<HTMLButtonElement>>;
 </script>
 
 <script lang="ts">
   import Button from "$components/button.svelte";
-  import { UseClipboard } from "$lib/hooks/extras/use-clipboard.svelte";
+  import { UseClipboard } from "$hooks/extras/use-clipboard.svelte";
   import { cn } from "$lib/utils.js";
   import CheckIcon from "@lucide/svelte/icons/check";
   import CopyIcon from "@lucide/svelte/icons/copy";
   import XIcon from "@lucide/svelte/icons/x";
+  import { mergeProps } from "bits-ui";
   import { scale } from "svelte/transition";
 
-  let { ref = $bindable(null), text, icon, animationDuration = 500, variant = "ghost", size = "icon", onCopy, class: className, tabindex = -1, children, ...rest }: CopyButtonProps = $props();
+  let {
+    ref = $bindable(null),
+    text,
+    icon,
+    animationDuration = 500,
+    variant = "ghost",
+    size = "icon",
+    onCopy,
+    class: className,
+    tabindex,
+    children,
+    ...rest
+  }: CopyButtonProps = $props();
 
   // this way if the user passes text then the button will be the default size
   // svelte-ignore state_referenced_locally
@@ -35,6 +48,16 @@
   }
 
   const clipboard = new UseClipboard();
+
+  const merged = $derived(
+    mergeProps(rest, {
+      onclick: async () => {
+        const status = await clipboard.copy(text);
+
+        onCopy?.(status);
+      }
+    })
+  );
 </script>
 
 <Button
@@ -45,12 +68,7 @@
   class={cn("flex items-center gap-2", className)}
   type="button"
   name="copy"
-  onclick={async () => {
-    const status = await clipboard.copy(text);
-
-    onCopy?.(status);
-  }}
-  {...rest as /* eslint-disable-line @typescript-eslint/no-explicit-any */ any}>
+  {...merged as unknown as ButtonProps}>
   {#if clipboard.status === "success"}
     <div in:scale={{ duration: animationDuration, start: 0.85 }}>
       <CheckIcon tabindex={-1} />
