@@ -64,9 +64,13 @@ export default defineConfig({
         $lib: "./src/lib",
         $params: "./src/params",
         $content: "./src/content",
-        $css: "./src/app.css",
+        $css: "./src/routes/layout.css",
         $api: "./src/api",
-        $src: "./src"
+        $src: "./src",
+        "$utils.js": "./src/lib/utils.ts",
+        $hooks: "./src/lib/hooks",
+        $actions: "./src/lib/actions",
+        $utils: "./src/lib/utils.ts"
       },
 
       typescript: {
