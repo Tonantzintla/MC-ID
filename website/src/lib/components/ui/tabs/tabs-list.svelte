@@ -18,7 +18,7 @@
 </script>
 
 <script lang="ts">
-  import { cn } from "$lib/utils.js";
+  import { cn } from "$utils.js";
   import { Tabs as TabsPrimitive } from "bits-ui";
 
   let {

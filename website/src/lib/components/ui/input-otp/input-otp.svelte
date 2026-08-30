@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn } from "$lib/utils.js";
+  import { cn } from "$utils.js";
   import { PinInput as InputOTPPrimitive } from "bits-ui";
 
   let {

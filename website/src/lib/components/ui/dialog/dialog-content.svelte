@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { cn, type WithoutChildrenOrChild } from "$lib/utils.js";
   import { Button } from "$ui/button/index.js";
+  import { cn, type WithoutChildrenOrChild } from "$utils.js";
   import XIcon from "@lucide/svelte/icons/x";
   import { Dialog as DialogPrimitive } from "bits-ui";
   import type { Snippet } from "svelte";

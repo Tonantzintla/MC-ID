@@ -6,7 +6,8 @@
     variants: {
       variant: {
         default: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-        outline: "bg-background shadow-[0_0_0_1px_var(--sidebar-border)] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_var(--sidebar-accent)]"
+        outline:
+          "bg-background shadow-[0_0_0_1px_var(--sidebar-border)] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_var(--sidebar-accent)]"
       },
       size: {
         default: "h-9 text-sm",
@@ -25,12 +26,12 @@
 </script>
 
 <script lang="ts">
-  import { mergeProps } from "bits-ui";
   import * as Tooltip from "$ui/tooltip/index.js";
-  import { cn, type WithElementRef, type WithoutChildrenOrChild } from "$lib/utils.js";
-  import { useSidebar } from "./context.svelte.js";
+  import { cn, type WithElementRef, type WithoutChildrenOrChild } from "$utils.js";
+  import { mergeProps } from "bits-ui";
   import type { ComponentProps, Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
+  import { useSidebar } from "./context.svelte.js";
 
   let {
     ref = $bindable(null),
@@ -84,7 +85,11 @@
         {@render Button({ props })}
       {/snippet}
     </Tooltip.Trigger>
-    <Tooltip.Content side="right" align="center" hidden={sidebar.state !== "collapsed" || sidebar.isMobile} {...tooltipContentProps}>
+    <Tooltip.Content
+      side="right"
+      align="center"
+      hidden={sidebar.state !== "collapsed" || sidebar.isMobile}
+      {...tooltipContentProps}>
       {#if typeof tooltipContent === "string"}
         {tooltipContent}
       {:else if tooltipContent}

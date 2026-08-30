@@ -2,7 +2,8 @@ import type { ZxcvbnResult } from "@zxcvbn-ts/core";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "svelte-toolbelt";
 
-type ZxcvbnRunner = (password: string) => ZxcvbnResult;
+type ZxcvbnCoreModule = typeof import("@zxcvbn-ts/core");
+type ZxcvbnRunner = InstanceType<ZxcvbnCoreModule["ZxcvbnFactory"]>;
 
 let zxcvbnRunnerPromise: Promise<ZxcvbnRunner> | null = null;
 
@@ -15,16 +16,16 @@ const loadZxcvbnRunner = async (): Promise<ZxcvbnRunner> => {
     import("@zxcvbn-ts/language-en")
   ])
     .then(([core, common, en]) => {
-      const zxcvbn = new core.ZxcvbnFactory({
+      const options = {
         translations: en.translations,
         graphs: common.adjacencyGraphs,
         dictionary: {
           ...common.dictionary,
           ...en.dictionary
         }
-      });
+      };
 
-      return (password: string) => zxcvbn.check(password);
+      return new core.ZxcvbnFactory(options);
     })
     .catch((error: unknown) => {
       zxcvbnRunnerPromise = null;
@@ -81,7 +82,7 @@ class PasswordRootState {
 
     try {
       const zxcvbn = await loadZxcvbnRunner();
-      const result = zxcvbn(password);
+      const result = zxcvbn.check(password);
       if (requestId !== this.#requestId) return;
 
       this.strength = result;

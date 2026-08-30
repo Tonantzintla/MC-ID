@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn, type WithoutChild } from "$lib/utils.js";
+  import { cn, type WithoutChild } from "$utils.js";
   import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
   import ChevronUpIcon from "@lucide/svelte/icons/chevron-up";
   import { Accordion as AccordionPrimitive } from "bits-ui";

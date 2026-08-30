@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { cn } from "$lib/utils.js";
   import { Input } from "$ui/input/index.js";
+  import { cn } from "$utils.js";
   import type { ComponentProps } from "svelte";
 
   let {

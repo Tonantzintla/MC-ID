@@ -22,11 +22,21 @@
       <DropdownMenu.Label>Actions</DropdownMenu.Label>
       <DropdownMenu.Item>
         {#snippet child({ props })}
-          <a href={resolve("/(protected)/dashboard/(admin)/admin/oauth-apps/[oauthAppID]", { oauthAppID: id })} {...props}> View OAuth App </a>
+          <a
+            href={resolve("/(protected)/dashboard/(admin)/admin/oauth-apps/[oauthAppID]", { oauthAppID: id })}
+            {...props}>
+            View OAuth App
+          </a>
         {/snippet}
       </DropdownMenu.Item>
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
-    <DropdownMenu.Item onclick={() => toast.promise(navigator.clipboard.writeText(id), { loading: "Copying OAuth App ID...", success: "OAuth App ID copied to clipboard", error: "Failed to copy OAuth App ID" })}>Copy OAuth App ID</DropdownMenu.Item>
+    <DropdownMenu.Item
+      onclick={() =>
+        toast.promise(navigator.clipboard.writeText(id), {
+          loading: "Copying OAuth App ID...",
+          success: "OAuth App ID copied to clipboard",
+          error: "Failed to copy OAuth App ID"
+        })}>Copy OAuth App ID</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>

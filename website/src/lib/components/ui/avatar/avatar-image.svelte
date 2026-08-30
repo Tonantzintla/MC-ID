@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn } from "$lib/utils.js";
+  import { cn } from "$utils.js";
   import { Avatar as AvatarPrimitive } from "bits-ui";
 
   let { ref = $bindable(null), class: className, ...restProps }: AvatarPrimitive.ImageProps = $props();

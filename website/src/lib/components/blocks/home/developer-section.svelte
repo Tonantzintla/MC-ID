@@ -39,11 +39,17 @@ export const auth = betterAuth({
   <div class="mx-auto max-w-6xl px-6">
     <div class="grid items-center gap-16 lg:grid-cols-2">
       <div>
-        <div class="mb-4 inline-flex items-center rounded-full border border-transparent bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground transition-colors hover:bg-secondary/80 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none">For Developers</div>
+        <div
+          class="mb-4 inline-flex items-center rounded-full border border-transparent bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground transition-colors hover:bg-secondary/80 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none">
+          For Developers
+        </div>
         <h2 class="mb-6 text-3xl font-bold tracking-tight lg:text-4xl">
           Standard OIDC & <br /> Powerful API
         </h2>
-        <p class="mb-8 text-lg text-muted-foreground">Integrate MC-ID into your application using standard OpenID Connect protocols. Compatible with any OIDC client library in any language.</p>
+        <p class="mb-8 text-lg text-muted-foreground">
+          Integrate MC-ID into your application using standard OpenID Connect protocols. Compatible with any OIDC client
+          library in any language.
+        </p>
 
         <div class="mb-8 space-y-6">
           <div class="flex gap-4">
@@ -54,7 +60,9 @@ export const auth = betterAuth({
             </div>
             <div>
               <h3 class="mb-1 font-semibold">OIDC Provider</h3>
-              <p class="text-sm text-muted-foreground">Full OpenID Connect compliance. Use existing libraries like NextAuth, Auth.js, or Passport.js.</p>
+              <p class="text-sm text-muted-foreground">
+                Full OpenID Connect compliance. Use existing libraries like NextAuth, Auth.js, or Passport.js.
+              </p>
             </div>
           </div>
 
@@ -66,7 +74,9 @@ export const auth = betterAuth({
             </div>
             <div>
               <h3 class="mb-1 font-semibold">Headless API</h3>
-              <p class="text-sm text-muted-foreground">Need more control? Use our comprehensive REST API for custom integrations and headless flows.</p>
+              <p class="text-sm text-muted-foreground">
+                Need more control? Use our comprehensive REST API for custom integrations and headless flows.
+              </p>
             </div>
           </div>
         </div>
@@ -98,7 +108,8 @@ export const auth = betterAuth({
 <section class="bg-background py-16">
   <div class="mx-auto max-w-5xl px-6">
     <h2 class="text-center text-3xl font-bold tracking-tight lg:text-4xl">MC-ID is already being used by</h2>
-    <div class="mx-auto mt-10 flex max-w-4xl flex-wrap items-center justify-center gap-x-8 gap-y-8 sm:gap-x-12 sm:gap-y-12">
+    <div
+      class="mx-auto mt-10 flex max-w-4xl flex-wrap items-center justify-center gap-x-8 gap-y-8 sm:gap-x-12 sm:gap-y-12">
       {#each servicesUsingMCID as service, index (index)}
         {@render usedBy(service)}
       {/each}
@@ -107,7 +118,10 @@ export const auth = betterAuth({
 </section>
 
 {#snippet usedBy({ src, name, link, showName = false }: Service)}
-  <a href={link} target="_blank" class="flex h-20 w-fit items-center justify-center gap-4 rounded-md border p-4 transition-opacity hover:opacity-80">
+  <a
+    href={link}
+    target="_blank"
+    class="flex h-20 w-fit items-center justify-center gap-4 rounded-md border p-4 transition-opacity hover:opacity-80">
     <Avatar.Root class="size-auto rounded-none after:rounded-none after:border-0">
       <Avatar.Image class="max-h-14 rounded-none" {src} alt="{name} logo" />
       <Avatar.Fallback class="rounded-none">{name.slice(0, 2)}</Avatar.Fallback>

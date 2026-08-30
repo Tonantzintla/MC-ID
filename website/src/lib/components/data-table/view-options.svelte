@@ -21,8 +21,12 @@
     <DropdownMenu.Group>
       <DropdownMenu.Label>Toggle columns</DropdownMenu.Label>
       <DropdownMenu.Separator />
-      {#each table.getAllColumns().filter((col) => typeof col.accessorFn !== "undefined" && col.getCanHide()) as column (column)}
-        <DropdownMenu.CheckboxItem bind:checked={() => column.getIsVisible(), (v) => column.toggleVisibility(!!v)} class="capitalize">
+      {#each table
+        .getAllColumns()
+        .filter((col) => typeof col.accessorFn !== "undefined" && col.getCanHide()) as column (column)}
+        <DropdownMenu.CheckboxItem
+          bind:checked={() => column.getIsVisible(), (v) => column.toggleVisibility(!!v)}
+          class="capitalize">
           {column.id}
         </DropdownMenu.CheckboxItem>
       {/each}

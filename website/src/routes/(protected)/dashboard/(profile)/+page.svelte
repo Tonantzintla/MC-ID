@@ -47,7 +47,8 @@
   <Card.Header>
     <Card.Title>Dashboard</Card.Title>
     <Card.Description>
-      Welcome back{#if primaryMcAccount}, {primaryMcAccount.username}{/if}! Here are some quick links to get you started.
+      Welcome back{#if primaryMcAccount}, {primaryMcAccount.username}{/if}! Here are some quick links to get you
+      started.
     </Card.Description>
   </Card.Header>
 
@@ -58,7 +59,11 @@
       <Item.Root variant="outline">
         {#snippet child({ props })}
           <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-          <a href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noreferrer" : undefined} {...props}>
+          <a
+            href={link.href}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noreferrer" : undefined}
+            {...props}>
             <Item.Media variant="icon">
               <link.icon />
             </Item.Media>

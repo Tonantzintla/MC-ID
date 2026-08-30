@@ -1,4 +1,9 @@
-import Root, { type ButtonProps, type ButtonSize, type ButtonVariant, buttonVariants } from "$ui/button/button.svelte";
+import Root, {
+  type ButtonProps,
+  type ButtonSize,
+  type ButtonVariant,
+  buttonVariants
+} from "$ui/extras/button/button.svelte";
 
 export {
   Root,

@@ -30,7 +30,17 @@
   import { appSchema, deleteAppSchema, type AppSchema, type DeleteAppSchema } from "./schema";
   import { AppFormVariant } from "./types.d";
 
-  const { data, variant }: { data: { appForm: SuperValidated<Infer<AppSchema>>; deleteAppForm: SuperValidated<Infer<DeleteAppSchema>>; appData?: OAuthClient }; variant: AppFormVariant } = $props();
+  const {
+    data,
+    variant
+  }: {
+    data: {
+      appForm: SuperValidated<Infer<AppSchema>>;
+      deleteAppForm: SuperValidated<Infer<DeleteAppSchema>>;
+      appData?: OAuthClient;
+    };
+    variant: AppFormVariant;
+  } = $props();
   const { appData } = $derived(data);
 
   let toastLoading = $state<number | string>();
@@ -72,9 +82,21 @@
     })
   );
 
-  const { form: appFormData, enhance: appEnhance, tainted: appTainted, isTainted: appIsTainted, submitting: appSubmitting, timeout: appTimeout, errors: appErrors } = $derived(appForm);
+  const {
+    form: appFormData,
+    enhance: appEnhance,
+    tainted: appTainted,
+    isTainted: appIsTainted,
+    submitting: appSubmitting,
+    timeout: appTimeout,
+    errors: appErrors
+  } = $derived(appForm);
 
-  const { form: deleteAppFormData, enhance: deleteAppEnhance, submitting: deleteAppSubmitting } = $derived(deleteAppForm);
+  const {
+    form: deleteAppFormData,
+    enhance: deleteAppEnhance,
+    submitting: deleteAppSubmitting
+  } = $derived(deleteAppForm);
 
   const debouncediconUrlValue = $state(new Debounced(() => $appFormData.logoUrl, 300));
 
@@ -180,7 +202,8 @@
   class="relative mx-auto flex h-1/2 flex-col justify-center space-y-4 self-center px-4 md:px-0">
   {#if isEdit}
     <div class="flex items-center justify-center">
-      <Avatar.Root class="pointer-events-none flex h-16 w-16 items-center justify-center rounded-none select-none after:rounded-none after:border-0">
+      <Avatar.Root
+        class="pointer-events-none flex h-16 w-16 items-center justify-center rounded-none select-none after:rounded-none after:border-0">
         <Avatar.Image src={avatar} alt="App Avatar" class="h-16 w-16 rounded-none" />
         <Avatar.Fallback class="rounded-none">{$appFormData.name.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
@@ -204,7 +227,12 @@
                   App ID
                 </Form.Label>
                 <Form.Description>This is your app's unique identifier</Form.Description>
-                <CopyButton text={$appFormData.id ?? "No ID"} size="default" variant="outline" class="w-full justify-start" id={props.name}>
+                <CopyButton
+                  text={$appFormData.id ?? "No ID"}
+                  size="default"
+                  variant="outline"
+                  class="w-full justify-start"
+                  id={props.name}>
                   <span class="font-mono text-sm font-light">{$appFormData.id}</span>
                 </CopyButton>
               {/snippet}
@@ -266,7 +294,9 @@
                   }
                 );
               }}>
-              <RefreshCw class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin" data-syncing={resettingSecret} />
+              <RefreshCw
+                class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin"
+                data-syncing={resettingSecret} />
               Reset Secret
             </Button>
           </div>
@@ -301,7 +331,9 @@
     <Form.Control>
       {#snippet children({ props })}
         <Form.Label for={props.name}>URI</Form.Label>
-        <Form.Description>This is the URI to your app's website or homepage. It will be displayed in the dashboard and used in the OAuth2 flow.</Form.Description>
+        <Form.Description
+          >This is the URI to your app's website or homepage. It will be displayed in the dashboard and used in the
+          OAuth2 flow.</Form.Description>
         <Input {...props} bind:value={$appFormData.uri} type="url" autocomplete="url" />
         <Form.FieldErrors variant="single" />
       {/snippet}
@@ -310,17 +342,29 @@
 
   <Accordion.Root type="single">
     <Accordion.Item value="redirect-uris" class="group/redirect-uris">
-      <Accordion.Trigger class="group-has-data-fs-error/redirect-uris:text-destructive">Redirect URIs</Accordion.Trigger>
+      <Accordion.Trigger class="group-has-data-fs-error/redirect-uris:text-destructive"
+        >Redirect URIs</Accordion.Trigger>
       <Accordion.Content>
         <Form.Fieldset form={appForm} name="redirectUris">
-          <Form.Description>These are the URIs that your app can redirect to after a user authorizes it. Make sure to include all the URIs that your app will use.</Form.Description>
+          <Form.Description
+            >These are the URIs that your app can redirect to after a user authorizes it. Make sure to include all the
+            URIs that your app will use.</Form.Description>
           {#each $appFormData.redirectUris as _, i (i)}
             <Form.ElementField form={appForm} name="redirectUris[{i}]">
               <Form.Control>
                 {#snippet children({ props })}
                   <div class="relative" transition:slide={{ axis: "y", duration: 300 }}>
-                    <Input {...props} bind:value={$appFormData.redirectUris[i]} class="relative" placeholder="http://localhost:3000/cb" />
-                    <Button type="button" variant="link" size="sm" class="group absolute top-1/2 right-2 h-auto -translate-y-1/2 transform p-0 text-destructive" onclick={() => ($appFormData.redirectUris = $appFormData.redirectUris.filter((_, j) => j !== i))}>
+                    <Input
+                      {...props}
+                      bind:value={$appFormData.redirectUris[i]}
+                      class="relative"
+                      placeholder="http://localhost:3000/cb" />
+                    <Button
+                      type="button"
+                      variant="link"
+                      size="sm"
+                      class="group absolute top-1/2 right-2 h-auto -translate-y-1/2 transform p-0 text-destructive"
+                      onclick={() => ($appFormData.redirectUris = $appFormData.redirectUris.filter((_, j) => j !== i))}>
                       <CircleMinus class="opacity-50 transition-opacity duration-300 group-hover:opacity-100" />
                     </Button>
                   </div>
@@ -341,23 +385,36 @@
               </div>
             {/if}
           {:else}
-            <Form.Description class="text-sm text-muted-foreground">Please fill in all the URIs before adding a new one.</Form.Description>
+            <Form.Description class="text-sm text-muted-foreground"
+              >Please fill in all the URIs before adding a new one.</Form.Description>
           {/if}
         </Form.Fieldset>
       </Accordion.Content>
     </Accordion.Item>
     <Accordion.Item value="contact-emails" class="group/contact-emails">
-      <Accordion.Trigger class="group-has-data-fs-error/contact-emails:text-destructive">Contact Emails</Accordion.Trigger>
+      <Accordion.Trigger class="group-has-data-fs-error/contact-emails:text-destructive"
+        >Contact Emails</Accordion.Trigger>
       <Accordion.Content>
         <Form.Fieldset form={appForm} name="contacts">
-          <Form.Description>These are the email addresses that we can use to contact you about your app. They will not be shared with users.</Form.Description>
+          <Form.Description
+            >These are the email addresses that we can use to contact you about your app. They will not be shared with
+            users.</Form.Description>
           {#each $appFormData.contacts as _, i (i)}
             <Form.ElementField form={appForm} name="contacts[{i}]">
               <Form.Control>
                 {#snippet children({ props })}
                   <div class="relative" transition:slide={{ axis: "y", duration: 300 }}>
-                    <Input {...props} bind:value={$appFormData.contacts[i]} class="relative" placeholder="contact@example.com" />
-                    <Button type="button" variant="link" size="sm" class="group absolute top-1/2 right-2 h-auto -translate-y-1/2 transform p-0 text-destructive" onclick={() => ($appFormData.contacts = $appFormData.contacts.filter((_, j) => j !== i))}>
+                    <Input
+                      {...props}
+                      bind:value={$appFormData.contacts[i]}
+                      class="relative"
+                      placeholder="contact@example.com" />
+                    <Button
+                      type="button"
+                      variant="link"
+                      size="sm"
+                      class="group absolute top-1/2 right-2 h-auto -translate-y-1/2 transform p-0 text-destructive"
+                      onclick={() => ($appFormData.contacts = $appFormData.contacts.filter((_, j) => j !== i))}>
                       <CircleMinus class="opacity-50 transition-opacity duration-300 group-hover:opacity-100" />
                     </Button>
                   </div>
@@ -378,7 +435,8 @@
               </div>
             {/if}
           {:else}
-            <Form.Description class="text-sm text-muted-foreground">Please fill in all the contacts before adding a new one.</Form.Description>
+            <Form.Description class="text-sm text-muted-foreground"
+              >Please fill in all the contacts before adding a new one.</Form.Description>
           {/if}
         </Form.Fieldset>
       </Accordion.Content>
@@ -433,8 +491,15 @@
           <Form.Control>
             {#snippet children({ props })}
               <Form.Label for={props.name}>Description</Form.Label>
-              <Form.Description>This is a short description of your app, it will be displayed in the dashboard.</Form.Description>
-              <Textarea {...props} class="resize-none" bind:value={$appFormData.description} bind:ref={textAreaEl} autocomplete="off" placeholder="Describe your app in a few words" />
+              <Form.Description
+                >This is a short description of your app, it will be displayed in the dashboard.</Form.Description>
+              <Textarea
+                {...props}
+                class="resize-none"
+                bind:value={$appFormData.description}
+                bind:ref={textAreaEl}
+                autocomplete="off"
+                placeholder="Describe your app in a few words" />
               <Form.FieldErrors variant="single" />
             {/snippet}
           </Form.Control>
@@ -473,7 +538,16 @@
     </Accordion.Item>
   </Accordion.Root>
 
-  <Form.Button disabled={!appIsTainted($appTainted) || urlErrors || contactErrors || $appSubmitting || (isCreate && !emailVerified)} class="capitalize transition-all duration-300" variant={!appIsTainted($appTainted) || urlErrors || contactErrors || $appSubmitting || (isCreate && !emailVerified) ? "secondary" : "default"}>
+  <Form.Button
+    disabled={!appIsTainted($appTainted) ||
+      urlErrors ||
+      contactErrors ||
+      $appSubmitting ||
+      (isCreate && !emailVerified)}
+    class="capitalize transition-all duration-300"
+    variant={!appIsTainted($appTainted) || urlErrors || contactErrors || $appSubmitting || (isCreate && !emailVerified)
+      ? "secondary"
+      : "default"}>
     {#if !$appSubmitting}
       Save
     {:else}
@@ -513,7 +587,10 @@
       </Form.Control>
     </Form.Field>
 
-    <Form.Button disabled={$deleteAppSubmitting} class="mt-2 capitalize transition-all duration-300" variant="destructive">
+    <Form.Button
+      disabled={$deleteAppSubmitting}
+      class="mt-2 capitalize transition-all duration-300"
+      variant="destructive">
       {#if !$deleteAppSubmitting}
         Delete App
       {:else}

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { cn } from "$lib/utils.js";
   import * as InputGroup from "$ui/input-group/index.js";
+  import { cn } from "$utils.js";
   import SearchIcon from "@lucide/svelte/icons/search";
   import { Command as CommandPrimitive } from "bits-ui";
 

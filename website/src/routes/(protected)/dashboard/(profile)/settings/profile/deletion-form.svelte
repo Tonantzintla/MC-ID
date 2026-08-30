@@ -61,7 +61,8 @@
     <Form.Control>
       {#snippet children({ props })}
         <Form.Label for={props.name}>Current Password</Form.Label>
-        <Form.Description>If you want to delete your account, you need to enter your current password first.</Form.Description>
+        <Form.Description
+          >If you want to delete your account, you need to enter your current password first.</Form.Description>
         <Password.Root>
           <Password.Input {...props} bind:value={$formData["current-password"]} autocomplete="current-password">
             <Password.ToggleVisibility />
@@ -88,9 +89,14 @@
     </Form.Control>
   </Form.Field>
   {#if isTainted($tainted)}
-    <p class="text-center text-destructive" transition:slide>Deleting your account is permanent and cannot be undone.</p>
+    <p class="text-center text-destructive" transition:slide>
+      Deleting your account is permanent and cannot be undone.
+    </p>
   {/if}
-  <Form.Button disabled={!isTainted($tainted) || $submitting} class="transition-all duration-300" variant={!isTainted($tainted) ? "secondary" : "destructive"}>
+  <Form.Button
+    disabled={!isTainted($tainted) || $submitting}
+    class="transition-all duration-300"
+    variant={!isTainted($tainted) ? "secondary" : "destructive"}>
     {#if !$submitting}
       Delete Account
     {:else}
