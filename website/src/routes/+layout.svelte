@@ -8,7 +8,7 @@
   import { setContext } from "svelte";
   import SvelteSeo from "svelte-seo";
   import { Toaster, type ToasterProps } from "svelte-sonner";
-  import "../app.css";
+  import "./layout.css";
 
   const { children } = $props();
 

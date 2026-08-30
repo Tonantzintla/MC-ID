@@ -11,7 +11,7 @@
   },
   "jsdoc": true,
   "sortTailwindcss": {
-    "stylesheet": "src/app.css",
+    "stylesheet": "src/routes/layout.css",
     "functions": ["cn", "clsx"],
     "attributes": ["class", "class:*", "class:name", "/.*Classes/"],
     "preserveWhitespace": false

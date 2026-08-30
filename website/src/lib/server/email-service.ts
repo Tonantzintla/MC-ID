@@ -1,6 +1,6 @@
 import { Renderer, toPlainText } from "@better-svelte-email/server";
 import { usesend } from "./usesend";
-import appStyles from "$src/app.css?raw";
+import appStyles from "$src/routes/layout.css?inline";
 
 interface EmailOptions {
   to: string;
