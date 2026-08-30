@@ -1,4 +1,4 @@
-import prettier from "@jsrepo/transform-prettier";
+import oxfmt from "@jsrepo/transform-oxfmt";
 import { defineConfig } from "jsrepo";
 
 export default defineConfig({
@@ -12,5 +12,5 @@ export default defineConfig({
     component: "$components",
     block: "$lib/components"
   },
-  transforms: [prettier()]
+  transforms: [oxfmt()]
 });
