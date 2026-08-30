@@ -15,7 +15,7 @@
   const account = $derived(data.discordAccount);
 </script>
 
-{#if account}
+{#if account && account.user.id}
   <div class="relative isolate flex w-full flex-col overflow-clip rounded-lg border-2 bg-card">
     <div class="relative">
       <Avatar.Root class="relative z-20 aspect-video size-full max-h-64 overflow-clip rounded-none after:border-0">
@@ -39,7 +39,7 @@
         <span class="text-sm">{account.data?.username}</span>
         <div class="flex flex-row items-center gap-1">
           <p class="text-sm text-muted-foreground">{account.user.id}</p>
-          <CopyButton text={account.user.id.toString()} variant="ghost" size="sm" class="-my-2 text-muted-foreground hover:text-foreground" />
+          <CopyButton text={String(account.user.id)} variant="ghost" size="sm" class="-my-2 text-muted-foreground hover:text-foreground" />
         </div>
         <Button
           class="mt-4"
@@ -47,7 +47,7 @@
           onclick={() =>
             toast.promise(
               authClient.unlinkAccount({
-                providerId: "discord"
+                accountId: account.accountId
               }),
               {
                 loading: "Unlinking Discord account...",

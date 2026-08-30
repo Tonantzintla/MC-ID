@@ -4,7 +4,7 @@
   import * as Avatar from "$ui/avatar";
   import { Button } from "$ui/button";
   import * as Card from "$ui/card";
-  import type { OAuthClient } from "@better-auth/oauth-provider";
+  import type { MCIDOAuthClient } from "$lib/types/oauth";
   import { botttsNeutral } from "@dicebear/collection";
   import { createAvatar } from "@dicebear/core";
   import AlertCircle from "@lucide/svelte/icons/alert-circle";
@@ -37,14 +37,14 @@
       <AppForm variant={AppFormVariant.CREATE} {data} />
     </Card.Content>
     <div class="grid grid-cols-1 gap-4 px-6 py-6 @lg:grid-cols-2">
-      {#each apps as app (app.id)}
+      {#each apps as app (app.client_id)}
         {@render appCard(app)}
       {/each}
     </div>
   </Card.Root>
 </div>
 
-{#snippet appCard(app: OAuthClient)}
+{#snippet appCard(app: MCIDOAuthClient)}
   {@const avatar = createAvatar(botttsNeutral, {
     size: 128,
     seed: app.client_id
@@ -65,7 +65,7 @@
         </div>
       {/if}
       <Card.Header class="my-0 items-center justify-center px-6 py-0 text-center">
-        <Card.Title class="text-lg">{app.name}</Card.Title>
+        <Card.Title class="text-lg">{app.client_name}</Card.Title>
       </Card.Header>
 
       <Card.Description class="w-full truncate px-6 text-center">

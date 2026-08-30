@@ -70,7 +70,7 @@ export const actions: Actions = {
           contacts: form.data.contacts,
           tos_uri: form.data.tosUri,
           policy_uri: form.data.policyUri,
-          type: "web",
+          application_type: "web",
           skip_consent: false,
           logo_uri: form.data.logoUrl,
           metadata: {

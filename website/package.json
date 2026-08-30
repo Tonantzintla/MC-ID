@@ -25,9 +25,9 @@
     "db:studio": "drizzle-kit studio"
   },
   "devDependencies": {
-    "@better-auth/api-key": "^1.6.10",
-    "@better-auth/oauth-provider": "^1.6.10",
-    "@better-auth/passkey": "^1.6.10",
+    "@better-auth/api-key": "^1.7.2",
+    "@better-auth/oauth-provider": "^1.7.2",
+    "@better-auth/passkey": "^1.7.2",
     "@better-svelte-email/components": "^2.0.0",
     "@better-svelte-email/server": "^2.0.0",
     "@date-fns/tz": "^1.4.1",
@@ -55,7 +55,7 @@
     "@zxcvbn-ts/core": "^3.0.4",
     "@zxcvbn-ts/language-common": "^3.0.4",
     "@zxcvbn-ts/language-en": "^3.0.2",
-    "better-auth": "^1.6.10",
+    "better-auth": "^1.7.2",
     "bits-ui": "^2.18.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

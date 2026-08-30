@@ -1,5 +1,7 @@
 import { command, getRequestEvent, query } from "$app/server";
 import { auth } from "$lib/server/auth";
+import { db } from "$lib/server/db";
+import type { MCIDOAuthClient } from "$lib/types/oauth";
 import { error } from "@sveltejs/kit";
 import { z } from "zod/v4-mini";
 
@@ -22,9 +24,16 @@ export const getConsentedApps = query(async () => {
           // This endpoint requires session cookies.
           headers: request.headers
         });
+        const storedClient = await db.query.oauthClient.findFirst({
+          where: (client, { eq }) => eq(client.clientId, consent.clientId),
+          columns: { metadata: true }
+        });
         return {
           consent,
-          publicApp: appDetails
+          publicApp: {
+            ...appDetails,
+            ...((storedClient?.metadata ?? {}) as Partial<MCIDOAuthClient>)
+          }
         };
       })
     );

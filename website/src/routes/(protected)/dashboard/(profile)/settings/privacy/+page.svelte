@@ -1,6 +1,7 @@
 <script lang="ts">
   import OauthAppAvatar from "$components/oauth-app-avatar.svelte";
   import { Scope, scopes } from "$lib/scopes";
+  import type { MCIDOAuthClient } from "$lib/types/oauth";
   import { reportReasonEnum } from "$lib/shared/db/schema/reports";
   import { cn } from "$lib/utils";
   import * as AlertDialog from "$ui/alert-dialog";
@@ -16,7 +17,7 @@
   import { Separator } from "$ui/separator";
   import { Spinner } from "$ui/spinner";
   import { Textarea } from "$ui/textarea";
-  import type { OAuthClient, OAuthConsent } from "@better-auth/oauth-provider";
+  import type { OAuthConsent } from "@better-auth/oauth-provider";
   import { tz } from "@date-fns/tz";
   import type { Icon as IconType } from "@lucide/svelte";
   import BookText from "@lucide/svelte/icons/book-text";
@@ -36,7 +37,7 @@
   import { submitReport } from "./report.remote";
 
   type SelectedAppForDeauth = {
-    app: OAuthClient;
+    app: MCIDOAuthClient;
     consent: OAuthConsent<Scope[]>;
   } | null;
 
@@ -54,7 +55,7 @@
     other: "Other"
   };
 
-  let selectedAppForInfo: OAuthClient | null = $state(null);
+  let selectedAppForInfo: MCIDOAuthClient | null = $state(null);
   let selectedAppForDeauth: SelectedAppForDeauth | null = $state(null);
   let selectedAppForReport: SelectedAppForReport | null = $state(null);
   let dialogOpen = $derived(selectedAppForInfo !== null);
