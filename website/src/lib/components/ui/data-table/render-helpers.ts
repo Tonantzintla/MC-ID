@@ -13,7 +13,7 @@ import type { Component, ComponentProps, Snippet } from "svelte";
  *   {@const { component: Component, props } = result}
  *   <Component {...props} />
  *   {/if}
- *   ```
+ *   ```;
  */
 export class RenderComponentConfig<TComponent extends Component> {
   component: TComponent;
@@ -37,7 +37,7 @@ export class RenderComponentConfig<TComponent extends Component> {
  *   {@const { snippet, params } = result}
  *   {@render snippet(params)}
  *   {/if}
- *   ```
+ *   ```;
  */
 export class RenderSnippetConfig<TProps> {
   snippet: Snippet<[TProps]>;
@@ -64,7 +64,7 @@ export class RenderSnippetConfig<TProps> {
  *       header: (header) => renderComponent(SortHeader, { label: "State", header })
  *     })
  *   ];
- *   ```
+ *   ```;
  *
  * @param component A Svelte component
  * @param props The props to pass to `component`
@@ -97,7 +97,7 @@ export function renderComponent<
  *       cell: (cell) => renderSnippet(stateSnippet, { state: cell.row.state })
  *     })
  *   ];
- *   ```
+ *   ```;
  *
  * @param snippet
  * @param params

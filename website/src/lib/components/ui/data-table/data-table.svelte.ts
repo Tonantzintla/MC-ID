@@ -30,7 +30,7 @@ import {
  *   </thead>
  *   <!-- ... -->
  *   </table>
- *   ```
+ *   ```;
  *
  * @param options Table options to create the table with.
  * @returns A reactive table object.
