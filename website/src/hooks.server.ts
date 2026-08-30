@@ -66,7 +66,7 @@ const protectedHandler = (async ({ event, resolve }) => {
       redirect(307, "/dashboard");
     }
   }
-  if (!locals.primaryMcAccount) {
+  if (!locals.primaryMcAccount && url.pathname !== "/logout") {
     if (route.id?.includes(protectedRouteGroupName) && !url.pathname.startsWith("/dashboard/connections/minecraft")) {
       console.info("Redirecting to Minecraft connections setup as no primary Minecraft account is linked.");
       redirect(307, "/dashboard/connections/minecraft");

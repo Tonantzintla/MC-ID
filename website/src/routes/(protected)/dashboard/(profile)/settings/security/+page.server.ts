@@ -31,7 +31,7 @@ export const actions: Actions = {
     }
 
     try {
-      auth.api.changePassword({
+      await auth.api.changePassword({
         body: { newPassword, currentPassword, revokeOtherSessions: true },
         headers: request.headers
       });

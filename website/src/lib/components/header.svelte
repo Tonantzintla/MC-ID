@@ -71,12 +71,13 @@
           <ul class="flex gap-8 text-sm">
             {#each menuItems as item, index (index)}
               <li>
-                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+                <!-- eslint-disable svelte/no-navigation-without-resolve -->
                 <a
                   href={item.href}
                   class="block text-accent-foreground duration-150 hover:text-muted-foreground dark:text-muted-foreground dark:hover:text-accent-foreground">
                   <span>{item.name}</span>
                 </a>
+                <!-- eslint-enable svelte/no-navigation-without-resolve -->
               </li>
             {/each}
           </ul>

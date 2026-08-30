@@ -10,7 +10,8 @@ export enum LogLevel {
 
 interface LogContext {
   userId?: string;
-  apiKey?: string;
+  apiKeyId?: string;
+  apiKeyFingerprint?: string;
   endpoint?: string;
   ip?: string;
   userAgent?: string;
@@ -26,6 +27,20 @@ class Logger {
     // Configure Pino logger
     this.pino = pino({
       level: dev ? "debug" : "info",
+      redact: {
+        paths: [
+          "apiKey",
+          "key",
+          "password",
+          "token",
+          "authorization",
+          "req.headers.authorization",
+          "req.headers.x-api-key",
+          "headers.authorization",
+          "headers.x-api-key"
+        ],
+        censor: "[REDACTED]"
+      },
       transport: dev
         ? {
             target: "pino-pretty",
@@ -112,11 +127,11 @@ class Logger {
     }
   }
 
-  authAttempt(success: boolean, identifier?: string, context?: LogContext): void {
+  authAttempt(success: boolean, apiKeyId?: string, context?: LogContext): void {
     const message = success ? "Authentication successful" : "Authentication failed";
     const logData = {
       ...context,
-      identifier,
+      apiKeyId,
       authSuccess: success,
       type: "auth_attempt"
     };

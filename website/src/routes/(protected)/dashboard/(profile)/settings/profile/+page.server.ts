@@ -29,7 +29,7 @@ export const actions: Actions = {
     const { email } = form.data;
 
     try {
-      auth.api.changeEmail({ body: { newEmail: email }, headers: request.headers });
+      await auth.api.changeEmail({ body: { newEmail: email }, headers: request.headers });
       if (locals.user) {
         locals.user.email = email;
         locals.user.emailVerified = false; // Email needs to be re-verified

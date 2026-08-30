@@ -58,7 +58,7 @@
     {#each quickLinks as link, index (index)}
       <Item.Root variant="outline">
         {#snippet child({ props })}
-          <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+          <!-- eslint-disable svelte/no-navigation-without-resolve -->
           <a
             href={link.href}
             target={link.external ? "_blank" : undefined}
@@ -81,6 +81,7 @@
               {/if}
             </Item.Actions>
           </a>
+          <!-- eslint-enable svelte/no-navigation-without-resolve -->
         {/snippet}
       </Item.Root>
     {/each}

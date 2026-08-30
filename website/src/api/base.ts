@@ -7,7 +7,6 @@ import type { RequestHeadersPluginContext } from "@orpc/server/plugins";
 type ApiKeyData = NonNullable<Awaited<ReturnType<Auth["api"]["verifyApiKey"]>>["key"]>;
 
 export interface ORPCContext extends RequestHeadersPluginContext {
-  apiKey?: string;
   apiKeyData?: ApiKeyData;
 }
 

@@ -1,8 +1,11 @@
+import { createHash } from "node:crypto";
 import type { Permissions } from "$api/utils";
 import { logger } from "$api/utils";
 import { type Auth } from "$lib/server/auth";
 import { os } from "@orpc/server";
 import { z } from "zod";
+
+const fingerprintApiKey = (apiKey: string) => createHash("sha256").update(apiKey).digest("hex").slice(0, 16);
 
 // Define auth errors in a reusable base
 export const authBase = os.errors({
@@ -50,7 +53,10 @@ export const authMiddleware = (requiredPermissions?: Permissions) =>
     });
 
     if (!key) {
-      logger.authAttempt(false, apiKey, { reason: "Invalid API key" });
+      logger.authAttempt(false, undefined, {
+        apiKeyFingerprint: fingerprintApiKey(apiKey),
+        reason: "Invalid API key"
+      });
       throw errors.UNAUTHORIZED({
         message: "The provided API key is invalid",
         data: { reason: "API key not found or invalid format" }
@@ -58,7 +64,10 @@ export const authMiddleware = (requiredPermissions?: Permissions) =>
     }
 
     if (!key.valid) {
-      logger.authAttempt(false, apiKey, { reason: "Revoked API key" });
+      logger.authAttempt(false, key.key?.id, {
+        apiKeyFingerprint: key.key ? undefined : fingerprintApiKey(apiKey),
+        reason: "Revoked API key"
+      });
       throw errors.FORBIDDEN({
         message: "This API key is not valid or doesn't have the required permissions",
         data: {
@@ -84,11 +93,10 @@ export const authMiddleware = (requiredPermissions?: Permissions) =>
       });
     }
 
-    logger.authAttempt(true, apiKey, { permissions: requiredPermissions });
+    logger.authAttempt(true, key.key.id, { permissions: requiredPermissions });
 
     return next({
       context: {
-        apiKey,
         apiKeyData: key.key
       }
     });

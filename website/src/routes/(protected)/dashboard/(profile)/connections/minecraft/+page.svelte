@@ -47,6 +47,17 @@
 
   const { form: formData, enhance, tainted, isTainted, submitting, timeout } = $derived(form);
 
+  const remoteErrorMessage = (error: unknown, fallback: string) => {
+    if (error instanceof Error) return error.message;
+    if (typeof error === "object" && error !== null && "body" in error) {
+      const body = error.body;
+      if (typeof body === "object" && body !== null && "message" in body && typeof body.message === "string") {
+        return body.message;
+      }
+    }
+    return fallback;
+  };
+
   const handleRequestCode = async () => {
     if (!mcUsername.success) return;
     loadingRequest = true;
@@ -61,11 +72,10 @@
       }
     } catch (error) {
       console.error(error);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : ((error as any)?.body?.message ?? "An unknown error occurred while requesting the verification code.");
+      const errorMessage = remoteErrorMessage(
+        error,
+        "An unknown error occurred while requesting the verification code."
+      );
       toast.error(errorMessage);
       loadingRequest = false;
     }
@@ -83,11 +93,7 @@
       }
     } catch (error) {
       console.error(error);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : ((error as any)?.body?.message ?? "An unknown error occurred while requesting the verification code.");
+      const errorMessage = remoteErrorMessage(error, "An unknown error occurred while unlinking the account.");
       toast.error(errorMessage);
       loadingRequest = false;
     }
@@ -106,11 +112,7 @@
       }
     } catch (error) {
       console.error(error);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : ((error as any)?.body?.message ?? "An unknown error occurred while requesting the verification code.");
+      const errorMessage = remoteErrorMessage(error, "An unknown error occurred while setting the primary account.");
       toast.error(errorMessage);
       loadingRequest = false;
     }
