@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Calendar as CalendarPrimitive } from "bits-ui";
-  import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
-  import { buttonVariants, type ButtonVariant } from "$ui/button/index.js";
   import { cn } from "$lib/utils.js";
+  import { buttonVariants, type ButtonVariant } from "$ui/button/index.js";
+  import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
+  import { Calendar as CalendarPrimitive } from "bits-ui";
 
   let {
     ref = $bindable(null),
@@ -19,7 +19,14 @@
   <ChevronRightIcon class={cn("size-4", className)} />
 {/snippet}
 
-<CalendarPrimitive.NextButton bind:ref class={cn(buttonVariants({ variant }), "size-(--cell-size) bg-transparent p-0 select-none disabled:opacity-50 rtl:rotate-180", className)} {...restProps}>
+<CalendarPrimitive.NextButton
+  bind:ref
+  class={cn(
+    buttonVariants({ variant }),
+    "size-(--cell-size) bg-transparent p-0 select-none disabled:opacity-50 rtl:rotate-180",
+    className
+  )}
+  {...restProps}>
   {#if children}
     {@render children?.()}
   {:else}

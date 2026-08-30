@@ -1,6 +1,6 @@
-import appStyles from "$src/app.css?raw";
 import { Renderer, toPlainText } from "@better-svelte-email/server";
 import { usesend } from "./usesend";
+import appStyles from "$src/app.css?raw";
 
 interface EmailOptions {
   to: string;
@@ -18,7 +18,14 @@ export class EmailService {
   private static readonly DEFAULT_RETRIES = 3;
   private static readonly DEFAULT_RETRY_DELAY = 1000; // 1 second
 
-  static async sendEmail({ to, subject, html, from = EmailService.DEFAULT_FROM, retries = EmailService.DEFAULT_RETRIES, retryDelay = EmailService.DEFAULT_RETRY_DELAY }: EmailOptions): Promise<{ success: boolean; error?: string }> {
+  static async sendEmail({
+    to,
+    subject,
+    html,
+    from = EmailService.DEFAULT_FROM,
+    retries = EmailService.DEFAULT_RETRIES,
+    retryDelay = EmailService.DEFAULT_RETRY_DELAY
+  }: EmailOptions): Promise<{ success: boolean; error?: string }> {
     let lastError: Error | null = null;
 
     if (!usesend) {

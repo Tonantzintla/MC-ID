@@ -61,7 +61,12 @@ export const actions: Actions = {
         db.query.minecraftAccount.findFirst({
           where: eq(minecraftAccount.uuid, userData.id)
         }),
-        db.$count(minecraftAccount, and(eq(minecraftAccount.uuid, userData.id), eq(minecraftAccount.userId, locals.user!.id))).then((count) => count > 0)
+        db
+          .$count(
+            minecraftAccount,
+            and(eq(minecraftAccount.uuid, userData.id), eq(minecraftAccount.userId, locals.user!.id))
+          )
+          .then((count) => count > 0)
       ]);
 
       if (hasAccount) {
@@ -83,7 +88,9 @@ export const actions: Actions = {
 
       return {
         success: true,
-        message: existingAccount ? "This account was already linked. We have automatically transferred it to this MC-ID account." : undefined,
+        message: existingAccount
+          ? "This account was already linked. We have automatically transferred it to this MC-ID account."
+          : undefined,
         form
       };
     } catch (err) {
@@ -116,7 +123,10 @@ export const actions: Actions = {
 };
 
 async function saveMinecraftAccount(userId: string, uuid: string, username: string, request: Request) {
-  const hasPrimary = await db.$count(minecraftAccount, and(eq(minecraftAccount.userId, userId), eq(minecraftAccount.primary, true)));
+  const hasPrimary = await db.$count(
+    minecraftAccount,
+    and(eq(minecraftAccount.userId, userId), eq(minecraftAccount.primary, true))
+  );
 
   const updateNamePromise =
     hasPrimary === 0

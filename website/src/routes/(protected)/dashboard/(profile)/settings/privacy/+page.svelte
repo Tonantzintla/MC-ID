@@ -1,8 +1,8 @@
 <script lang="ts">
   import OauthAppAvatar from "$components/oauth-app-avatar.svelte";
   import { Scope, scopes } from "$lib/scopes";
-  import type { MCIDOAuthClient } from "$lib/types/oauth";
   import { reportReasonEnum } from "$lib/shared/db/schema/reports";
+  import type { MCIDOAuthClient } from "$lib/types/oauth";
   import { cn } from "$lib/utils";
   import * as AlertDialog from "$ui/alert-dialog";
   import { Button } from "$ui/button";
@@ -92,12 +92,21 @@
                 <Item.Root variant="outline" class="flex-col items-start">
                   <div class="flex w-full flex-wrap items-center gap-4">
                     <Item.Media>
-                      <OauthAppAvatar client_id={authorization.publicApp.client_id} logo_uri={authorization.publicApp.logo_uri} client_name={authorization.publicApp.client_name} class="pointer-events-none size-10 rounded-none" />
+                      <OauthAppAvatar
+                        client_id={authorization.publicApp.client_id}
+                        logo_uri={authorization.publicApp.logo_uri}
+                        client_name={authorization.publicApp.client_name}
+                        class="pointer-events-none size-10 rounded-none" />
                     </Item.Media>
                     <Item.Content>
                       <Item.Title>{authorization.publicApp.client_name}</Item.Title>
                       <Item.Description>
-                        Authorized on {format(new Date(authorization.consent.createdAt), "Pp", { in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })} ({formatDistanceToNowStrict(new Date(authorization.consent.createdAt), { addSuffix: true, in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })})
+                        Authorized on {format(new Date(authorization.consent.createdAt), "Pp", {
+                          in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone)
+                        })} ({formatDistanceToNowStrict(new Date(authorization.consent.createdAt), {
+                          addSuffix: true,
+                          in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone)
+                        })})
                       </Item.Description>
                     </Item.Content>
                     <Item.Actions>
@@ -113,14 +122,24 @@
                           <DropdownMenu.Group>
                             <DropdownMenu.GroupHeading>{authorization.publicApp.client_name}</DropdownMenu.GroupHeading>
                             <DropdownMenu.Separator />
-                            <DropdownMenu.Item onclick={() => (selectedAppForInfo = authorization.publicApp)}>View Details</DropdownMenu.Item>
+                            <DropdownMenu.Item onclick={() => (selectedAppForInfo = authorization.publicApp)}
+                              >View Details</DropdownMenu.Item>
                             <DropdownMenu.Separator />
                             <DropdownMenu.Item
                               onclick={() => {
-                                selectedAppForReport = { app: authorization.publicApp, consent: authorization.consent as OAuthConsent<Scope[]> };
+                                selectedAppForReport = {
+                                  app: authorization.publicApp,
+                                  consent: authorization.consent as OAuthConsent<Scope[]>
+                                };
                               }}
                               class="text-destructive data-highlighted:text-destructive">Report</DropdownMenu.Item>
-                            <DropdownMenu.Item onclick={() => (selectedAppForDeauth = { app: authorization.publicApp, consent: authorization.consent as OAuthConsent<Scope[]> })} class="text-destructive data-highlighted:text-destructive">Deauthorize</DropdownMenu.Item>
+                            <DropdownMenu.Item
+                              onclick={() =>
+                                (selectedAppForDeauth = {
+                                  app: authorization.publicApp,
+                                  consent: authorization.consent as OAuthConsent<Scope[]>
+                                })}
+                              class="text-destructive data-highlighted:text-destructive">Deauthorize</DropdownMenu.Item>
                           </DropdownMenu.Group>
                         </DropdownMenu.Content>
                       </DropdownMenu.Root>
@@ -131,19 +150,31 @@
                     <Collapsible.Trigger class="w-full rounded-md border p-4">
                       <div class="flex w-full items-center justify-between">
                         Permissions
-                        <ChevronRight class="inline-block size-5 text-muted-foreground transition-transform duration-150 ease-out group-data-[state=open]/permissions:rotate-90" />
+                        <ChevronRight
+                          class="inline-block size-5 text-muted-foreground transition-transform duration-150 ease-out group-data-[state=open]/permissions:rotate-90" />
                       </div>
                       <Collapsible.Content forceMount>
                         {#snippet child({ props, open })}
                           {#if open}
-                            <div {...props} transition:slide={{ duration: 150, easing: cubicOut, axis: "y" }} class="mt-2">
+                            <div
+                              {...props}
+                              transition:slide={{ duration: 150, easing: cubicOut, axis: "y" }}
+                              class="mt-2">
                               {#each scopes as scope (scope.value)}
-                                {@render scopeItem({ canAccess: authorization.consent.scopes.includes(scope.value), description: scope.consentDescription })}
+                                {@render scopeItem({
+                                  canAccess: authorization.consent.scopes.includes(scope.value),
+                                  description: scope.consentDescription
+                                })}
                               {/each}
                             </div>
                           {:else}
                             <div class="mt-2 text-left text-sm text-muted-foreground">
-                              {authorization.consent.scopes.filter((scope) => scopes.find((s) => s.value === scope)).length} permission{authorization.consent.scopes.filter((scope) => scopes.find((s) => s.value === scope)).length !== 1 ? "s" : ""} granted
+                              {authorization.consent.scopes.filter((scope) => scopes.find((s) => s.value === scope))
+                                .length} permission{authorization.consent.scopes.filter((scope) =>
+                                scopes.find((s) => s.value === scope)
+                              ).length !== 1
+                                ? "s"
+                                : ""} granted
                             </div>
                           {/if}
                         {/snippet}
@@ -216,7 +247,11 @@
       <Dialog.Header>
         <Dialog.Title>Details for {selectedAppForInfo.client_name}</Dialog.Title>
         <Dialog.Description class="space-y-4">
-          <OauthAppAvatar client_id={selectedAppForInfo.client_id} logo_uri={selectedAppForInfo.logo_uri} client_name={selectedAppForInfo.client_name} class="pointer-events-none mx-auto size-16 rounded-none sm:size-24" />
+          <OauthAppAvatar
+            client_id={selectedAppForInfo.client_id}
+            logo_uri={selectedAppForInfo.logo_uri}
+            client_name={selectedAppForInfo.client_name}
+            class="pointer-events-none mx-auto size-16 rounded-none sm:size-24" />
 
           {#if selectedAppForInfo.description || selectedAppForInfo.client_uri}
             <Item.Group class="rounded-lg border">
@@ -227,7 +262,10 @@
                 })}
               {/if}
               {#if selectedAppForInfo.client_uri}
-                {@render additionalItem({ IconComponent: Info, description: `For more information about this app, please visit: <a href="${selectedAppForInfo.client_uri}" class="underline" target="_blank" rel="noopener noreferrer">${selectedAppForInfo.client_uri}</a>` })}
+                {@render additionalItem({
+                  IconComponent: Info,
+                  description: `For more information about this app, please visit: <a href="${selectedAppForInfo.client_uri}" class="underline" target="_blank" rel="noopener noreferrer">${selectedAppForInfo.client_uri}</a>`
+                })}
               {/if}
             </Item.Group>
           {/if}
@@ -255,7 +293,9 @@
     {#if selectedAppForDeauth}
       <AlertDialog.Header>
         <AlertDialog.Title>Deauthorize Application</AlertDialog.Title>
-        <AlertDialog.Description>This action will remove the link between your MC-ID account and {selectedAppForDeauth.app.client_name}</AlertDialog.Description>
+        <AlertDialog.Description
+          >This action will remove the link between your MC-ID account and {selectedAppForDeauth.app
+            .client_name}</AlertDialog.Description>
       </AlertDialog.Header>
       <AlertDialog.Footer>
         <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
@@ -318,7 +358,8 @@
         <Dialog.Title class="flex items-center gap-2">
           Report {selectedAppForReport.app.client_name}
         </Dialog.Title>
-        <Dialog.Description>Help us keep MC-ID safe by reporting applications that violate our policies.</Dialog.Description>
+        <Dialog.Description
+          >Help us keep MC-ID safe by reporting applications that violate our policies.</Dialog.Description>
         <Dialog.Description>Reporting an application will also revoke its access to your account.</Dialog.Description>
       </Dialog.Header>
 
@@ -339,7 +380,11 @@
 
         <div class="space-y-2">
           <Label for="report-description">Additional details (optional)</Label>
-          <Textarea id="report-description" bind:value={reportDescription} placeholder="Provide any additional context that might help us investigate this report..." rows={4} />
+          <Textarea
+            id="report-description"
+            bind:value={reportDescription}
+            placeholder="Provide any additional context that might help us investigate this report..."
+            rows={4} />
         </div>
       </div>
 

@@ -123,8 +123,14 @@ html.dark .shiki span {
   --color-sidebar-ring: var(--sidebar-ring);
 
   --font-sans: "Inter Variable", sans-serif;
-  --font-sans--font-feature-settings: "cv01", "cv02", "cv03", "cv04", "cv05", "cv06", "cv07", "cv08", "cv09", "cv10", "cv11", "cv12", "cv13", "alt-1", "alt-3", "open-4", "open-6", "open-9", "lc-l-with-tail", "simplified-u", "alt-double-s", "uc-i-with-serif", "uc-g-with-spur", "single-story-a", "compact-lc-f", "compact-lc-t";
-  --font-sans--font-feature-variant: "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "ss07", "ss08", "open-digits", "disambiguation", "disambiguation-except-zero", "round-quotes-and-commas", "square-punctuation", "square-quotes", "circled-characters", "squared-characters";
+  --font-sans--font-feature-settings:
+    "cv01", "cv02", "cv03", "cv04", "cv05", "cv06", "cv07", "cv08", "cv09", "cv10", "cv11", "cv12", "cv13", "alt-1",
+    "alt-3", "open-4", "open-6", "open-9", "lc-l-with-tail", "simplified-u", "alt-double-s", "uc-i-with-serif",
+    "uc-g-with-spur", "single-story-a", "compact-lc-f", "compact-lc-t";
+  --font-sans--font-feature-variant:
+    "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "ss07", "ss08", "open-digits", "disambiguation",
+    "disambiguation-except-zero", "round-quotes-and-commas", "square-punctuation", "square-quotes",
+    "circled-characters", "squared-characters";
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);

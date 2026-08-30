@@ -37,5 +37,9 @@ export const oauthClientReport = pgTable(
       .$onUpdate(() => new Date())
       .notNull()
   },
-  (table) => [index("report_reporter_idx").on(table.reporterId), index("report_client_idx").on(table.clientId), index("report_status_idx").on(table.status)]
+  (table) => [
+    index("report_reporter_idx").on(table.reporterId),
+    index("report_client_idx").on(table.clientId),
+    index("report_status_idx").on(table.status)
+  ]
 );

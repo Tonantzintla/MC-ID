@@ -26,7 +26,7 @@
   "js/ts.updateImportsOnFileMove.enabled": "prompt",
   "eslint.validate": ["javascript", "typescript", "svelte"],
   "prettier.documentSelectors": ["**/*.svelte"],
-    "oxc.fmt.configPath": ".oxfmtrc.json",
+  "oxc.fmt.configPath": ".oxfmtrc.json",
   "workbench.editor.customLabels.patterns": {
     // Page
     "**/routes/**/*/+page.svelte": "${dirname} - Page",

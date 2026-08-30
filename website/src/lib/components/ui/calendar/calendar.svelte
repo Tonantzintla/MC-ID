@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { cn, type WithoutChildrenOrChild } from "$lib/utils.js";
   import { isEqualMonth, type DateValue } from "@internationalized/date";
   import { Calendar as CalendarPrimitive } from "bits-ui";
-  import { cn, type WithoutChildrenOrChild } from "$lib/utils.js";
-  import * as Calendar from "./index.js";
-  import type { ButtonVariant } from "../button/button.svelte";
   import type { Snippet } from "svelte";
+  import type { ButtonVariant } from "../button/button.svelte";
+  import * as Calendar from "./index.js";
 
   let {
     ref = $bindable(null),
@@ -43,7 +43,20 @@
 Discriminated Unions + Destructing (required for bindable) do not
 get along, so we shut typescript up by casting `value` to `never`.
 -->
-<CalendarPrimitive.Root bind:value={value as never} bind:ref bind:placeholder {weekdayFormat} {disableDaysOutsideMonth} class={cn("group/calendar bg-background p-3 [--cell-radius:var(--radius-4xl)] [--cell-size:--spacing(8)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent", className)} {locale} {monthFormat} {yearFormat} {...restProps}>
+<CalendarPrimitive.Root
+  bind:value={value as never}
+  bind:ref
+  bind:placeholder
+  {weekdayFormat}
+  {disableDaysOutsideMonth}
+  class={cn(
+    "group/calendar bg-background p-3 [--cell-radius:var(--radius-4xl)] [--cell-size:--spacing(8)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
+    className
+  )}
+  {locale}
+  {monthFormat}
+  {yearFormat}
+  {...restProps}>
   {#snippet children({ months, weekdays })}
     <Calendar.Months>
       <Calendar.Nav>
@@ -53,7 +66,16 @@ get along, so we shut typescript up by casting `value` to `never`.
       {#each months as month, monthIndex (month)}
         <Calendar.Month>
           <Calendar.Header>
-            <Calendar.Caption {captionLayout} months={monthsProp} {monthFormat} {years} {yearFormat} month={month.value} bind:placeholder {locale} {monthIndex} />
+            <Calendar.Caption
+              {captionLayout}
+              months={monthsProp}
+              {monthFormat}
+              {years}
+              {yearFormat}
+              month={month.value}
+              bind:placeholder
+              {locale}
+              {monthIndex} />
           </Calendar.Header>
           <Calendar.Grid>
             <Calendar.GridHead>

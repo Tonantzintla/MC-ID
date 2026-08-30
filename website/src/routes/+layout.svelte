@@ -17,7 +17,8 @@
   let isHover = $state(new IsHover());
 
   const ogTitle = "MC-ID" as const;
-  const ogDescription = "MC-ID is a unified account system for Minecraft services, providing a seamless login experience across multiple platforms." as const;
+  const ogDescription =
+    "MC-ID is a unified account system for Minecraft services, providing a seamless login experience across multiple platforms." as const;
 
   setContext("isHover", isHover);
   initSidebarsState();

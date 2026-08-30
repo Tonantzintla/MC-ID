@@ -16,4 +16,39 @@ import Sub from "./dropdown-menu-sub.svelte";
 import Trigger from "./dropdown-menu-trigger.svelte";
 import Root from "./dropdown-menu.svelte";
 
-export { CheckboxGroup, CheckboxItem, Content, Portal, Root as DropdownMenu, CheckboxGroup as DropdownMenuCheckboxGroup, CheckboxItem as DropdownMenuCheckboxItem, Content as DropdownMenuContent, Portal as DropdownMenuPortal, Group as DropdownMenuGroup, Item as DropdownMenuItem, Label as DropdownMenuLabel, RadioGroup as DropdownMenuRadioGroup, RadioItem as DropdownMenuRadioItem, Separator as DropdownMenuSeparator, Shortcut as DropdownMenuShortcut, Sub as DropdownMenuSub, SubContent as DropdownMenuSubContent, SubTrigger as DropdownMenuSubTrigger, Trigger as DropdownMenuTrigger, GroupHeading as DropdownMenuGroupHeading, Group, GroupHeading, Item, Label, RadioGroup, RadioItem, Root, Separator, Shortcut, Sub, SubContent, SubTrigger, Trigger };
+export {
+  CheckboxGroup,
+  CheckboxItem,
+  Content,
+  Portal,
+  Root as DropdownMenu,
+  CheckboxGroup as DropdownMenuCheckboxGroup,
+  CheckboxItem as DropdownMenuCheckboxItem,
+  Content as DropdownMenuContent,
+  Portal as DropdownMenuPortal,
+  Group as DropdownMenuGroup,
+  Item as DropdownMenuItem,
+  Label as DropdownMenuLabel,
+  RadioGroup as DropdownMenuRadioGroup,
+  RadioItem as DropdownMenuRadioItem,
+  Separator as DropdownMenuSeparator,
+  Shortcut as DropdownMenuShortcut,
+  Sub as DropdownMenuSub,
+  SubContent as DropdownMenuSubContent,
+  SubTrigger as DropdownMenuSubTrigger,
+  Trigger as DropdownMenuTrigger,
+  GroupHeading as DropdownMenuGroupHeading,
+  Group,
+  GroupHeading,
+  Item,
+  Label,
+  RadioGroup,
+  RadioItem,
+  Root,
+  Separator,
+  Shortcut,
+  Sub,
+  SubContent,
+  SubTrigger,
+  Trigger
+};

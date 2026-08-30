@@ -17,7 +17,8 @@ export const load = (async ({ url, request }) => {
   if (!client_id || !scope || !scope.includes(Scope.PROFILE)) {
     return {
       error: "invalid_request",
-      error_description: `Missing required parameters: ${!client_id ? "client_id " : ""}${!scope ? "scope " : ""}${!scope?.includes(Scope.PROFILE) ? Scope.PROFILE + " scope" : ""}`.trim(),
+      error_description:
+        `Missing required parameters: ${!client_id ? "client_id " : ""}${!scope ? "scope " : ""}${!scope?.includes(Scope.PROFILE) ? Scope.PROFILE + " scope" : ""}`.trim(),
       status: 400
     };
   }

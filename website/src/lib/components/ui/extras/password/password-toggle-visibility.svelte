@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { cn } from "$lib/utils.js";
+  import { usePasswordToggleVisibility } from "$ui/extras/password/password.svelte.js";
+  import type { PasswordToggleVisibilityProps } from "$ui/extras/password/types.js";
   import { Toggle } from "$ui/extras/toggle";
   import EyeIcon from "@lucide/svelte/icons/eye";
   import EyeOffIcon from "@lucide/svelte/icons/eye-off";
-  import { usePasswordToggleVisibility } from "$ui/extras/password/password.svelte.js";
-  import type { PasswordToggleVisibilityProps } from "$ui/extras/password/types.js";
-  import { cn } from "$lib/utils.js";
 
   let { ref = $bindable(null), class: className }: PasswordToggleVisibilityProps = $props();
 

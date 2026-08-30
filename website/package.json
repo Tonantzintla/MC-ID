@@ -1,12 +1,12 @@
 {
   "name": "mc-id-website",
-  "private": true,
   "version": "0.0.1",
-  "type": "module",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/Tonantzintla/MC-ID.git"
   },
+  "type": "module",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -23,6 +23,13 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@node-rs/argon2": "^2.1.0",
+    "chrono-node": "^2.10.1",
+    "drizzle-orm": "^0.45.2",
+    "node-cron": "^4.6.0",
+    "postgres": "^3.4.9"
   },
   "devDependencies": {
     "@better-auth/api-key": "^1.7.2",
@@ -94,19 +101,12 @@
     "vite": "^8.2.2",
     "zod": "4.5.2"
   },
-  "dependencies": {
-    "@node-rs/argon2": "^2.1.0",
-    "chrono-node": "^2.10.1",
-    "drizzle-orm": "^0.45.2",
-    "node-cron": "^4.6.0",
-    "postgres": "^3.4.9"
-  },
   "engines": {
-    "node": "^24",
-    "pnpm": "^11",
+    "bun": "forbidden, use pnpm instead",
     "deno": "forbidden, use node instead",
+    "node": "^24",
     "npm": "forbidden, use pnpm instead",
-    "yarn": "forbidden, use pnpm instead",
-    "bun": "forbidden, use pnpm instead"
+    "pnpm": "^11",
+    "yarn": "forbidden, use pnpm instead"
   }
 }

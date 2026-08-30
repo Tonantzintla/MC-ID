@@ -24,7 +24,8 @@
 <Card.Root class="w-full border-destructive/10 bg-destructive/5">
   <Card.Header>
     <Card.Title>Danger Zone</Card.Title>
-    <Card.Description>This is the last chance to turn back. Once you delete your account, there is no going back. Please be certain.</Card.Description>
+    <Card.Description
+      >This is the last chance to turn back. Once you delete your account, there is no going back. Please be certain.</Card.Description>
   </Card.Header>
 
   <Separator class="bg-destructive/10" />

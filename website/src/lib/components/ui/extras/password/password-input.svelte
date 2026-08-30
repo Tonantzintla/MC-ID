@@ -1,11 +1,17 @@
 <script lang="ts">
   import { cn } from "$lib/utils.js";
-  import { box, mergeProps } from "svelte-toolbelt";
+  import { Input } from "$ui/extras/input";
   import { usePasswordInput } from "$ui/extras/password/password.svelte.js";
   import type { PasswordInputProps } from "$ui/extras/password/types.js";
-  import { Input } from "$ui/extras/input";
+  import { box, mergeProps } from "svelte-toolbelt";
 
-  let { ref = $bindable(null), value = $bindable(""), class: className, children, ...rest }: PasswordInputProps = $props();
+  let {
+    ref = $bindable(null),
+    value = $bindable(""),
+    class: className,
+    children,
+    ...rest
+  }: PasswordInputProps = $props();
 
   const state = usePasswordInput({
     value: box.with(

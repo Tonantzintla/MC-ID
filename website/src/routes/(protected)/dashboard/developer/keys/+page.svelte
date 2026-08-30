@@ -42,7 +42,9 @@
     <Alert.Root>
       <AlertCircle class="h-4 w-4" />
       <Alert.Title>Email Verification Required</Alert.Title>
-      <Alert.Description>You must verify your email address before you can create API keys. Please check your inbox for a verification email.</Alert.Description>
+      <Alert.Description
+        >You must verify your email address before you can create API keys. Please check your inbox for a verification
+        email.</Alert.Description>
     </Alert.Root>
   {/if}
   <Alert.Root class="flex items-start gap-3">
@@ -51,11 +53,16 @@
       <Alert.Title>Heads up!</Alert.Title>
       <Alert.Description>
         <p>API keys are for when you want to access our API directly, aka Headless mode.</p>
-        <p>Headless mode is not recommended for most users. Check our documentation for the differences between Headless and our standard mode.</p>
+        <p>
+          Headless mode is not recommended for most users. Check our documentation for the differences between Headless
+          and our standard mode.
+        </p>
       </Alert.Description>
     </div>
   </Alert.Root>
-  <Card.Root class="w-full bg-background data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[disabled=true]:select-none" data-disabled={!emailVerified}>
+  <Card.Root
+    class="w-full bg-background data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[disabled=true]:select-none"
+    data-disabled={!emailVerified}>
     <Card.Header>
       <Card.Title>API Keys</Card.Title>
       <Card.Description>Manage your API Keys</Card.Description>
@@ -124,7 +131,8 @@
       <Trash2 class="opacity-50 transition-opacity duration-300 group-hover:opacity-100 hover:text-destructive" />
     </Button>
     <div class="bg-(--bgColor,transparent)" style:--bgColor={avatar.toJSON().options.backgroundColor?.[0]}>
-      <Avatar.Root class="pointer-events-none mx-auto flex size-40 flex-shrink-0 justify-center rounded-none select-none after:rounded-none after:border-0">
+      <Avatar.Root
+        class="pointer-events-none mx-auto flex size-40 flex-shrink-0 justify-center rounded-none select-none after:rounded-none after:border-0">
         <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full rounded-none" />
         <Avatar.Fallback class="rounded-none">{apiKey.name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
@@ -138,7 +146,8 @@
         <Alert.Root class="mt-2">
           <AlertCircle class="h-4 w-4" />
           <Alert.Title>Important!</Alert.Title>
-          <Alert.Description>This is the only time you will see your API key. Make sure to copy it now and store it securely.</Alert.Description>
+          <Alert.Description
+            >This is the only time you will see your API key. Make sure to copy it now and store it securely.</Alert.Description>
         </Alert.Root>
 
         <Password.Root class="w-full">
@@ -153,7 +162,12 @@
     <Card.Footer>
       {#if apiKey.createdAt && apiKey.updatedAt}
         {@const isSameTime = new Date(apiKey.createdAt).getTime() === new Date(apiKey.updatedAt).getTime()}
-        <Card.Description class="mx-auto text-xs">{isSameTime ? "Created" : "Updated"} {formatDistanceStrict(isSameTime ? apiKey.createdAt : apiKey.updatedAt, currentTime, { addSuffix: true, in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })}</Card.Description>
+        <Card.Description class="mx-auto text-xs"
+          >{isSameTime ? "Created" : "Updated"}
+          {formatDistanceStrict(isSameTime ? apiKey.createdAt : apiKey.updatedAt, currentTime, {
+            addSuffix: true,
+            in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone)
+          })}</Card.Description>
       {/if}
     </Card.Footer>
   </Card.Root>

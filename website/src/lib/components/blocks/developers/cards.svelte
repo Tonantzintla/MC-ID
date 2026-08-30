@@ -11,7 +11,10 @@
   <div class="@container mx-auto max-w-5xl px-6">
     <div class="text-center">
       <h2 class="text-4xl font-semibold text-balance lg:text-5xl">Built with developers in mind</h2>
-      <p class="mt-4">MC-ID is designed to prioritize your developer experience, ensuring it covers all your needs while being simple and easy to integrate.</p>
+      <p class="mt-4">
+        MC-ID is designed to prioritize your developer experience, ensuring it covers all your needs while being simple
+        and easy to integrate.
+      </p>
     </div>
     <div class="mx-auto mt-8 grid max-w-sm gap-4 md:mt-16 @min-4xl:max-w-full @min-4xl:grid-cols-3">
       {@render featureCard({
@@ -35,12 +38,28 @@
   </div>
 </section>
 
-{#snippet featureCard({ title, icon: IconComponent, description }: { title: string; icon: typeof IconType; description: string })}
+{#snippet featureCard({
+  title,
+  icon: IconComponent,
+  description
+}: {
+  title: string;
+  icon: typeof IconType;
+  description: string;
+})}
   <Card class="group relative mx-auto overflow-hidden rounded-none border shadow-card/5 *:text-center">
-    <span class="absolute -top-px -left-px block size-2 border-white" style="border-top-width: 2px; border-left-width: 2px;"></span>
-    <span class="absolute -top-px -right-px block size-2 border-white" style="border-top-width: 2px; border-right-width: 2px;"></span>
-    <span class="absolute -bottom-px -left-px block size-2 border-white" style="border-bottom-width: 2px; border-left-width: 2px;"></span>
-    <span class="absolute -right-px -bottom-px block size-2 border-white" style="border-bottom-width: 2px; border-right-width: 2px;"></span>
+    <span
+      class="absolute -top-px -left-px block size-2 border-white"
+      style="border-top-width: 2px; border-left-width: 2px;"></span>
+    <span
+      class="absolute -top-px -right-px block size-2 border-white"
+      style="border-top-width: 2px; border-right-width: 2px;"></span>
+    <span
+      class="absolute -bottom-px -left-px block size-2 border-white"
+      style="border-bottom-width: 2px; border-left-width: 2px;"></span>
+    <span
+      class="absolute -right-px -bottom-px block size-2 border-white"
+      style="border-bottom-width: 2px; border-right-width: 2px;"></span>
 
     <CardHeader>
       <CardDecorator>

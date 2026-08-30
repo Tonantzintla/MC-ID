@@ -1,8 +1,8 @@
-import type { Snippet } from "svelte";
-import type { ButtonProps } from "$ui/extras/button";
 import type { UseClipboard } from "$lib/hooks/extras/use-clipboard.svelte";
-import type { HTMLAttributes } from "svelte/elements";
+import type { ButtonProps } from "$ui/extras/button";
 import type { WithChildren, WithoutChildren } from "bits-ui";
+import type { Snippet } from "svelte";
+import type { HTMLAttributes } from "svelte/elements";
 
 export type CopyButtonPropsWithoutHTML = WithChildren<{
   size?: ButtonProps["size"];

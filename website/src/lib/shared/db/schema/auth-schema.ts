@@ -61,7 +61,10 @@ export const account = pgTable(
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull()
   },
-  (table) => [uniqueIndex("account_issuer_accountId_uidx").on(table.issuer, table.accountId), index("account_userId_idx").on(table.userId)]
+  (table) => [
+    uniqueIndex("account_issuer_accountId_uidx").on(table.issuer, table.accountId),
+    index("account_userId_idx").on(table.userId)
+  ]
 );
 
 export const verification = pgTable(
@@ -184,7 +187,11 @@ export const oauthClientResource = pgTable(
     metadata: jsonb("metadata"),
     createdAt: timestamp("created_at")
   },
-  (table) => [uniqueIndex("oauthClientResource_clientId_resourceId_uidx").on(table.clientId, table.resourceId), index("oauthClientResource_clientId_idx").on(table.clientId), index("oauthClientResource_resourceId_idx").on(table.resourceId)]
+  (table) => [
+    uniqueIndex("oauthClientResource_clientId_resourceId_uidx").on(table.clientId, table.resourceId),
+    index("oauthClientResource_clientId_idx").on(table.clientId),
+    index("oauthClientResource_resourceId_idx").on(table.resourceId)
+  ]
 );
 
 export const oauthRefreshToken = pgTable(
@@ -215,7 +222,12 @@ export const oauthRefreshToken = pgTable(
     confirmation: jsonb("confirmation"),
     scopes: text("scopes").array().notNull()
   },
-  (table) => [index("oauthRefreshToken_clientId_idx").on(table.clientId), index("oauthRefreshToken_sessionId_idx").on(table.sessionId), index("oauthRefreshToken_userId_idx").on(table.userId), index("oauthRefreshToken_authorizationCodeId_idx").on(table.authorizationCodeId)]
+  (table) => [
+    index("oauthRefreshToken_clientId_idx").on(table.clientId),
+    index("oauthRefreshToken_sessionId_idx").on(table.sessionId),
+    index("oauthRefreshToken_userId_idx").on(table.userId),
+    index("oauthRefreshToken_authorizationCodeId_idx").on(table.authorizationCodeId)
+  ]
 );
 
 export const oauthAccessToken = pgTable(
@@ -243,7 +255,13 @@ export const oauthAccessToken = pgTable(
     confirmation: jsonb("confirmation"),
     scopes: text("scopes").array().notNull()
   },
-  (table) => [index("oauthAccessToken_clientId_idx").on(table.clientId), index("oauthAccessToken_sessionId_idx").on(table.sessionId), index("oauthAccessToken_userId_idx").on(table.userId), index("oauthAccessToken_authorizationCodeId_idx").on(table.authorizationCodeId), index("oauthAccessToken_refreshId_idx").on(table.refreshId)]
+  (table) => [
+    index("oauthAccessToken_clientId_idx").on(table.clientId),
+    index("oauthAccessToken_sessionId_idx").on(table.sessionId),
+    index("oauthAccessToken_userId_idx").on(table.userId),
+    index("oauthAccessToken_authorizationCodeId_idx").on(table.authorizationCodeId),
+    index("oauthAccessToken_refreshId_idx").on(table.refreshId)
+  ]
 );
 
 export const oauthConsent = pgTable("oauth_consent", {
@@ -291,7 +309,11 @@ export const apikey = pgTable(
     permissions: text("permissions"),
     metadata: text("metadata")
   },
-  (table) => [index("apikey_configId_idx").on(table.configId), index("apikey_referenceId_idx").on(table.referenceId), index("apikey_key_idx").on(table.key)]
+  (table) => [
+    index("apikey_configId_idx").on(table.configId),
+    index("apikey_referenceId_idx").on(table.referenceId),
+    index("apikey_key_idx").on(table.key)
+  ]
 );
 
 export const minecraftAccount = pgTable("minecraft_account", {

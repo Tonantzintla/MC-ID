@@ -48,8 +48,20 @@
     })
   );
 
-  const { form: updateKeyFormData, enhance: updateKeyEnhance, tainted: updateKeyTainted, isTainted: updateKeyIsTainted, submitting: updateKeySubmitting, timeout: updateKeyTimeout } = $derived(updateKeyForm);
-  const { form: deleteKeyFormData, enhance: deleteKeyEnhance, submitting: deleteKeySubmitting, timeout: deleteKeyTimeout } = $derived(deleteKeyForm);
+  const {
+    form: updateKeyFormData,
+    enhance: updateKeyEnhance,
+    tainted: updateKeyTainted,
+    isTainted: updateKeyIsTainted,
+    submitting: updateKeySubmitting,
+    timeout: updateKeyTimeout
+  } = $derived(updateKeyForm);
+  const {
+    form: deleteKeyFormData,
+    enhance: deleteKeyEnhance,
+    submitting: deleteKeySubmitting,
+    timeout: deleteKeyTimeout
+  } = $derived(deleteKeyForm);
 
   $effect(() => {
     updateKeyTimeout.subscribe((value) => {
@@ -81,7 +93,10 @@
         <Item.Header class="justify-start">Owner</Item.Header>
         <Item.Media variant="image" class="rounded-none">
           <Avatar.Root class="size-10 rounded-none after:rounded-none after:border-0">
-            <Avatar.Image src={`https://nmsr.nickac.dev/face/${apiKey.minecraftAccount.uuid}`} alt={apiKey.minecraftAccount.username} class="rounded-none" />
+            <Avatar.Image
+              src={`https://nmsr.nickac.dev/face/${apiKey.minecraftAccount.uuid}`}
+              alt={apiKey.minecraftAccount.username}
+              class="rounded-none" />
             <Avatar.Fallback class="rounded-none">
               {apiKey.minecraftAccount.username.slice(0, 2).toUpperCase()}
             </Avatar.Fallback>
@@ -99,7 +114,11 @@
             <p>
               Updated <DateTooltip date={apiKey.minecraftAccount.updatedAt} />
             </p>
-            <Button variant="outline" href={resolve("/(protected)/dashboard/(admin)/admin/users/[userID]", { userID: apiKey.minecraftAccount.userId })}>Show User</Button>
+            <Button
+              variant="outline"
+              href={resolve("/(protected)/dashboard/(admin)/admin/users/[userID]", {
+                userID: apiKey.minecraftAccount.userId
+              })}>Show User</Button>
           </Item.Description>
         </Item.Content>
       </Item.Root>
@@ -197,7 +216,12 @@
                 <Form.Control>
                   {#snippet children({ props })}
                     <Form.Label for={props.name}>Rate Limit Time Window</Form.Label>
-                    <Form.Description>Set the time window in ms for the rate limit of this API key. Check <Button href="https://www.better-auth.com/docs/plugins/api-key#update-an-api-key" variant="link" class="inline h-auto p-0 break-all">the Better Auth documentation</Button> for more information about rate limits.</Form.Description>
+                    <Form.Description
+                      >Set the time window in ms for the rate limit of this API key. Check <Button
+                        href="https://www.better-auth.com/docs/plugins/api-key#update-an-api-key"
+                        variant="link"
+                        class="inline h-auto p-0 break-all">the Better Auth documentation</Button> for more information about
+                      rate limits.</Form.Description>
                     <Input
                       {...props}
                       bind:value={
@@ -211,7 +235,10 @@
                         }
                       } />
                     <p>
-                      {$updateKeyFormData.rateLimitTimeWindow} ms is {formatDuration(intervalToDuration({ start: 0, end: Number($updateKeyFormData.rateLimitTimeWindow) || 0 }), { format: ["hours", "minutes", "seconds"] })}.
+                      {$updateKeyFormData.rateLimitTimeWindow} ms is {formatDuration(
+                        intervalToDuration({ start: 0, end: Number($updateKeyFormData.rateLimitTimeWindow) || 0 }),
+                        { format: ["hours", "minutes", "seconds"] }
+                      )}.
                     </p>
                     <Form.FieldErrors variant="single" />
                   {/snippet}
@@ -223,7 +250,11 @@
                   {#snippet children({ props })}
                     <Form.Label for={props.name}>Rate Limit Max</Form.Label>
                     <Form.Description>
-                      Set the maximum number of requests allowed within the time window for this API key. Check <Button href="https://www.better-auth.com/docs/plugins/api-key#update-an-api-key" variant="link" class="inline h-auto p-0 break-all">the Better Auth documentation</Button> for more information about rate limits.</Form.Description>
+                      Set the maximum number of requests allowed within the time window for this API key. Check <Button
+                        href="https://www.better-auth.com/docs/plugins/api-key#update-an-api-key"
+                        variant="link"
+                        class="inline h-auto p-0 break-all">the Better Auth documentation</Button> for more information about
+                      rate limits.</Form.Description>
                     <Input
                       {...props}
                       bind:value={
@@ -242,7 +273,9 @@
               </Form.Field>
               <AlertDialog.Footer>
                 <AlertDialog.Cancel type="button">Cancel</AlertDialog.Cancel>
-                <AlertDialog.Action disabled={!updateKeyIsTainted($updateKeyTainted) || $updateKeySubmitting} class="transition-all duration-300">
+                <AlertDialog.Action
+                  disabled={!updateKeyIsTainted($updateKeyTainted) || $updateKeySubmitting}
+                  class="transition-all duration-300">
                   {#snippet child({ props })}
                     <Form.Button {...props}>
                       {#if !$updateKeySubmitting}
@@ -291,7 +324,9 @@
               <AlertDialog.Header>
                 <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
                 <AlertDialog.Description>
-                  This action cannot be undone. This will permanently delete the key <span class="font-semibold">{apiKey.name}</span>.
+                  This action cannot be undone. This will permanently delete the key <span class="font-semibold"
+                    >{apiKey.name}</span
+                  >.
                 </AlertDialog.Description>
               </AlertDialog.Header>
               <AlertDialog.Footer>

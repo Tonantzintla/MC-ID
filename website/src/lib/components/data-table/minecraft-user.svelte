@@ -14,11 +14,16 @@
 {#if minecraftAccount}
   <div class="flex items-center gap-1">
     <HoverCard.Root>
-      <HoverCard.Trigger href={resolve("/(protected)/dashboard/(admin)/admin/users/[userID]", { userID: minecraftAccount.userId })} class="flex items-center gap-1 px-1">
+      <HoverCard.Trigger
+        href={resolve("/(protected)/dashboard/(admin)/admin/users/[userID]", { userID: minecraftAccount.userId })}
+        class="flex items-center gap-1 px-1">
         {#snippet child({ props })}
           <Button {...props} variant="ghost">
             <Avatar.Root class="size-6 rounded-none after:rounded-none after:border-0">
-              <Avatar.Image src="https://nmsr.nickac.dev/face/{minecraftAccount.uuid}" alt={minecraftAccount.username} class="rounded-none" />
+              <Avatar.Image
+                src="https://nmsr.nickac.dev/face/{minecraftAccount.uuid}"
+                alt={minecraftAccount.username}
+                class="rounded-none" />
               <Avatar.Fallback class="rounded-none">
                 {minecraftAccount.username.slice(0, 2).toUpperCase()}
               </Avatar.Fallback>
@@ -30,7 +35,10 @@
       <HoverCard.Content class="w-85">
         <div class="flex justify-start gap-4">
           <Avatar.Root class="rounded-none after:rounded-none after:border-0">
-            <Avatar.Image src="https://nmsr.nickac.dev/face/{minecraftAccount.uuid}" alt={minecraftAccount.username} class="rounded-none" />
+            <Avatar.Image
+              src="https://nmsr.nickac.dev/face/{minecraftAccount.uuid}"
+              alt={minecraftAccount.username}
+              class="rounded-none" />
             <Avatar.Fallback class="rounded-none">
               {minecraftAccount.username.slice(0, 2).toUpperCase()}
             </Avatar.Fallback>

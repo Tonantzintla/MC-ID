@@ -15,7 +15,10 @@
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
   import { loginFormSchema, type LoginFormSchema } from "./schema";
 
-  const { data, handleSignUpButtonClick }: { data: { loginForm: SuperValidated<Infer<LoginFormSchema>> }; handleSignUpButtonClick: () => void } = $props();
+  const {
+    data,
+    handleSignUpButtonClick
+  }: { data: { loginForm: SuperValidated<Infer<LoginFormSchema>> }; handleSignUpButtonClick: () => void } = $props();
 
   let toastLoading = $state<number | string>();
 
@@ -56,7 +59,10 @@
   });
 
   $effect(() => {
-    if (!PublicKeyCredential.isConditionalMediationAvailable || !PublicKeyCredential.isConditionalMediationAvailable()) {
+    if (
+      !PublicKeyCredential.isConditionalMediationAvailable ||
+      !PublicKeyCredential.isConditionalMediationAvailable()
+    ) {
       return;
     }
 
@@ -113,7 +119,10 @@
             </Form.Description>
 
             <Password.Root>
-              <Password.Input {...props} bind:value={$formData["current-password"]} autocomplete="current-password webauthn">
+              <Password.Input
+                {...props}
+                bind:value={$formData["current-password"]}
+                autocomplete="current-password webauthn">
                 <Password.ToggleVisibility />
               </Password.Input>
             </Password.Root>
@@ -133,8 +142,14 @@
 
     <div class="flex flex-col items-center justify-center gap-y-2 px-4 md:px-0">
       <span class="w-full text-center text-sm opacity-50">Or</span>
-      <Button class="w-full" variant="outline" data-disabled={$submitting} data-sveltekit-preload-data="tap" onclick={async () => await signInWithPasskey()}>
-        <Key class="pointer-events-none h-6 w-auto transition-opacity duration-300 select-none group-hover:opacity-70" />
+      <Button
+        class="w-full"
+        variant="outline"
+        data-disabled={$submitting}
+        data-sveltekit-preload-data="tap"
+        onclick={async () => await signInWithPasskey()}>
+        <Key
+          class="pointer-events-none h-6 w-auto transition-opacity duration-300 select-none group-hover:opacity-70" />
         Login with Passkey
       </Button>
     </div>
@@ -142,11 +157,19 @@
   <Card.Footer class="flex flex-col items-center justify-center gap-y-2">
     <p class="w-full text-center text-sm">
       <span class="opacity-50">Don't have an account?</span>
-      <Button variant="link" onclick={handleSignUpButtonClick} class={`inline-block p-0 underline underline-offset-2 opacity-50 transition-opacity duration-300 hover:opacity-100 ${$submitting ? "pointer-events-none cursor-default" : ""}`}>Sign up</Button>
+      <Button
+        variant="link"
+        onclick={handleSignUpButtonClick}
+        class={`inline-block p-0 underline underline-offset-2 opacity-50 transition-opacity duration-300 hover:opacity-100 ${$submitting ? "pointer-events-none cursor-default" : ""}`}
+        >Sign up</Button>
     </p>
     <p class="w-full text-center text-sm">
       <span class="opacity-50"> Forgot your password? </span>
-      <Button variant="link" href={resolve("/login/forgot-password")} class={`inline-block p-0 underline underline-offset-2 opacity-50 transition-opacity duration-300 hover:opacity-100 ${$submitting ? "pointer-events-none cursor-default" : ""}`}>Reset Password</Button>
+      <Button
+        variant="link"
+        href={resolve("/login/forgot-password")}
+        class={`inline-block p-0 underline underline-offset-2 opacity-50 transition-opacity duration-300 hover:opacity-100 ${$submitting ? "pointer-events-none cursor-default" : ""}`}
+        >Reset Password</Button>
     </p>
   </Card.Footer>
 </Card.Root>

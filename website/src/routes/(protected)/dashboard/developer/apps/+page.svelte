@@ -2,10 +2,10 @@
   import { authClient } from "$lib/auth-client";
   import { createBotttsNeutralAvatar } from "$lib/avatar";
   import * as Alert from "$lib/components/ui/alert";
+  import type { MCIDOAuthClient } from "$lib/types/oauth";
   import * as Avatar from "$ui/avatar";
   import { Button } from "$ui/button";
   import * as Card from "$ui/card";
-  import type { MCIDOAuthClient } from "$lib/types/oauth";
   import AlertCircle from "@lucide/svelte/icons/alert-circle";
   import type { PageProps } from "./$types";
   import AppForm from "./app-form.svelte";
@@ -23,10 +23,14 @@
     <Alert.Root>
       <AlertCircle class="h-4 w-4" />
       <Alert.Title>Email Verification Required</Alert.Title>
-      <Alert.Description>You must verify your email address before you can create OAuth applications. Please check your inbox for a verification email.</Alert.Description>
+      <Alert.Description
+        >You must verify your email address before you can create OAuth applications. Please check your inbox for a
+        verification email.</Alert.Description>
     </Alert.Root>
   {/if}
-  <Card.Root class="w-full bg-background data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[disabled=true]:select-none" data-disabled={!emailVerified}>
+  <Card.Root
+    class="w-full bg-background data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[disabled=true]:select-none"
+    data-disabled={!emailVerified}>
     <Card.Header>
       <Card.Title>Apps</Card.Title>
       <Card.Description>Manage your apps</Card.Description>
@@ -48,13 +52,15 @@
   <Button href="apps/{app.client_id}" class="contents cursor-pointer">
     <Card.Root class="gap-0 space-y-2 truncate p-0 pb-2">
       {#if app.logo_uri}
-        <Avatar.Root class="pointer-events-none size-40 w-full rounded-none select-none after:rounded-none after:border-0">
+        <Avatar.Root
+          class="pointer-events-none size-40 w-full rounded-none select-none after:rounded-none after:border-0">
           <Avatar.Image src={app.logo_uri} alt="App Logo" class="size-full rounded-none object-contain" />
           <Avatar.Fallback class="rounded-none">{app.client_name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
         </Avatar.Root>
       {:else}
         <div class="bg-(--bgColor,transparent)" style:--bgColor={avatar.toJSON().options.backgroundColor?.[0]}>
-          <Avatar.Root class="pointer-events-none mx-auto flex size-40 shrink-0 justify-center rounded-none select-none after:rounded-none after:border-0">
+          <Avatar.Root
+            class="pointer-events-none mx-auto flex size-40 shrink-0 justify-center rounded-none select-none after:rounded-none after:border-0">
             <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full rounded-none" />
             <Avatar.Fallback class="rounded-none">{app.client_name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
           </Avatar.Root>

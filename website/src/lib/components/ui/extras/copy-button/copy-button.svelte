@@ -1,8 +1,8 @@
 <script lang="ts" module>
-  import type { Snippet } from "svelte";
   import type { ButtonProps } from "$ui/extras/button";
-  import type { HTMLAttributes } from "svelte/elements";
   import type { WithChildren, WithoutChildren } from "bits-ui";
+  import type { Snippet } from "svelte";
+  import type { HTMLAttributes } from "svelte/elements";
 
   export type CopyButtonPropsWithoutHTML = WithChildren<{
     size?: ButtonProps["size"];
@@ -26,7 +26,19 @@
   import XIcon from "@lucide/svelte/icons/x";
   import { scale } from "svelte/transition";
 
-  let { ref = $bindable(null), text, icon, animationDuration = 500, variant = "ghost", size = "icon", onCopy, class: className, tabindex = -1, children, ...rest }: CopyButtonProps = $props();
+  let {
+    ref = $bindable(null),
+    text,
+    icon,
+    animationDuration = 500,
+    variant = "ghost",
+    size = "icon",
+    onCopy,
+    class: className,
+    tabindex = -1,
+    children,
+    ...rest
+  }: CopyButtonProps = $props();
 
   // this way if the user passes text then the button will be the default size
   // svelte-ignore state_referenced_locally

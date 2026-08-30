@@ -22,11 +22,19 @@
       <DropdownMenu.Label>Actions</DropdownMenu.Label>
       <DropdownMenu.Item>
         {#snippet child({ props })}
-          <a href={resolve("/(protected)/dashboard/(admin)/admin/api-keys/[apiKeyID]", { apiKeyID: id })} {...props}> View API Key </a>
+          <a href={resolve("/(protected)/dashboard/(admin)/admin/api-keys/[apiKeyID]", { apiKeyID: id })} {...props}>
+            View API Key
+          </a>
         {/snippet}
       </DropdownMenu.Item>
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
-    <DropdownMenu.Item onclick={() => toast.promise(navigator.clipboard.writeText(id), { loading: "Copying API Key ID...", success: "API Key ID copied to clipboard", error: "Failed to copy API Key ID" })}>Copy API Key ID</DropdownMenu.Item>
+    <DropdownMenu.Item
+      onclick={() =>
+        toast.promise(navigator.clipboard.writeText(id), {
+          loading: "Copying API Key ID...",
+          success: "API Key ID copied to clipboard",
+          error: "Failed to copy API Key ID"
+        })}>Copy API Key ID</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>

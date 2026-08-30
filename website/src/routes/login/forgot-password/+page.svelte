@@ -88,7 +88,11 @@
   <Card.Footer class="flex flex-col items-center justify-center gap-y-2">
     <p class="w-full text-center text-sm">
       <span class="opacity-50"> Remembered your password? </span>
-      <Button variant="link" href={resolve("/login")} class={`inline-block p-0 underline underline-offset-2 opacity-50 transition-opacity duration-300 hover:opacity-100 ${$submitting ? "pointer-events-none cursor-default" : ""}`}>Log in</Button>
+      <Button
+        variant="link"
+        href={resolve("/login")}
+        class={`inline-block p-0 underline underline-offset-2 opacity-50 transition-opacity duration-300 hover:opacity-100 ${$submitting ? "pointer-events-none cursor-default" : ""}`}
+        >Log in</Button>
     </p>
   </Card.Footer>
 </Card.Root>

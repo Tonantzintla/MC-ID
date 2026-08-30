@@ -1,17 +1,21 @@
 <script lang="ts" module>
-  import { type VariantProps, tv } from "tailwind-variants";
   import { cn, type WithElementRef } from "$lib/utils.js";
   import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
+  import { type VariantProps, tv } from "tailwind-variants";
 
   export const buttonVariants = tv({
     base: "rounded-4xl border border-transparent bg-clip-padding text-sm font-medium focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 active:not-aria-[haspopup]:translate-y-px aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 group/button inline-flex shrink-0 items-center justify-center whitespace-nowrap transition-all outline-none select-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/80",
-        outline: "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:bg-transparent dark:hover:bg-input/30",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
-        ghost: "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
-        destructive: "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+        outline:
+          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:bg-transparent dark:hover:bg-input/30",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+        ghost:
+          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+        destructive:
+          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline"
       },
       size: {
@@ -42,15 +46,39 @@
 </script>
 
 <script lang="ts">
-  let { class: className, variant = "default", size = "default", ref = $bindable(null), href = undefined, type = "button", disabled, children, ...restProps }: ButtonProps = $props();
+  let {
+    class: className,
+    variant = "default",
+    size = "default",
+    ref = $bindable(null),
+    href = undefined,
+    type = "button",
+    disabled,
+    children,
+    ...restProps
+  }: ButtonProps = $props();
 </script>
 
 {#if href}
-  <a bind:this={ref} data-slot="button" class={cn(buttonVariants({ variant, size }), className)} href={disabled ? undefined : href} aria-disabled={disabled} role={disabled ? "link" : undefined} tabindex={disabled ? -1 : undefined} {...restProps}>
+  <a
+    bind:this={ref}
+    data-slot="button"
+    class={cn(buttonVariants({ variant, size }), className)}
+    href={disabled ? undefined : href}
+    aria-disabled={disabled}
+    role={disabled ? "link" : undefined}
+    tabindex={disabled ? -1 : undefined}
+    {...restProps}>
     {@render children?.()}
   </a>
 {:else}
-  <button bind:this={ref} data-slot="button" class={cn(buttonVariants({ variant, size }), className)} {type} {disabled} {...restProps}>
+  <button
+    bind:this={ref}
+    data-slot="button"
+    class={cn(buttonVariants({ variant, size }), className)}
+    {type}
+    {disabled}
+    {...restProps}>
     {@render children?.()}
   </button>
 {/if}

@@ -43,7 +43,11 @@
 
   const lastSynced = getLastSynced();
   const serverDateResult = $derived(await serverDate());
-  let syncDisabled = $derived(!page.data.primaryMcAccount.username && lastSynced.current && new Date(serverDateResult.data).getTime() - lastSynced.current.getTime() < 3 * 24 * 60 * 60 * 1000);
+  let syncDisabled = $derived(
+    !page.data.primaryMcAccount.username &&
+      lastSynced.current &&
+      new Date(serverDateResult.data).getTime() - lastSynced.current.getTime() < 3 * 24 * 60 * 60 * 1000
+  );
   let username = $state<string>(page.data.primaryMcAccount.username ?? $formData.name);
   let toastLoading = $state<number | string>();
   let syncingUser = $state<boolean>(false);
@@ -152,22 +156,40 @@
   {#if page.data.primaryMcAccount}
     <div class="space-y-2">
       <Label for="username">Minecraft account</Label>
-      <div class="text-sm text-muted-foreground">You can edit your Minecraft account on <Button href="https://www.minecraft.net/profile" target="_blank" variant="link" class="inline h-auto p-0">minecraft.net</Button>.</div>
+      <div class="text-sm text-muted-foreground">
+        You can edit your Minecraft account on <Button
+          href="https://www.minecraft.net/profile"
+          target="_blank"
+          variant="link"
+          class="inline h-auto p-0">minecraft.net</Button
+        >.
+      </div>
       <div class="flex gap-4">
         <Input value={username} disabled readonly maxlength={16} type="text" autocomplete="username" />
         {#if syncDisabled}
           <Tooltip.Root>
             <Tooltip.Trigger>
               {#snippet child({ props })}
-                <div {...props} class={cn("cursor-not-allowed opacity-50 hover:bg-secondary!", buttonVariants({ variant: "secondary", size: "default" }))}>
-                  <RefreshCw class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin" data-syncing={syncingUser} />
+                <div
+                  {...props}
+                  class={cn(
+                    "cursor-not-allowed opacity-50 hover:bg-secondary!",
+                    buttonVariants({ variant: "secondary", size: "default" })
+                  )}>
+                  <RefreshCw
+                    class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin"
+                    data-syncing={syncingUser} />
                   Sync
                 </div>
               {/snippet}
             </Tooltip.Trigger>
             <Tooltip.Content>
               You can sync again
-              {formatDistanceStrict(new Date(new Date(serverDateResult.data).getTime() + 3 * 24 * 60 * 60 * 1000), lastSynced.current, { addSuffix: true, in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) })}
+              {formatDistanceStrict(
+                new Date(new Date(serverDateResult.data).getTime() + 3 * 24 * 60 * 60 * 1000),
+                lastSynced.current,
+                { addSuffix: true, in: tz(Intl.DateTimeFormat().resolvedOptions().timeZone) }
+              )}
             </Tooltip.Content>
           </Tooltip.Root>
         {:else}
@@ -182,7 +204,9 @@
               toast.promise(
                 new Promise((resolve, reject) => {
                   (async () => {
-                    const { data, success, message } = await syncUser(page.data.primaryMcAccount.uuid ?? $formData.uuid);
+                    const { data, success, message } = await syncUser(
+                      page.data.primaryMcAccount.uuid ?? $formData.uuid
+                    );
 
                     if (!success) throw new Error(message ?? "Failed to sync user.");
 
@@ -209,7 +233,9 @@
                 }
               );
             }}>
-            <RefreshCw class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin" data-syncing={syncingUser} />
+            <RefreshCw
+              class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin"
+              data-syncing={syncingUser} />
             Sync
           </Button>
         {/if}
@@ -222,7 +248,8 @@
         <div class="flex items-center gap-2">
           <Form.Label for={props.name}>Email</Form.Label>
           {#if emailVerified}
-            <span class="inline-flex items-center gap-1 rounded-full bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
+            <span
+              class="inline-flex items-center gap-1 rounded-full bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
               <BadgeCheck class="h-3 w-3" />
               Verified
             </span>
@@ -236,7 +263,12 @@
               <Tooltip.Root>
                 <Tooltip.Trigger>
                   {#snippet child({ props: tooltipProps })}
-                    <div {...tooltipProps} class={cn("cursor-not-allowed opacity-50", buttonVariants({ variant: "secondary", size: "default" }))}>
+                    <div
+                      {...tooltipProps}
+                      class={cn(
+                        "cursor-not-allowed opacity-50",
+                        buttonVariants({ variant: "secondary", size: "default" })
+                      )}>
                       <Mail class="h-4 w-4" />
                       Verify
                     </div>
@@ -247,7 +279,11 @@
                 </Tooltip.Content>
               </Tooltip.Root>
             {:else}
-              <Button type="button" variant="secondary" disabled={sendingVerification || $submitting} onclick={handleSendVerification}>
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={sendingVerification || $submitting}
+                onclick={handleSendVerification}>
                 {#if sendingVerification}
                   <LoaderCircle class="h-4 w-4 animate-spin" />
                 {:else}
@@ -263,7 +299,10 @@
     </Form.Control>
   </Form.Field>
 
-  <Form.Button disabled={!isTainted($tainted) || $submitting || syncingUser} class="transition-all duration-300" variant={!isTainted($tainted) ? "secondary" : "default"}>
+  <Form.Button
+    disabled={!isTainted($tainted) || $submitting || syncingUser}
+    class="transition-all duration-300"
+    variant={!isTainted($tainted) ? "secondary" : "default"}>
     {#if !$submitting}
       Update Profile
     {:else}
