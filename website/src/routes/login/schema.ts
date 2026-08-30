@@ -1,5 +1,16 @@
-import { type ZxcvbnResult, zxcvbn } from "@zxcvbn-ts/core";
+import { type ZxcvbnResult, ZxcvbnFactory } from "@zxcvbn-ts/core";
+import { adjacencyGraphs, dictionary as commonDictionary } from "@zxcvbn-ts/language-common";
+import { dictionary as englishDictionary, translations } from "@zxcvbn-ts/language-en";
 import { z } from "zod";
+
+const zxcvbn = new ZxcvbnFactory({
+  translations,
+  graphs: adjacencyGraphs,
+  dictionary: {
+    ...commonDictionary,
+    ...englishDictionary
+  }
+});
 
 const newPassword = z
   .string()
@@ -17,7 +28,7 @@ const newPassword = z
     message: "Passwords must contain at least one special character"
   })
   .refine((x) => {
-    const result: ZxcvbnResult = zxcvbn(x);
+    const result: ZxcvbnResult = zxcvbn.check(x);
     return result.score >= 3;
   }, "Password is too weak");
 

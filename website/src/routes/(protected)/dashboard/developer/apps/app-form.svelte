@@ -1,5 +1,6 @@
 <script lang="ts">
   import { authClient } from "$lib/auth-client";
+  import { createBotttsNeutralAvatar } from "$lib/avatar";
   import * as Accordion from "$lib/components/ui/accordion";
   import { Checkbox } from "$lib/components/ui/checkbox";
   import { Scope, scopes } from "$lib/scopes";
@@ -14,8 +15,6 @@
   import { Textarea } from "$ui/textarea";
   import * as Tooltip from "$ui/tooltip";
   import type { OAuthClient } from "@better-auth/oauth-provider";
-  import { botttsNeutral } from "@dicebear/collection";
-  import { createAvatar } from "@dicebear/core";
   import CircleMinus from "@lucide/svelte/icons/circle-minus";
   import CircleQuestionMark from "@lucide/svelte/icons/circle-question-mark";
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
@@ -83,10 +82,7 @@
     if ($appErrors.logoUrl === undefined && $appFormData.logoUrl && debouncediconUrlValue.current) {
       return debouncediconUrlValue.current;
     }
-    return createAvatar(botttsNeutral, {
-      size: 128,
-      seed: appData?.client_id
-    }).toDataUri();
+    return createBotttsNeutralAvatar(appData?.client_id).toDataUri();
   });
 
   const addUrl = () => {

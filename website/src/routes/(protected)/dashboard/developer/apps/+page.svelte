@@ -1,12 +1,11 @@
 <script lang="ts">
   import { authClient } from "$lib/auth-client";
+  import { createBotttsNeutralAvatar } from "$lib/avatar";
   import * as Alert from "$lib/components/ui/alert";
   import * as Avatar from "$ui/avatar";
   import { Button } from "$ui/button";
   import * as Card from "$ui/card";
   import type { MCIDOAuthClient } from "$lib/types/oauth";
-  import { botttsNeutral } from "@dicebear/collection";
-  import { createAvatar } from "@dicebear/core";
   import AlertCircle from "@lucide/svelte/icons/alert-circle";
   import type { PageProps } from "./$types";
   import AppForm from "./app-form.svelte";
@@ -45,10 +44,7 @@
 </div>
 
 {#snippet appCard(app: MCIDOAuthClient)}
-  {@const avatar = createAvatar(botttsNeutral, {
-    size: 128,
-    seed: app.client_id
-  })}
+  {@const avatar = createBotttsNeutralAvatar(app.client_id)}
   <Button href="apps/{app.client_id}" class="contents cursor-pointer">
     <Card.Root class="gap-0 space-y-2 truncate p-0 pb-2">
       {#if app.logo_uri}
@@ -57,7 +53,7 @@
           <Avatar.Fallback class="rounded-none">{app.client_name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
         </Avatar.Root>
       {:else}
-        <div class="bg-(--bgColor,transparent)" style="--bgColor: {avatar.toJson().extra.primaryBackgroundColor}">
+        <div class="bg-(--bgColor,transparent)" style:--bgColor={avatar.toJSON().options.backgroundColor?.[0]}>
           <Avatar.Root class="pointer-events-none mx-auto flex size-40 shrink-0 justify-center rounded-none select-none after:rounded-none after:border-0">
             <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full rounded-none" />
             <Avatar.Fallback class="rounded-none">{app.client_name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>

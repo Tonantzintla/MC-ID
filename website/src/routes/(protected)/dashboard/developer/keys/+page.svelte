@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { authClient } from "$lib/auth-client";
+  import { createBotttsNeutralAvatar } from "$lib/avatar";
   import * as Alert from "$lib/components/ui/alert";
   import { Button } from "$lib/components/ui/button";
   import { Spinner } from "$lib/components/ui/spinner";
@@ -8,8 +9,6 @@
   import * as Card from "$ui/card";
   import * as Password from "$ui/extras/password";
   import { tz } from "@date-fns/tz";
-  import { botttsNeutral } from "@dicebear/collection";
-  import { createAvatar } from "@dicebear/core";
   import AlertCircle from "@lucide/svelte/icons/alert-circle";
   import Trash2 from "@lucide/svelte/icons/trash-2";
   import { formatDistanceStrict } from "date-fns";
@@ -90,10 +89,7 @@
 </div>
 
 {#snippet keyCard(apiKey: ApiKey & { key?: string; permissions?: { [key: string]: string[] } | null })}
-  {@const avatar = createAvatar(botttsNeutral, {
-    size: 128,
-    seed: apiKey.id ?? "default-avatar"
-  })}
+  {@const avatar = createBotttsNeutralAvatar(apiKey.id)}
   <Card.Root class="relative gap-0 space-y-2 truncate p-0 pb-2">
     <Button
       type="button"
@@ -127,7 +123,7 @@
       aria-label="Delete API Key">
       <Trash2 class="opacity-50 transition-opacity duration-300 group-hover:opacity-100 hover:text-destructive" />
     </Button>
-    <div class="bg-(--bgColor,transparent)" style="--bgColor: {avatar.toJson().extra.primaryBackgroundColor}">
+    <div class="bg-(--bgColor,transparent)" style:--bgColor={avatar.toJSON().options.backgroundColor?.[0]}>
       <Avatar.Root class="pointer-events-none mx-auto flex size-40 flex-shrink-0 justify-center rounded-none select-none after:rounded-none after:border-0">
         <Avatar.Image src={avatar.toDataUri()} alt="App Avatar" class="size-full rounded-none" />
         <Avatar.Fallback class="rounded-none">{apiKey.name?.slice(0, 2).toUpperCase()}</Avatar.Fallback>
