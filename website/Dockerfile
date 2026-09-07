@@ -6,10 +6,8 @@ RUN corepack enable
 FROM base AS build
 WORKDIR /app
 COPY . .
+RUN pnpm install --filter mc-id-website... --frozen-lockfile --ignore-scripts --config.node-linker=hoisted
 WORKDIR /app/website
-RUN pnpm install --frozen-lockfile --ignore-scripts --lockfile-dir .. --ignore-workspace --config.node-linker=hoisted
-# Call binaries directly to avoid pnpm 11.x's verify-deps-before-run check,
-# which triggers an interactive node_modules purge that aborts in Docker (no TTY).
 RUN ../node_modules/.bin/svelte-kit sync
 RUN ../node_modules/.bin/vite build
 
