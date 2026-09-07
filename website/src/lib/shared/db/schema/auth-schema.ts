@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { boolean, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, integer, jsonb, index, uniqueIndex } from "drizzle-orm/pg-core";
 import { oauthClientReport } from "./reports";
 
 export const user = pgTable("user", {
@@ -43,7 +43,6 @@ export const account = pgTable(
   "account",
   {
     id: text("id").primaryKey(),
-    issuer: text("issuer").notNull(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
     userId: text("user_id")
@@ -61,10 +60,7 @@ export const account = pgTable(
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull()
   },
-  (table) => [
-    uniqueIndex("account_issuer_accountId_uidx").on(table.issuer, table.accountId),
-    index("account_userId_idx").on(table.userId)
-  ]
+  (table) => [index("account_userId_idx").on(table.userId)]
 );
 
 export const verification = pgTable(
@@ -264,19 +260,23 @@ export const oauthAccessToken = pgTable(
   ]
 );
 
-export const oauthConsent = pgTable("oauth_consent", {
-  id: text("id").primaryKey(),
-  clientId: text("client_id")
-    .notNull()
-    .references(() => oauthClient.clientId, { onDelete: "cascade" }),
-  userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
-  referenceId: text("reference_id"),
-  resources: text("resources").array(),
-  requestedUserInfoClaims: text("requested_user_info_claims").array(),
-  scopes: text("scopes").array().notNull(),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull()
-});
+export const oauthConsent = pgTable(
+  "oauth_consent",
+  {
+    id: text("id").primaryKey(),
+    clientId: text("client_id")
+      .notNull()
+      .references(() => oauthClient.clientId, { onDelete: "cascade" }),
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+    referenceId: text("reference_id"),
+    resources: text("resources").array(),
+    requestedUserInfoClaims: text("requested_user_info_claims").array(),
+    scopes: text("scopes").array().notNull(),
+    createdAt: timestamp("created_at").notNull(),
+    updatedAt: timestamp("updated_at").notNull()
+  },
+  (table) => [index("oauthConsent_clientId_idx").on(table.clientId), index("oauthConsent_userId_idx").on(table.userId)]
+);
 
 export const oauthClientAssertion = pgTable("oauth_client_assertion", {
   id: text("id").primaryKey(),
@@ -376,7 +376,9 @@ export const oauthClientRelations = relations(oauthClient, ({ one, many }) => ({
   oauthRefreshTokens: many(oauthRefreshToken),
   oauthAccessTokens: many(oauthAccessToken),
   oauthConsents: many(oauthConsent),
-  oauthClientReports: many(oauthClientReport, { relationName: "oauthClientReport_client" })
+  oauthClientReports: many(oauthClientReport, {
+    relationName: "oauthClientReport_client"
+  })
 }));
 
 export const oauthResourceRelations = relations(oauthResource, ({ many }) => ({
