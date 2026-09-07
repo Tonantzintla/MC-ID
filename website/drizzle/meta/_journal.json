@@ -36,6 +36,13 @@
       "when": 1788093701662,
       "tag": "0004_better-auth-1.7",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788801898166,
+      "tag": "0005_great_corsair",
+      "breakpoints": true
     }
   ]
 }

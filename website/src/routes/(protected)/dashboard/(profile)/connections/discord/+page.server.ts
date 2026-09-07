@@ -8,20 +8,20 @@ export const load = (async ({ request }) => {
 
   const discord = accounts?.find((account) => account.providerId === "discord");
 
-  let discordInfo;
-  if (discord) {
-    discordInfo = await auth.api.accountInfo({
-      query: { accountId: discord?.accountId },
-      headers: request.headers
-    });
+  if (!discord) {
+    return { discordAccount: undefined };
   }
+
+  const discordInfo = await auth.api.accountInfo({
+    query: { accountId: discord.id },
+    headers: request.headers
+  });
+
   return {
-    discordAccount: discordInfo
-      ? {
-          ...discordInfo,
-          accountId: discord!.accountId,
-          data: discordInfo.data as { avatar?: string; banner?: string; username?: string }
-        }
-      : undefined
+    discordAccount: {
+      ...discordInfo,
+      accountId: discordInfo.account.id,
+      data: discordInfo.data as { avatar?: string; banner?: string; username?: string }
+    }
   };
 }) satisfies PageServerLoad;

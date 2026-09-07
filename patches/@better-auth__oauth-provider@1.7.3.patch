@@ -1,0 +1,13 @@
+diff --git a/dist/authorize-9whjxVLJ.mjs b/dist/authorize-9whjxVLJ.mjs
+index 6c1d5c51cc553db32900bc750dfd0687420b12b7..9d0389aae6d5b02ddbec172edac55320f90233f0 100644
+--- a/dist/authorize-9whjxVLJ.mjs
++++ b/dist/authorize-9whjxVLJ.mjs
+@@ -1697,7 +1697,7 @@ function validateClientRedirectUri(redirectUri, applicationType) {
+ 	const rawHttpHostname = getRawHttpHostname(redirectUri);
+ 	const isAllowedNativeHttpLoopback = rawHttpHostname === "localhost" || rawHttpHostname === "127.0.0.1" || rawHttpHostname === "[::1]";
+ 	if (applicationType === "web") {
+-		if (!isHttps || isRedirectLoopback) invalidRedirectUri(`web clients require https redirect URIs on non-loopback hosts: ${redirectUri}`);
++		if (!isHttps && !isRedirectLoopback) invalidRedirectUri(`web clients require https redirect URIs on non-loopback hosts: ${redirectUri}`);
+ 		return;
+ 	}
+ 	if (isHttps) {

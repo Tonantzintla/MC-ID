@@ -7,3 +7,5 @@ allowBuilds:
   sharp: true
   simple-git-hooks: true
   workerd: true
+patchedDependencies:
+  '@better-auth/oauth-provider@1.7.3': patches/@better-auth__oauth-provider@1.7.3.patch
