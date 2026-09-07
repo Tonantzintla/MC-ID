@@ -26,23 +26,18 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.PAT_TOKEN }}
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v5
+      - name: Setup Node & PNPM
+        uses: pnpm/setup@v2
         with:
-          version: latest
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: "pnpm"
+          runtime: node@24
+          cache: true
 
       - name: Setup Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: 25
           distribution: "temurin"
@@ -60,11 +55,14 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Create Release PR or Publish
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          commit: "chore(release): version packages"
-          title: "chore(release): version packages"
-          version: pnpm changeset version
-          publish: pnpm run changeset:publish
+          commit-message: "chore(release): version packages"
+          pr-title: "chore(release): version packages"
+          version-script: pnpm changeset version
+          publish-script: pnpm run changeset:publish
+          github-token: ${{ secrets.PAT_TOKEN }}
+          create-github-releases: false
+          push-git-tags: false
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}

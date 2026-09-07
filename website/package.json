@@ -108,7 +108,7 @@
     "deno": "forbidden, use node instead",
     "node": "^24",
     "npm": "forbidden, use pnpm instead",
-    "pnpm": "^11",
+    "pnpm": "^12",
     "yarn": "forbidden, use pnpm instead"
   }
 }
