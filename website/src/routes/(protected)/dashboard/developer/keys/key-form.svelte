@@ -3,9 +3,11 @@
   import * as Form from "$ui/form";
   import { Input } from "$ui/input";
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
+  import { untrack } from "svelte";
   import { toast } from "svelte-sonner";
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
+  import { getApiKeys } from "./apiKeys.remote";
   import { keySchema, type KeySchema } from "./schema";
 
   const { data }: { data: { keyForm: SuperValidated<Infer<KeySchema>> } } = $props();
@@ -15,13 +17,14 @@
   const session = authClient.useSession();
   const emailVerified = $derived($session.data?.user?.emailVerified ?? false);
 
-  const keyForm = $derived(
-    superForm(data.keyForm, {
+  const keyForm = superForm(
+    untrack(() => data.keyForm),
+    {
       validators: zodClient(keySchema),
       dataType: "json",
       timeoutMs: 2000,
       validationMethod: "onblur"
-    })
+    }
   );
 
   const {
@@ -32,14 +35,14 @@
     submitting: keySubmitting,
     timeout: keyTimeout,
     errors: keyErrors
-  } = $derived(keyForm);
+  } = keyForm;
 
   const buttonDisabled = $derived(
     !keyIsTainted($keyTainted) || $keySubmitting || !emailVerified || ($keyErrors.name?.length ?? 0) > 0
   );
 
   $effect(() => {
-    keyTimeout.subscribe((value) => {
+    return keyTimeout.subscribe((value) => {
       if (value) {
         toast.loading("It's taking longer than expected to create your key...", {
           id: toastLoading
@@ -61,9 +64,11 @@
       setTimeout(() => toast.dismiss(toastLoading), 300);
     },
     onUpdate: async ({ result }) => {
-      console.info(result);
       if (result.type === "success") {
         toast.success("Key created successfully!");
+        await getApiKeys()
+          .refresh()
+          .catch(() => toast.error("Your key was created, but the key list could not be refreshed."));
       } else {
         toast.error("Failed to create your key. Please check the form for errors.");
       }

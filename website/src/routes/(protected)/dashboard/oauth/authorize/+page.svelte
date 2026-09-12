@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { page } from "$app/state";
   import OauthAppAvatar from "$components/oauth-app-avatar.svelte";
   import * as Avatar from "$lib/components/ui/avatar";
@@ -12,6 +13,7 @@
   import { IsHover } from "$lib/hooks/is-hover.svelte";
   import { scopes } from "$lib/scopes";
   import type { PrimaryMcAccount } from "$lib/types/global";
+  import { safeExternalUrl } from "$lib/url";
   import { cn } from "$lib/utils";
   import { type Icon as IconType } from "@lucide/svelte";
   import BadgeCheck from "@lucide/svelte/icons/badge-check";
@@ -24,7 +26,7 @@
   import Info from "@lucide/svelte/icons/info";
   import Scale from "@lucide/svelte/icons/scale";
   import type { User } from "better-auth";
-  import { getContext } from "svelte";
+  import { getContext, type Snippet } from "svelte";
   import { toast } from "svelte-sonner";
   import type { PageServerData } from "./$types";
   import { consent } from "./consent.remote";
@@ -52,7 +54,7 @@
         {#if data.error}
           <Empty.Title>{data.error}</Empty.Title>
           {#if data.error_description}
-            <Empty.Description>{@html data.error_description}</Empty.Description>
+            <Empty.Description>{data.error_description}</Empty.Description>
           {/if}
         {:else if dataEmpty}
           <Empty.Title>No Authorization Request</Empty.Title>
@@ -62,7 +64,7 @@
       </Empty.Header>
       {#if dataEmpty}
         <Empty.Content>
-          <Button href="/dashboard" variant="secondary">Go to Dashboard</Button>
+          <Button href={resolve("/dashboard")} variant="secondary">Go to Dashboard</Button>
         </Empty.Content>
       {/if}
     </Empty.Root>
@@ -113,8 +115,8 @@
         <Card.Description class="text-center sm:text-lg">wants to connect to your MC-ID account.</Card.Description>
       </Card.Header>
       <ScrollArea class="h-120 w-full sm:h-full" type="auto">
-        <Card.Content class="space-y-2">
-          <Item.Group class="rounded-lg bg-accent p-4">
+        <Card.Content class="flex flex-col gap-2">
+          <Item.Group class="rounded-xl border p-4">
             <p class="text-sm text-muted-foreground">
               This will allow the developer of {oauthClient?.client_name} to:
             </p>
@@ -126,35 +128,61 @@
             {/each}
           </Item.Group>
 
-          {#if oauthClient?.description || oauthClient?.client_uri}
-            <div class="rounded-lg bg-accent p-4">
-              {#if oauthClient.description}
+          {#if oauthClient?.description || safeExternalUrl(oauthClient?.client_uri)}
+            <div class="rounded-xl border p-4">
+              {#if oauthClient?.description}
                 {@render additionalItem({
                   IconComponent: BookText,
-                  description: oauthClient.description as string
+                  description: oauthClient?.description as string
                 })}
               {/if}
-              {#if oauthClient.client_uri}
-                {@render additionalItem({
-                  IconComponent: Info,
-                  description: `For more information about this app, please visit: <a href="${oauthClient.client_uri}" class="underline" target="_blank" rel="noopener noreferrer">${oauthClient.client_uri}</a>`
-                })}
+              {#if safeExternalUrl(oauthClient?.client_uri)}
+                {#snippet information()}
+                  For more information about this app, please visit:
+                  <!-- Application links are validated external HTTP(S) URLs, not SvelteKit routes. -->
+                  <!-- eslint-disable svelte/no-navigation-without-resolve -->
+                  <a
+                    href={safeExternalUrl(oauthClient?.client_uri)}
+                    class="underline"
+                    target="_blank"
+                    rel="noopener noreferrer">{oauthClient?.client_uri}</a>
+                  <!-- eslint-enable svelte/no-navigation-without-resolve -->
+                {/snippet}
+                {@render additionalItem({ IconComponent: Info, description: information })}
               {/if}
             </div>
           {/if}
 
-          <div class="rounded-lg bg-accent p-4">
-            {@render additionalItem({
-              IconComponent: ExternalLink,
-              description: `Once you authorize, you will be redirected <strong>outside of MC-ID</strong>.`
-            })}
-            {@render additionalItem({
-              IconComponent: Scale,
-              description: `The developer of ${oauthClient?.client_name}${oauthClient?.client_name?.endsWith("s") ? "'" : "'s"} ${oauthClient?.policy_uri ? `<a href="${oauthClient.policy_uri}" class="underline" target="_blank" rel="noopener noreferrer">privacy policy</a>` : "privacy policy"} and ${oauthClient?.tos_uri ? `<a href="${oauthClient.tos_uri}" class="underline" target="_blank" rel="noopener noreferrer">terms of service</a>` : "terms of service"} apply to this application`
-            })}
+          <div class="rounded-xl border p-4">
+            {#snippet redirectNotice()}Once you authorize, you will be redirected <strong>outside of MC-ID</strong
+              >.{/snippet}
+            {@render additionalItem({ IconComponent: ExternalLink, description: redirectNotice })}
+            {#snippet policies()}
+              The developer of {oauthClient?.client_name}{oauthClient?.client_name?.endsWith("s") ? "'" : "'s"}
+              <!-- Application links are validated external HTTP(S) URLs, not SvelteKit routes. -->
+              <!-- eslint-disable svelte/no-navigation-without-resolve -->
+              {#if safeExternalUrl(oauthClient?.policy_uri)}
+                <a
+                  href={safeExternalUrl(oauthClient?.policy_uri)}
+                  class="underline"
+                  target="_blank"
+                  rel="noopener noreferrer">privacy policy</a>
+              {:else}privacy policy{/if}
+              and
+              {#if safeExternalUrl(oauthClient?.tos_uri)}
+                <a
+                  href={safeExternalUrl(oauthClient?.tos_uri)}
+                  class="underline"
+                  target="_blank"
+                  rel="noopener noreferrer">terms of service</a>
+              {:else}terms of service{/if}
+              <!-- eslint-enable svelte/no-navigation-without-resolve -->
+              apply to this application.
+            {/snippet}
+            {@render additionalItem({ IconComponent: Scale, description: policies })}
           </div>
 
-          <Item.Group class="rounded-lg bg-accent p-4">
+          <Item.Group class="rounded-xl border p-4">
             <p class="text-sm text-muted-foreground">
               Apps can <strong><i>never</i></strong> do the following:
             </p>
@@ -174,7 +202,8 @@
 
       <Card.Footer class="flex justify-center gap-2">
         <Button
-          class="flex-1 text-base"
+          class="flex-1"
+          disabled={acceptPending || declinePending}
           variant="secondary"
           onclick={async () => {
             declinePending = true;
@@ -188,7 +217,7 @@
               })
               .catch((err) => {
                 console.error("Error during authorization decline:", err);
-                toast.error("An unknown error occurred while processing your authorization.");
+                toast.error(err instanceof Error ? err.message : "Unable to process authorization. Please try again.");
               });
 
             if (result && result.status === 307) {
@@ -197,11 +226,12 @@
           }}>
           Cancel
           {#if declinePending}
-            <Spinner />
+            <Spinner data-icon="inline-end" />
           {/if}
         </Button>
         <Button
-          class="flex-1 text-base"
+          class="flex-1"
+          disabled={acceptPending || declinePending}
           onclick={async () => {
             acceptPending = true;
             const result = await consent({
@@ -214,7 +244,7 @@
               })
               .catch((err) => {
                 console.error("Error during authorization consent:", err);
-                toast.error("An unknown error occurred while processing your authorization.");
+                toast.error(err instanceof Error ? err.message : "Unable to process authorization. Please try again.");
               });
             if (result && result.status === 307) {
               window.location.href = result.redirect;
@@ -222,7 +252,7 @@
           }}>
           Authorize
           {#if acceptPending}
-            <Spinner />
+            <Spinner data-icon="inline-end" />
           {/if}
         </Button>
       </Card.Footer>
@@ -245,13 +275,22 @@
   </Item.Root>
 {/snippet}
 
-{#snippet additionalItem({ IconComponent, description }: { IconComponent: typeof IconType; description: string })}
+{#snippet additionalItem({
+  IconComponent,
+  description
+}: {
+  IconComponent: typeof IconType;
+  description: string | Snippet;
+})}
   <Item.Root variant="default" size="sm" class="py-2 opacity-50">
     <Item.Media>
       <IconComponent class="size-5" />
     </Item.Media>
     <Item.Content>
-      <Item.Title><p>{@html description}</p></Item.Title>
+      <Item.Title
+        ><p>
+          {#if typeof description === "string"}{description}{:else}{@render description()}{/if}
+        </p></Item.Title>
     </Item.Content>
   </Item.Root>
 {/snippet}

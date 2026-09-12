@@ -21,6 +21,7 @@ export const load = (async ({ request }) => {
     discordAccount: {
       ...discordInfo,
       accountId: discordInfo.account.id,
+      discordId: discordInfo.account.accountId,
       data: discordInfo.data as { avatar?: string; banner?: string; username?: string }
     }
   };

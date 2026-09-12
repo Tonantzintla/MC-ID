@@ -25,6 +25,7 @@
   import CircleArrowLeftIcon from "@lucide/svelte/icons/circle-arrow-left";
   import CodeXmlIcon from "@lucide/svelte/icons/code-xml";
   import SearchXIcon from "@lucide/svelte/icons/search-x";
+  import { untrack } from "svelte";
   import { toast } from "svelte-sonner";
   import { cubicOut } from "svelte/easing";
   import { slide } from "svelte/transition";
@@ -41,7 +42,7 @@
   let deleteModalOpen = $state<boolean>(false);
   let handleReportModalOpen = $state<boolean>(false);
 
-  const updateOauthAppForm = $derived(
+  const updateOauthAppForm = untrack(() =>
     superForm(data.updateOauthAppForm, {
       validators: zodClient(updateOauthAppSchema),
       dataType: "json",
@@ -50,7 +51,7 @@
     })
   );
 
-  const deleteOauthAppForm = $derived(
+  const deleteOauthAppForm = untrack(() =>
     superForm(data.deleteOauthAppForm, {
       validators: zodClient(deleteOauthAppSchema),
       dataType: "json",
@@ -59,7 +60,7 @@
     })
   );
 
-  const handleReportForm = $derived(
+  const handleReportForm = untrack(() =>
     superForm(data.handleReportForm, {
       validators: zodClient(handleReportSchema),
       dataType: "json",
@@ -75,13 +76,13 @@
     isTainted: updateOauthAppIsTainted,
     submitting: updateOauthAppSubmitting,
     timeout: updateOauthAppTimeout
-  } = $derived(updateOauthAppForm);
+  } = updateOauthAppForm;
   const {
     form: deleteOauthAppFormData,
     enhance: deleteOauthAppEnhance,
     submitting: deleteOauthAppSubmitting,
     timeout: deleteOauthAppTimeout
-  } = $derived(deleteOauthAppForm);
+  } = deleteOauthAppForm;
   const {
     form: handleReportFormData,
     enhance: handleReportEnhance,
@@ -89,32 +90,26 @@
     isTainted: handleReportIsTainted,
     submitting: handleReportSubmitting,
     timeout: handleReportTimeout
-  } = $derived(handleReportForm);
+  } = handleReportForm;
 
   $effect(() => {
-    updateOauthAppTimeout.subscribe((value) => {
-      if (value) {
-        toast.loading("It's taking longer than expected to process your request...", {
-          id: toastLoading
-        });
-      }
-    });
+    if ($updateOauthAppTimeout && toastLoading !== undefined) {
+      toast.loading("It's taking longer than expected to process your request...", {
+        id: toastLoading
+      });
+    }
 
-    deleteOauthAppTimeout.subscribe((value) => {
-      if (value) {
-        toast.loading("It's taking longer than expected to process your request...", {
-          id: toastLoading
-        });
-      }
-    });
+    if ($deleteOauthAppTimeout && toastLoading !== undefined) {
+      toast.loading("It's taking longer than expected to process your request...", {
+        id: toastLoading
+      });
+    }
 
-    handleReportTimeout.subscribe((value) => {
-      if (value) {
-        toast.loading("It's taking longer than expected to process your request...", {
-          id: toastLoading
-        });
-      }
-    });
+    if ($handleReportTimeout && toastLoading !== undefined) {
+      toast.loading("It's taking longer than expected to process your request...", {
+        id: toastLoading
+      });
+    }
   });
 </script>
 

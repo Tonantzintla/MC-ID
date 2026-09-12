@@ -13,7 +13,10 @@ import { passkey } from "@better-auth/passkey";
 import { hash as argon2Hash, verify as argon2Verify } from "@node-rs/argon2";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth, type BetterAuthOptions } from "better-auth/minimal";
-import { admin, customSession, jwt, openAPI } from "better-auth/plugins";
+import { openAPI } from "better-auth/plugins";
+import { admin } from "better-auth/plugins/admin";
+import { customSession } from "better-auth/plugins/custom-session";
+import { jwt } from "better-auth/plugins/jwt";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { db } from "./db";
 

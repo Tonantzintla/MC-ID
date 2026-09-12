@@ -3,6 +3,7 @@
   import * as Form from "$ui/form";
   import { Input } from "$ui/input";
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
+  import { untrack } from "svelte";
   import { toast } from "svelte-sonner";
   import { slide } from "svelte/transition";
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
@@ -13,7 +14,7 @@
 
   let toastLoading = $state<number | string>();
 
-  const form = $derived(
+  const form = untrack(() =>
     superForm(data.accountDeletionForm, {
       validators: zodClient(accountDeletionSchema),
       dataType: "json",
@@ -22,16 +23,14 @@
     })
   );
 
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = $derived(form);
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = form;
 
   $effect(() => {
-    timeout.subscribe((value) => {
-      if (value) {
-        toast.loading("It's taking longer than expected to delete your account...", {
-          id: toastLoading
-        });
-      }
-    });
+    if ($timeout && toastLoading !== undefined) {
+      toast.loading("It's taking longer than expected to delete your account...", {
+        id: toastLoading
+      });
+    }
   });
 </script>
 

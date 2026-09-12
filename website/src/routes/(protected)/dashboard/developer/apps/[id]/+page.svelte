@@ -10,7 +10,9 @@
 <div class="mx-auto flex max-w-xl flex-col justify-start gap-8 self-center px-2 md:px-0">
   <Card.Root class="w-full bg-background">
     <Card.Content>
-      <AppForm variant={AppFormVariant.EDIT} {data} />
+      {#key data.appData.client_id}
+        <AppForm variant={AppFormVariant.EDIT} {data} />
+      {/key}
     </Card.Content>
   </Card.Root>
 </div>

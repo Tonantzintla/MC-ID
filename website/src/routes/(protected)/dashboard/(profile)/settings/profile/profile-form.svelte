@@ -14,7 +14,7 @@
   import Mail from "@lucide/svelte/icons/mail";
   import RefreshCw from "@lucide/svelte/icons/refresh-cw";
   import { formatDistanceStrict } from "date-fns";
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
   import { toast } from "svelte-sonner";
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
@@ -29,7 +29,7 @@
   const session = authClient.useSession();
   const emailVerified = $derived($session.data?.user?.emailVerified ?? false);
 
-  const form = $derived(
+  const form = untrack(() =>
     superForm(data.profileUpdateForm, {
       validators: zodClient(profileUpdateSchema),
       dataType: "json",
@@ -39,7 +39,7 @@
     })
   );
 
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = $derived(form);
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
 
   const lastSynced = getLastSynced();
   const serverDateResult = $derived(await serverDate());
@@ -121,13 +121,11 @@
   });
 
   $effect(() => {
-    timeout.subscribe((value) => {
-      if (value) {
-        toast.loading("It's taking longer than expected to update your profile...", {
-          id: toastLoading
-        });
-      }
-    });
+    if ($timeout && toastLoading !== undefined) {
+      toast.loading("It's taking longer than expected to update your profile...", {
+        id: toastLoading
+      });
+    }
   });
 </script>
 

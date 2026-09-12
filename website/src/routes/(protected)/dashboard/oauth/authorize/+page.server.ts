@@ -1,24 +1,24 @@
+import { getOAuthQuery } from "$lib/oauth-query";
 import { Scope } from "$lib/scopes";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import type { MCIDOAuthClient } from "$lib/types/oauth";
-import { SvelteURLSearchParams } from "svelte/reactivity";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ url, request }) => {
-  const params = new SvelteURLSearchParams(url.searchParams.toString());
+  const params = url.searchParams;
 
   const client_id = params.get("client_id");
   const scope = params.get("scope")?.split(" ");
 
-  // Preserve the full query string for oauth_query parameter
-  const oauthQuery = url.search.slice(1); // Remove leading '?'
+  // Preserve only parameters covered by the provider's signature.
+  const oauthQuery = getOAuthQuery(params);
 
-  if (!client_id || !scope || !scope.includes(Scope.PROFILE)) {
+  if (!oauthQuery || !client_id || !scope || !scope.includes(Scope.PROFILE)) {
     return {
       error: "invalid_request",
       error_description:
-        `Missing required parameters: ${!client_id ? "client_id " : ""}${!scope ? "scope " : ""}${!scope?.includes(Scope.PROFILE) ? Scope.PROFILE + " scope" : ""}`.trim(),
+        "This authorization request is incomplete or invalid. Please restart authorization from the app.",
       status: 400
     };
   }

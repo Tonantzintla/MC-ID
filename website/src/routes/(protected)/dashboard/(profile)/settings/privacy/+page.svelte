@@ -3,6 +3,7 @@
   import { Scope, scopes } from "$lib/scopes";
   import { reportReasonEnum } from "$lib/shared/db/schema/reports";
   import type { MCIDOAuthClient } from "$lib/types/oauth";
+  import { safeExternalUrl } from "$lib/url";
   import { cn } from "$lib/utils";
   import * as AlertDialog from "$ui/alert-dialog";
   import { Button } from "$ui/button";
@@ -30,6 +31,7 @@
   import Scale from "@lucide/svelte/icons/scale";
   import SearchAlert from "@lucide/svelte/icons/search-alert";
   import { format, formatDistanceToNowStrict } from "date-fns";
+  import type { Snippet } from "svelte";
   import { toast } from "svelte-sonner";
   import { cubicOut } from "svelte/easing";
   import { slide } from "svelte/transition";
@@ -58,14 +60,55 @@
   let selectedAppForInfo: MCIDOAuthClient | null = $state(null);
   let selectedAppForDeauth: SelectedAppForDeauth | null = $state(null);
   let selectedAppForReport: SelectedAppForReport | null = $state(null);
-  let dialogOpen = $derived(selectedAppForInfo !== null);
-  let alertDialogOpen = $derived(selectedAppForDeauth !== null);
-  let reportDialogOpen = $derived(selectedAppForReport !== null);
   let deauthorizing = $state<boolean>(false);
   let submittingReport = $state<boolean>(false);
   let reportReason = $state<ReportReason | undefined>(undefined);
   let reportDescription = $state<string>("");
+
+  function closeReport() {
+    selectedAppForReport = null;
+    reportReason = undefined;
+    reportDescription = "";
+  }
+
+  async function deauthorize() {
+    if (!selectedAppForDeauth || deauthorizing) return;
+    deauthorizing = true;
+    const toastId = toast.loading("Deauthorizing application...");
+    try {
+      await deleteConsent(selectedAppForDeauth.consent.id);
+      selectedAppForDeauth = null;
+      toast.success("Application deauthorized successfully!", { id: toastId });
+    } catch {
+      toast.error("Failed to deauthorize application", { id: toastId });
+    } finally {
+      deauthorizing = false;
+    }
+  }
+
+  async function report() {
+    if (!reportReason || !selectedAppForReport || submittingReport) return;
+    submittingReport = true;
+    const toastId = toast.loading("Submitting report...");
+    try {
+      await submitReport({
+        clientId: selectedAppForReport.app.client_id,
+        reason: reportReason,
+        description: reportDescription || undefined,
+        consentId: selectedAppForReport.consent.id
+      });
+      closeReport();
+      toast.success("Report submitted successfully. Thank you for helping keep MC-ID safe!", { id: toastId });
+    } catch {
+      toast.error("Failed to submit report", { id: toastId });
+    } finally {
+      submittingReport = false;
+    }
+  }
 </script>
+
+<!-- All links below are validated external HTTP(S) application URLs, not SvelteKit routes. -->
+<!-- eslint-disable svelte/no-navigation-without-resolve -->
 
 <Card.Root class="w-full bg-background">
   <Card.Header>
@@ -88,7 +131,7 @@
                 Icon: FingerprintPattern
               })}
             {:else}
-              {#each authorizations as authorization, index (authorization.publicApp.client_id + index)}
+              {#each authorizations as authorization (authorization.consent.id)}
                 <Item.Root variant="outline" class="flex-col items-start">
                   <div class="flex w-full flex-wrap items-center gap-4">
                     <Item.Media>
@@ -147,7 +190,7 @@
                   </div>
 
                   <Collapsible.Root class="group/permissions w-full">
-                    <Collapsible.Trigger class="w-full rounded-md border p-4">
+                    <Collapsible.Trigger class="w-full rounded-xl border p-4">
                       <div class="flex w-full items-center justify-between">
                         Permissions
                         <ChevronRight
@@ -230,53 +273,85 @@
   </Item.Root>
 {/snippet}
 
-{#snippet additionalItem({ IconComponent, description }: { IconComponent: typeof IconType; description: string })}
+{#snippet additionalItem(IconComponent: typeof IconType, children: Snippet)}
   <Item.Root variant="default" size="sm" class="py-2 opacity-50">
     <Item.Media>
       <IconComponent class="size-5" />
     </Item.Media>
     <Item.Content>
-      <Item.Title><p>{@html description}</p></Item.Title>
+      <Item.Title>{@render children()}</Item.Title>
     </Item.Content>
   </Item.Root>
 {/snippet}
 
-<Dialog.Root bind:open={dialogOpen}>
+<Dialog.Root
+  open={selectedAppForInfo !== null}
+  onOpenChange={(open) => {
+    if (!open) selectedAppForInfo = null;
+  }}>
   <Dialog.Content>
     {#if selectedAppForInfo}
       <Dialog.Header>
         <Dialog.Title>Details for {selectedAppForInfo.client_name}</Dialog.Title>
-        <Dialog.Description class="space-y-4">
+        <Dialog.Description>Application details and developer policies.</Dialog.Description>
+        <div class="flex flex-col gap-4">
           <OauthAppAvatar
             client_id={selectedAppForInfo.client_id}
             logo_uri={selectedAppForInfo.logo_uri}
             client_name={selectedAppForInfo.client_name}
             class="pointer-events-none mx-auto size-16 rounded-none sm:size-24" />
 
-          {#if selectedAppForInfo.description || selectedAppForInfo.client_uri}
+          {#if selectedAppForInfo.description || safeExternalUrl(selectedAppForInfo.client_uri)}
             <Item.Group class="rounded-lg border">
               {#if selectedAppForInfo.description}
-                {@render additionalItem({
-                  IconComponent: BookText,
-                  description: selectedAppForInfo.description as string
-                })}
+                {#snippet description()}<p>{selectedAppForInfo?.description}</p>{/snippet}
+                {@render additionalItem(BookText, description)}
               {/if}
-              {#if selectedAppForInfo.client_uri}
-                {@render additionalItem({
-                  IconComponent: Info,
-                  description: `For more information about this app, please visit: <a href="${selectedAppForInfo.client_uri}" class="underline" target="_blank" rel="noopener noreferrer">${selectedAppForInfo.client_uri}</a>`
-                })}
+              {#if safeExternalUrl(selectedAppForInfo.client_uri)}
+                {#snippet information()}
+                  <p>
+                    For more information about this app, please visit:
+                    <a
+                      href={safeExternalUrl(selectedAppForInfo?.client_uri)}
+                      class="underline"
+                      target="_blank"
+                      rel="noopener noreferrer">{selectedAppForInfo?.client_uri}</a>
+                  </p>
+                {/snippet}
+                {@render additionalItem(Info, information)}
               {/if}
             </Item.Group>
           {/if}
 
-          <Item.Group class="rounded-lg border">
-            {@render additionalItem({
-              IconComponent: Scale,
-              description: `The developer of ${selectedAppForInfo.client_name}${selectedAppForInfo.client_name?.endsWith("s") ? "'" : "'s"} ${selectedAppForInfo.policy_uri ? `<a href="${selectedAppForInfo.policy_uri}" class="underline" target="_blank" rel="noopener noreferrer">privacy policy</a>` : "privacy policy"} and ${selectedAppForInfo.tos_uri ? `<a href="${selectedAppForInfo.tos_uri}" class="underline" target="_blank" rel="noopener noreferrer">terms of service</a>` : "terms of service"} apply to this application`
-            })}
-          </Item.Group>
-        </Dialog.Description>
+          {#if selectedAppForInfo}
+            {#snippet policies()}
+              <p>
+                The developer of {selectedAppForInfo?.client_name}{selectedAppForInfo?.client_name?.endsWith("s")
+                  ? "'"
+                  : "'s"}
+                {#if safeExternalUrl(selectedAppForInfo?.policy_uri)}
+                  <a
+                    href={safeExternalUrl(selectedAppForInfo?.policy_uri)}
+                    class="underline"
+                    target="_blank"
+                    rel="noopener noreferrer">privacy policy</a>
+                {:else}privacy policy{/if}
+                and
+                {#if safeExternalUrl(selectedAppForInfo?.tos_uri)}
+                  <a
+                    href={safeExternalUrl(selectedAppForInfo?.tos_uri)}
+                    class="underline"
+                    target="_blank"
+                    rel="noopener noreferrer">terms of service</a>
+                {:else}terms of service{/if}
+                apply to this application.
+              </p>
+            {/snippet}
+            <Item.Group class="rounded-lg border">
+              {@render additionalItem(Scale, policies)}
+            </Item.Group>
+          {/if}
+        </div>
       </Dialog.Header>
     {:else}
       {@render empty({
@@ -288,7 +363,11 @@
   </Dialog.Content>
 </Dialog.Root>
 
-<AlertDialog.Root bind:open={alertDialogOpen}>
+<AlertDialog.Root
+  open={selectedAppForDeauth !== null}
+  onOpenChange={(open) => {
+    if (!open && !deauthorizing) selectedAppForDeauth = null;
+  }}>
   <AlertDialog.Content>
     {#if selectedAppForDeauth}
       <AlertDialog.Header>
@@ -298,41 +377,11 @@
             .client_name}</AlertDialog.Description>
       </AlertDialog.Header>
       <AlertDialog.Footer>
-        <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-        <AlertDialog.Action class="text-foreground">
-          {#snippet child({ props })}
-            <Button
-              {...props}
-              variant="destructive"
-              onclick={() => {
-                deauthorizing = true;
-                toast.promise(
-                  new Promise((resolve, reject) => {
-                    deleteConsent(selectedAppForDeauth!.consent.id)
-                      .then(resolve)
-                      .catch(reject)
-                      .finally(async () => {
-                        selectedAppForDeauth = null;
-                        deauthorizing = false;
-                      });
-                  }),
-                  {
-                    loading: "Deauthorizing application...",
-                    success: "Application deauthorized successfully!",
-                    error: "Failed to deauthorize application"
-                  }
-                );
-              }}
-              disabled={deauthorizing}
-              aria-label="Deauthorize">
-              {#if deauthorizing}
-                <Spinner />
-              {:else}
-                Deauthorize
-              {/if}
-            </Button>
-          {/snippet}
-        </AlertDialog.Action>
+        <AlertDialog.Cancel disabled={deauthorizing}>Cancel</AlertDialog.Cancel>
+        <Button variant="destructive" onclick={deauthorize} disabled={deauthorizing}>
+          {#if deauthorizing}<Spinner data-icon="inline-start" />{/if}
+          Deauthorize
+        </Button>
       </AlertDialog.Footer>
     {:else}
       {@render empty({
@@ -345,12 +394,9 @@
 </AlertDialog.Root>
 
 <Dialog.Root
-  bind:open={reportDialogOpen}
+  open={selectedAppForReport !== null}
   onOpenChange={(open) => {
-    if (!open) {
-      reportReason = undefined;
-      reportDescription = "";
-    }
+    if (!open && !submittingReport) closeReport();
   }}>
   <Dialog.Content>
     {#if selectedAppForReport}
@@ -371,9 +417,11 @@
               {reportReason ? reasonLabels[reportReason] : "Select a reason..."}
             </Select.Trigger>
             <Select.Content>
-              {#each reportReasons as reason (reason)}
-                <Select.Item value={reason}>{reasonLabels[reason]}</Select.Item>
-              {/each}
+              <Select.Group>
+                {#each reportReasons as reason (reason)}
+                  <Select.Item value={reason}>{reasonLabels[reason]}</Select.Item>
+                {/each}
+              </Select.Group>
             </Select.Content>
           </Select.Root>
         </div>
@@ -389,38 +437,8 @@
       </div>
 
       <Dialog.Footer>
-        <Button variant="outline" onclick={() => (selectedAppForReport = null)}>Cancel</Button>
-        <Button
-          variant="destructive"
-          disabled={!reportReason || submittingReport}
-          onclick={() => {
-            if (!reportReason || !selectedAppForReport) return;
-
-            submittingReport = true;
-            toast.promise(
-              new Promise((resolve, reject) => {
-                submitReport({
-                  clientId: selectedAppForReport!.app.client_id,
-                  reason: reportReason!,
-                  description: reportDescription || undefined,
-                  consentId: selectedAppForReport!.consent.id
-                })
-                  .then(resolve)
-                  .catch(reject)
-                  .finally(() => {
-                    selectedAppForReport = null;
-                    submittingReport = false;
-                    reportReason = undefined;
-                    reportDescription = "";
-                  });
-              }),
-              {
-                loading: "Submitting report...",
-                success: "Report submitted successfully. Thank you for helping keep MC-ID safe!",
-                error: "Failed to submit report"
-              }
-            );
-          }}>
+        <Button variant="outline" disabled={submittingReport} onclick={closeReport}>Cancel</Button>
+        <Button variant="destructive" disabled={!reportReason || submittingReport} onclick={report}>
           {#if submittingReport}
             <Spinner />
           {:else}

@@ -42,7 +42,7 @@ export const code = z.string().refine((x) => /^\d{6}$/.test(x), {
 
 export const loginFormSchema = z.object({
   email,
-  "current-password": newPassword
+  "current-password": z.string().min(1, "Enter your password")
 });
 
 export const signupFormSchema = z

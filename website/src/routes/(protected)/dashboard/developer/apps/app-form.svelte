@@ -20,7 +20,7 @@
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
   import RefreshCw from "@lucide/svelte/icons/refresh-cw";
   import { Debounced, TextareaAutosize } from "runed";
-  import { tick } from "svelte";
+  import { tick, untrack } from "svelte";
   import { toast } from "svelte-sonner";
   import { cubicOut } from "svelte/easing";
   import { slide } from "svelte/transition";
@@ -47,8 +47,6 @@
   let textAreaEl = $state<HTMLTextAreaElement>(null!);
   let appSecret = $state<string>();
   let resettingSecret = $state<boolean>(false);
-  let urlErrors = $state<boolean>(false);
-  let contactErrors = $state<boolean>(false);
 
   const isCreate = $derived(variant == (AppFormVariant.CREATE as const));
   const isEdit = $derived(variant == (AppFormVariant.EDIT as const));
@@ -63,7 +61,8 @@
     normal: isCreate ? "create" : "edit"
   } as const);
 
-  const appForm = $derived(
+  // Superforms owns its stores and page subscriptions for the component lifetime.
+  const appForm = untrack(() =>
     superForm(data.appForm, {
       validators: zodClient(appSchema),
       dataType: "json",
@@ -73,7 +72,7 @@
     })
   );
 
-  const deleteAppForm = $derived(
+  const deleteAppForm = untrack(() =>
     superForm(data.deleteAppForm, {
       validators: zodClient(deleteAppSchema),
       dataType: "json",
@@ -90,15 +89,11 @@
     submitting: appSubmitting,
     timeout: appTimeout,
     errors: appErrors
-  } = $derived(appForm);
+  } = appForm;
 
-  const {
-    form: deleteAppFormData,
-    enhance: deleteAppEnhance,
-    submitting: deleteAppSubmitting
-  } = $derived(deleteAppForm);
+  const { form: deleteAppFormData, enhance: deleteAppEnhance, submitting: deleteAppSubmitting } = deleteAppForm;
 
-  const debouncediconUrlValue = $state(new Debounced(() => $appFormData.logoUrl, 300));
+  const debouncediconUrlValue = new Debounced(() => $appFormData.logoUrl, 300);
 
   const avatar = $derived.by(() => {
     if ($appErrors.logoUrl === undefined && $appFormData.logoUrl && debouncediconUrlValue.current) {
@@ -111,7 +106,9 @@
     $appFormData.redirectUris = [...$appFormData.redirectUris, ""];
 
     tick().then(() => {
-      const urlInputs = Array.from(document.querySelectorAll<HTMLElement>("#profile-form input[name='redirectUris']"));
+      const urlInputs = Array.from(
+        document.querySelectorAll<HTMLElement>("#oauth-app-form input[name^='redirectUris[']")
+      );
       const lastInput = urlInputs[urlInputs.length - 1];
       if (lastInput) {
         lastInput.focus();
@@ -123,7 +120,9 @@
     $appFormData.contacts = [...$appFormData.contacts, ""];
 
     tick().then(() => {
-      const contactInputs = Array.from(document.querySelectorAll<HTMLElement>("#profile-form input[name='contacts']"));
+      const contactInputs = Array.from(
+        document.querySelectorAll<HTMLElement>("#oauth-app-form input[name^='contacts[']")
+      );
       const lastInput = contactInputs[contactInputs.length - 1];
       if (lastInput) {
         lastInput.focus();
@@ -145,34 +144,31 @@
     maxHeight: 200
   });
 
-  $effect(() => {
-    appTimeout.subscribe((value) => {
-      if (value) {
-        toast.loading(`It's taking longer than expected to ${language.normal} your app...`, {
-          id: toastLoading
-        });
-      }
-    });
-  });
+  const urlErrors = $derived(Object.values($appErrors.redirectUris ?? {}).some((uri) => uri !== undefined));
+  const contactErrors = $derived(Object.values($appErrors.contacts ?? {}).some((email) => email !== undefined));
 
   $effect(() => {
-    appErrors.subscribe(({ redirectUris, contacts }) => {
-      if (redirectUris) {
-        urlErrors = Object.values(redirectUris).some((uri) => uri !== undefined);
-      } else {
-        urlErrors = false;
-      }
-
-      if (contacts) {
-        contactErrors = Object.values(contacts).some((email) => email !== undefined);
-      } else {
-        contactErrors = false;
-      }
-    });
+    if ($appTimeout && toastLoading !== undefined) {
+      toast.loading(`It's taking longer than expected to ${language.normal} your app...`, {
+        id: toastLoading
+      });
+    }
   });
+
+  async function rotateSecret() {
+    if (!$appFormData.id) throw new Error("App ID is required to reset the secret.");
+    resettingSecret = true;
+    try {
+      const { secret } = await resetSecret($appFormData.id);
+      appSecret = secret;
+    } finally {
+      resettingSecret = false;
+    }
+  }
 </script>
 
 <form
+  id="oauth-app-form"
   method="POST"
   action={isCreate ? "?/createApp" : `?/editApp`}
   use:appEnhance={{
@@ -186,16 +182,10 @@
       if (result.type === "success") {
         toast.success(`App ${language.success} successfully!`);
       } else {
-        if (isEdit) {
-          appForm.reset();
-        }
         toast.error(`Failed to ${language.normal} app. Please check the form for errors.`);
       }
     },
     onError: async () => {
-      if (isEdit) {
-        appForm.reset();
-      }
       toast.error(`An error occurred while ${language.action} your app. Please try again.`);
     }
   }}
@@ -267,32 +257,11 @@
               type="button"
               disabled={resettingSecret || $appSubmitting}
               onclick={() => {
-                resettingSecret = true;
-                toast.promise(
-                  new Promise((resolve, reject) => {
-                    if (!$appFormData.id) {
-                      reject(new Error("App ID is required to reset the secret."));
-                      return;
-                    }
-                    (async () => {
-                      const { secret, success } = await resetSecret($appFormData.id);
-
-                      if (!success) throw new Error("Failed to reset secret.");
-
-                      appSecret = secret;
-                      resolve(data);
-                    })()
-                      .catch(reject)
-                      .finally(() => {
-                        resettingSecret = false;
-                      });
-                  }),
-                  {
-                    loading: "Resetting secret...",
-                    success: "Secret reset successfully!",
-                    error: "Failed to reset secret."
-                  }
-                );
+                toast.promise(rotateSecret(), {
+                  loading: "Resetting secret...",
+                  success: "Secret reset successfully!",
+                  error: "Failed to reset secret."
+                });
               }}>
               <RefreshCw
                 class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin"
@@ -361,6 +330,7 @@
                       placeholder="http://localhost:3000/cb" />
                     <Button
                       type="button"
+                      aria-label={`Remove redirect URI ${i + 1}`}
                       variant="link"
                       size="sm"
                       class="group absolute top-1/2 right-2 h-auto -translate-y-1/2 transform p-0 text-destructive"
@@ -411,6 +381,7 @@
                       placeholder="contact@example.com" />
                     <Button
                       type="button"
+                      aria-label={`Remove contact email ${i + 1}`}
                       variant="link"
                       size="sm"
                       class="group absolute top-1/2 right-2 h-auto -translate-y-1/2 transform p-0 text-destructive"
@@ -582,7 +553,7 @@
     <Form.Field form={deleteAppForm} name="id" class="hidden">
       <Form.Control>
         {#snippet children({ props })}
-          <Input {...props} value={$deleteAppFormData.id} readonly type="url" autocomplete="url" />
+          <Input {...props} value={$deleteAppFormData.id} readonly type="hidden" />
         {/snippet}
       </Form.Control>
     </Form.Field>
