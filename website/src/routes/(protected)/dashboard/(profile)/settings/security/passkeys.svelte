@@ -2,128 +2,111 @@
   import { authClient } from "$lib/auth-client";
   import { Button } from "$ui/button";
   import { Input } from "$ui/input";
+  import * as InputGroup from "$ui/input-group";
   import { Label } from "$ui/label";
+  import { Skeleton } from "$ui/skeleton";
   import { CircleMinus, Key } from "@lucide/svelte";
   import { toast } from "svelte-sonner";
   import { slide } from "svelte/transition";
   import { deletePasskey, getPasskeys, updatePasskey } from "./passkeys.remote";
 
-  let newPasskeyName = $state<string>();
-  let changingPasskeys = $state<boolean>(false);
+  let newPasskeyName = $state("");
+  let changingPasskeys = $state(false);
+
+  async function changePasskey(action: () => Promise<unknown>, loading: string, success: string) {
+    if (changingPasskeys) return;
+    changingPasskeys = true;
+    const toastId = toast.loading(loading);
+    try {
+      await action();
+      toast.success(success, { id: toastId });
+    } catch {
+      toast.error("Could not update your passkeys. Please try again.", { id: toastId });
+    } finally {
+      changingPasskeys = false;
+    }
+  }
+
+  async function addPasskey() {
+    const result = await authClient.passkey.addPasskey({ name: newPasskeyName.trim() });
+    if (!result?.data || result.error) throw new Error(result?.error?.message ?? "Passkey was not created");
+    newPasskeyName = "";
+    await getPasskeys().refresh();
+  }
 </script>
 
-<div class="relative mx-auto flex h-1/2 flex-col justify-center space-y-4 self-center px-4 md:px-0">
-  <div class="space-y-2">
+<div class="relative mx-auto flex flex-col justify-center gap-4 self-center px-4 md:px-0">
+  <div class="flex flex-col gap-2">
     <Label for="passkeys">Passkeys</Label>
     <p class="text-sm text-muted-foreground">
       Passkeys are a secure and convenient way to log in without passwords. They use cryptographic keys stored on your
       device, making them resistant to phishing and other attacks.
     </p>
 
-    <div class="space-y-2">
+    <div class="flex flex-col gap-2">
       <svelte:boundary>
         {#each await getPasskeys() as passkey (passkey.id)}
-          <div class="relative" transition:slide={{ axis: "y", duration: 300 }}>
-            <Key class="absolute top-1/2 left-2 z-10 size-6 -translate-y-1/2 rounded-full bg-accent p-1 select-none" />
-            <Input
-              bind:value={passkey.name}
-              class="no-input-borders relative pl-10"
-              onchange={() => {
-                changingPasskeys = true;
-                toast.promise(
-                  new Promise((resolve, reject) => {
-                    updatePasskey({ id: passkey.id, name: passkey.name ?? "Unnamed Passkey" })
-                      .then(resolve)
-                      .catch(reject)
-                      .finally(() => {
-                        changingPasskeys = false;
-                      });
-                  }),
-                  {
-                    loading: "Changing passkey name...",
-                    success: "Passkey name changed successfully!",
-                    error: "Failed to change passkey name"
-                  }
-                );
-              }} />
-            <Button
-              type="button"
-              variant="link"
-              size="sm"
-              class="group absolute top-1/2 right-2 h-auto -translate-y-1/2 transform p-0"
-              onclick={() => {
-                changingPasskeys = true;
-                toast.promise(
-                  new Promise((resolve, reject) => {
-                    deletePasskey(passkey.id)
-                      .then(resolve)
-                      .catch(reject)
-                      .finally(async () => {
-                        await getPasskeys().refresh();
-                        changingPasskeys = false;
-                      });
-                  }),
-                  {
-                    loading: "Deleting passkey...",
-                    success: "Passkey deleted successfully!",
-                    error: "Failed to delete passkey"
-                  }
-                );
-              }}
-              aria-label="Delete Passkey">
-              <CircleMinus
-                class="text-destructive opacity-50 transition-opacity duration-300 group-hover:opacity-100" />
-            </Button>
+          <div transition:slide={{ axis: "y", duration: 300 }}>
+            <InputGroup.Root>
+              <InputGroup.Input
+                value={passkey.name ?? ""}
+                aria-label="Passkey name"
+                disabled={changingPasskeys}
+                onchange={(event) => {
+                  const input = event.currentTarget;
+                  const name = input.value.trim() || "Unnamed Passkey";
+                  void changePasskey(
+                    async () => {
+                      try {
+                        await updatePasskey({ id: passkey.id, name });
+                      } catch (error) {
+                        input.value = passkey.name ?? "";
+                        throw error;
+                      }
+                    },
+                    "Changing passkey name...",
+                    "Passkey name changed successfully!"
+                  );
+                }} />
+              <InputGroup.Addon><Key /></InputGroup.Addon>
+              <InputGroup.Addon align="inline-end">
+                <InputGroup.Button
+                  disabled={changingPasskeys}
+                  size="icon-sm"
+                  onclick={() =>
+                    changePasskey(
+                      () => deletePasskey(passkey.id),
+                      "Deleting passkey...",
+                      "Passkey deleted successfully!"
+                    )}
+                  aria-label="Delete passkey">
+                  <CircleMinus />
+                </InputGroup.Button>
+              </InputGroup.Addon>
+            </InputGroup.Root>
           </div>
         {/each}
 
         {#snippet pending()}
-          <div class="h-9 w-full animate-pulse rounded-md border border-input bg-input/30 shadow-xs"></div>
+          <Skeleton class="h-9 w-full" />
         {/snippet}
-
         {#snippet failed()}
-          <div class="text-destructive">Failed to load passkeys. Please try again later.</div>
+          <p class="text-destructive">Failed to load passkeys. Please try again later.</p>
         {/snippet}
       </svelte:boundary>
     </div>
 
-    <div class="flex items-center space-x-2">
-      <Input bind:value={newPasskeyName} placeholder="Enter passkey name" id="passkeys" class="w-full" />
-
+    <div class="flex items-center gap-2">
+      <Input
+        bind:value={newPasskeyName}
+        disabled={changingPasskeys}
+        placeholder="Enter passkey name"
+        id="passkeys"
+        class="w-full" />
       <Button
-        disabled={changingPasskeys || !newPasskeyName}
-        onclick={async () => {
-          changingPasskeys = true;
-          toast.promise(
-            authClient.passkey
-              .addPasskey({
-                name: newPasskeyName ?? "Unnamed Passkey"
-              })
-              .then((res) => {
-                if (res) {
-                  const { data: _data, error } = res;
-                  if (error) {
-                    console.error("Failed to add passkey:", error);
-                    throw new Error(error.message);
-                  }
-                }
-              })
-              .finally(async () => {
-                newPasskeyName = undefined!;
-                await getPasskeys().refresh();
-                changingPasskeys = false;
-              }),
-            {
-              loading: "Adding passkey...",
-              success: "Passkey added successfully!",
-              error: "Failed to add passkey",
-              finally: async () => {
-                changingPasskeys = false;
-                newPasskeyName = undefined!;
-              }
-            }
-          );
-        }}>Add Passkey</Button>
+        disabled={changingPasskeys || !newPasskeyName.trim()}
+        onclick={() => changePasskey(addPasskey, "Adding passkey...", "Passkey added successfully!")}
+        >Add Passkey</Button>
     </div>
   </div>
 </div>

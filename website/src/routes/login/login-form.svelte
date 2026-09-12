@@ -1,7 +1,9 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { resolve } from "$app/paths";
+  import { page } from "$app/state";
   import { authClient } from "$lib/auth-client";
+  import { getOAuthQuery } from "$lib/oauth-query";
   import { Button } from "$ui/button";
   import * as Card from "$ui/card";
   import * as Password from "$ui/extras/password";
@@ -9,7 +11,7 @@
   import { Input } from "$ui/input";
   import Key from "@lucide/svelte/icons/key";
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
-  import { untrack } from "svelte";
+  import { onMount, untrack } from "svelte";
   import { toast } from "svelte-sonner";
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
@@ -20,9 +22,11 @@
     handleSignUpButtonClick
   }: { data: { loginForm: SuperValidated<Infer<LoginFormSchema>> }; handleSignUpButtonClick: () => void } = $props();
 
+  const oauthQuery = $derived(getOAuthQuery(page.url.searchParams));
+
   let toastLoading = $state<number | string>();
 
-  const form = $derived(
+  const form = untrack(() =>
     superForm(data.loginForm, {
       validators: zodClient(loginFormSchema),
       dataType: "json",
@@ -31,14 +35,18 @@
     })
   );
 
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = $derived(form);
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
 
   async function signInWithPasskey(autoFill = false) {
     await authClient.signIn.passkey({
       autoFill,
       fetchOptions: {
-        onSuccess: (_context) => {
-          goto(resolve("/dashboard"));
+        onSuccess: ({ data }) => {
+          if (data?.redirect && typeof data.url === "string") {
+            window.location.assign(data.url);
+          } else {
+            void goto(resolve("/dashboard"));
+          }
         },
         onError: (error) => {
           console.error("Failed to login with passkey", error);
@@ -49,26 +57,27 @@
   }
 
   $effect(() => {
-    timeout.subscribe((value) => {
-      if (value) {
-        toast.loading("It's taking longer than expected to log you in...", {
-          id: toastLoading
-        });
-      }
-    });
+    if ($timeout && toastLoading !== undefined) {
+      toast.loading("It's taking longer than expected to log you in...", {
+        id: toastLoading
+      });
+    }
   });
 
-  $effect(() => {
-    if (
-      !PublicKeyCredential.isConditionalMediationAvailable ||
-      !PublicKeyCredential.isConditionalMediationAvailable()
-    ) {
-      return;
+  onMount(() => {
+    let disposed = false;
+    if (typeof PublicKeyCredential !== "undefined" && PublicKeyCredential.isConditionalMediationAvailable) {
+      void PublicKeyCredential.isConditionalMediationAvailable()
+        .then((available) => {
+          if (available && !disposed) return signInWithPasskey(true);
+        })
+        .catch(() => {
+          // Conditional autofill is optional; manual login remains available.
+        });
     }
-
-    untrack(async () => {
-      void (await signInWithPasskey(true));
-    });
+    return () => {
+      disposed = true;
+    };
   });
 </script>
 
@@ -80,7 +89,7 @@
   <Card.Content class="space-y-2">
     <form
       method="POST"
-      action="?/login"
+      action={`?/login${oauthQuery ? `&${oauthQuery}` : ""}`}
       use:enhance={{
         onSubmit: async () => {
           toastLoading = toast.loading("Logging you in...");

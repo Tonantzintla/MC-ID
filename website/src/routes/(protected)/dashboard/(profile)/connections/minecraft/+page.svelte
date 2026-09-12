@@ -15,6 +15,7 @@
   import Crown from "@lucide/svelte/icons/crown";
   import Unlink from "@lucide/svelte/icons/unlink";
   import { REGEXP_ONLY_DIGITS } from "bits-ui";
+  import { untrack } from "svelte";
   import { toast } from "svelte-sonner";
   import { fly } from "svelte/transition";
   import { superForm } from "sveltekit-superforms";
@@ -36,7 +37,7 @@
 
   const allMinecraftAccounts = minecraftAccounts();
 
-  const form = $derived(
+  const form = untrack(() =>
     superForm(data.verifyCodeForm, {
       validators: zodClient(requestCodeFormSchema),
       dataType: "json",
@@ -45,7 +46,7 @@
     })
   );
 
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = $derived(form);
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
 
   const remoteErrorMessage = (error: unknown, fallback: string) => {
     if (error instanceof Error) return error.message;
@@ -119,13 +120,11 @@
   };
 
   $effect(() => {
-    timeout.subscribe((value) => {
-      if (value) {
-        toast.loading("It's taking longer than expected to verify your code...", {
-          id: toastLoading
-        });
-      }
-    });
+    if ($timeout && toastLoading !== undefined) {
+      toast.loading("It's taking longer than expected to verify your code...", {
+        id: toastLoading
+      });
+    }
   });
 </script>
 

@@ -29,6 +29,7 @@
   import UserRoundXIcon from "@lucide/svelte/icons/user-round-x";
   import { parseDate } from "chrono-node";
   import { differenceInSeconds } from "date-fns";
+  import { untrack } from "svelte";
   import { toast } from "svelte-sonner";
   import { superForm } from "sveltekit-superforms";
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
@@ -67,7 +68,7 @@
     return 0;
   });
 
-  const form = $derived(
+  const form = untrack(() =>
     superForm(data.banForm, {
       validators: zodClient(banFormSchema),
       dataType: "json",
@@ -76,7 +77,7 @@
     })
   );
 
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = $derived(form);
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
 
   function formatDate(date: DateValue | undefined) {
     if (!date) return "";
@@ -89,13 +90,11 @@
   }
 
   $effect(() => {
-    timeout.subscribe((value) => {
-      if (value) {
-        toast.loading("It's taking longer than expected to process your request...", {
-          id: toastLoading
-        });
-      }
-    });
+    if ($timeout && toastLoading !== undefined) {
+      toast.loading("It's taking longer than expected to process your request...", {
+        id: toastLoading
+      });
+    }
   });
 </script>
 

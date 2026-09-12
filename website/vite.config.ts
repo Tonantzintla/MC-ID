@@ -53,10 +53,6 @@ export default defineConfig({
         }
       },
 
-      csrf: {
-        trustedOrigins: ["*"]
-      },
-
       alias: {
         $ui: "./src/lib/components/ui",
         $components: "./src/lib/components",

@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { page } from "$app/state";
   import { SCORE_NAMING } from "$lib/constants/password-score";
+  import { getOAuthQuery } from "$lib/oauth-query";
   import { Button } from "$ui/button";
   import * as Card from "$ui/card";
   import * as Password from "$ui/extras/password";
@@ -7,6 +9,7 @@
   import { Input } from "$ui/input";
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
   import type { ZxcvbnResult } from "@zxcvbn-ts/core";
+  import { untrack } from "svelte";
   import { toast } from "svelte-sonner";
   import { cubicInOut } from "svelte/easing";
   import { fly } from "svelte/transition";
@@ -19,13 +22,14 @@
     handleSignInButtonClick
   }: { data: { signupForm: SuperValidated<Infer<SignupFormSchema>> }; handleSignInButtonClick: () => void } = $props();
 
+  const oauthQuery = $derived(getOAuthQuery(page.url.searchParams));
+
   let toastLoading = $state<number | string>();
   let strength = $state<ZxcvbnResult>();
-  let anyErrors = $state(false);
 
   const passesStrength = $derived((strength?.score ?? 0) >= 3);
 
-  const form = $derived(
+  const form = untrack(() =>
     superForm(data.signupForm, {
       validators: zodClient(signupFormSchema),
       dataType: "json",
@@ -34,22 +38,16 @@
     })
   );
 
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = $derived(form);
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = form;
+
+  const anyErrors = $derived(Object.values($errors).some((v) => v !== undefined && v.length > 0));
 
   $effect(() => {
-    errors.subscribe((value) => {
-      anyErrors = Object.values(value).some((v) => v !== undefined && v.length > 0);
-    });
-  });
-
-  $effect(() => {
-    timeout.subscribe((value) => {
-      if (value) {
-        toast.loading("It's taking longer than expected to sign you up...", {
-          id: toastLoading
-        });
-      }
-    });
+    if ($timeout && toastLoading !== undefined) {
+      toast.loading("It's taking longer than expected to sign you up...", {
+        id: toastLoading
+      });
+    }
   });
 </script>
 
@@ -61,7 +59,7 @@
   <Card.Content>
     <form
       method="POST"
-      action="?/signup"
+      action={`?/signup${oauthQuery ? `&${oauthQuery}` : ""}`}
       use:enhance={{
         onSubmit: async () => {
           toastLoading = toast.loading("Creating your account...");

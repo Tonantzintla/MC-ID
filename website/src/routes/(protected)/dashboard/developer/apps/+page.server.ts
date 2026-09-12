@@ -90,6 +90,6 @@ export const actions: Actions = {
       });
     }
 
-    redirect(307, `/dashboard/developer/apps/${createdApp.client_id}`);
+    redirect(303, `/dashboard/developer/apps/${createdApp.client_id}`);
   }
 };

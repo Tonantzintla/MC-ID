@@ -17,6 +17,7 @@
   import CircleArrowLeftIcon from "@lucide/svelte/icons/circle-arrow-left";
   import KeyIcon from "@lucide/svelte/icons/key";
   import { formatDuration, intervalToDuration } from "date-fns";
+  import { untrack } from "svelte";
   import { toast } from "svelte-sonner";
   import { superForm } from "sveltekit-superforms";
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
@@ -30,7 +31,7 @@
   let updateModalOpen = $state<boolean>(false);
   let deleteModalOpen = $state<boolean>(false);
 
-  const updateKeyForm = $derived(
+  const updateKeyForm = untrack(() =>
     superForm(data.updateKeyForm, {
       validators: zodClient(updateKeySchema),
       dataType: "json",
@@ -39,7 +40,7 @@
     })
   );
 
-  const deleteKeyForm = $derived(
+  const deleteKeyForm = untrack(() =>
     superForm(data.deleteKeyForm, {
       validators: zodClient(deleteKeySchema),
       dataType: "json",
@@ -55,30 +56,26 @@
     isTainted: updateKeyIsTainted,
     submitting: updateKeySubmitting,
     timeout: updateKeyTimeout
-  } = $derived(updateKeyForm);
+  } = updateKeyForm;
   const {
     form: deleteKeyFormData,
     enhance: deleteKeyEnhance,
     submitting: deleteKeySubmitting,
     timeout: deleteKeyTimeout
-  } = $derived(deleteKeyForm);
+  } = deleteKeyForm;
 
   $effect(() => {
-    updateKeyTimeout.subscribe((value) => {
-      if (value) {
-        toast.loading("It's taking longer than expected to process your request...", {
-          id: toastLoading
-        });
-      }
-    });
+    if ($updateKeyTimeout && toastLoading !== undefined) {
+      toast.loading("It's taking longer than expected to process your request...", {
+        id: toastLoading
+      });
+    }
 
-    deleteKeyTimeout.subscribe((value) => {
-      if (value) {
-        toast.loading("It's taking longer than expected to process your request...", {
-          id: toastLoading
-        });
-      }
-    });
+    if ($deleteKeyTimeout && toastLoading !== undefined) {
+      toast.loading("It's taking longer than expected to process your request...", {
+        id: toastLoading
+      });
+    }
   });
 </script>
 

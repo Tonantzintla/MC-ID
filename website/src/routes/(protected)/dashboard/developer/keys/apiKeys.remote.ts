@@ -33,6 +33,8 @@ export const deleteApiKey = command(z.string(), async (id) => {
       headers: request.headers
     });
 
+    await getApiKeys().refresh();
+
     return { success: true, message: "API key deleted successfully" };
   } catch (err) {
     console.error("Error deleting API key", err);

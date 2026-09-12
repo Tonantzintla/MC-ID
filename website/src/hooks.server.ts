@@ -1,4 +1,5 @@
 import { building } from "$app/environment";
+import { getOAuthQuery } from "$lib/oauth-query";
 import { UserRole } from "$lib/roles";
 import { auth } from "$lib/server/auth"; // path to your auth file
 import { cleanupDbCron } from "$lib/server/crons/cleanup-db";
@@ -62,7 +63,7 @@ const protectedHandler = (async ({ event, resolve }) => {
     }
   }
   if (locals.user && locals.session) {
-    if (route.id?.startsWith(signInPath)) {
+    if (route.id === signInPath && !getOAuthQuery(url.searchParams)) {
       redirect(307, "/dashboard");
     }
   }

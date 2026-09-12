@@ -1,5 +1,6 @@
 import { Scope } from "$lib/scopes";
 import { auth } from "$lib/server/auth";
+import { db } from "$lib/server/db";
 import type { MCIDOAuthClient } from "$lib/types/oauth";
 import { error, fail, isHttpError, redirect, type Actions } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
@@ -52,7 +53,8 @@ export const load = (async (event) => {
 
 export const actions: Actions = {
   editApp: async (event) => {
-    const { request } = event;
+    const { request, locals } = event;
+    if (!locals.user) error(401, "Unauthorized");
     const form = await superValidate(event, zod(appSchema));
     try {
       if (!form.valid) {
@@ -71,6 +73,12 @@ export const actions: Actions = {
         });
       }
 
+      const storedApp = await db.query.oauthClient.findFirst({
+        where: (client, { and, eq }) => and(eq(client.clientId, form.data.id), eq(client.userId, locals.user!.id)),
+        columns: { metadata: true }
+      });
+      if (!storedApp) return fail(404, { form, error: "App not found" });
+
       await auth.api.adminUpdateOAuthClient({
         body: {
           client_id: form.data.id, // required
@@ -84,6 +92,7 @@ export const actions: Actions = {
             policy_uri: form.data.policyUri,
             logo_uri: form.data.logoUrl,
             metadata: {
+              ...(storedApp.metadata as Record<string, unknown> | null),
               description: form.data.description
             }
           }
@@ -129,6 +138,6 @@ export const actions: Actions = {
       });
     }
 
-    redirect(307, "/dashboard/developer/apps");
+    redirect(303, "/dashboard/developer/apps");
   }
 };

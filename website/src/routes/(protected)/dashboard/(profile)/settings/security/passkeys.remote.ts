@@ -40,6 +40,8 @@ export const updatePasskey = command(updatePasskeySchema, async (newData) => {
       error(404, "Passkey not found");
     }
 
+    await getPasskeys().refresh();
+
     return data.passkey;
   } catch (err) {
     console.error("Error updating passkey", err);
@@ -57,6 +59,8 @@ export const deletePasskey = command(z.string(), async (id) => {
       // This endpoint requires session cookies.
       headers: request.headers
     });
+
+    await getPasskeys().refresh();
 
     return { success: true, message: "Passkey deleted successfully" };
   } catch (err) {

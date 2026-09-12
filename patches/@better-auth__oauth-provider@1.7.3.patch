@@ -1,5 +1,5 @@
 diff --git a/dist/authorize-9whjxVLJ.mjs b/dist/authorize-9whjxVLJ.mjs
-index 6c1d5c51cc553db32900bc750dfd0687420b12b7..9d0389aae6d5b02ddbec172edac55320f90233f0 100644
+index 6c1d5c51cc553db32900bc750dfd0687420b12b7..71141e96a81aca9724d7cb8bacfc8bf5ebf5196a 100644
 --- a/dist/authorize-9whjxVLJ.mjs
 +++ b/dist/authorize-9whjxVLJ.mjs
 @@ -1697,7 +1697,7 @@ function validateClientRedirectUri(redirectUri, applicationType) {
@@ -7,7 +7,7 @@ index 6c1d5c51cc553db32900bc750dfd0687420b12b7..9d0389aae6d5b02ddbec172edac55320
  	const isAllowedNativeHttpLoopback = rawHttpHostname === "localhost" || rawHttpHostname === "127.0.0.1" || rawHttpHostname === "[::1]";
  	if (applicationType === "web") {
 -		if (!isHttps || isRedirectLoopback) invalidRedirectUri(`web clients require https redirect URIs on non-loopback hosts: ${redirectUri}`);
-+		if (!isHttps && !isRedirectLoopback) invalidRedirectUri(`web clients require https redirect URIs on non-loopback hosts: ${redirectUri}`);
++		if ((!isHttps || isRedirectLoopback) && !isAllowedNativeHttpLoopback) invalidRedirectUri(`web clients require https except on exact http loopback hosts: ${redirectUri}`);
  		return;
  	}
  	if (isHttps) {

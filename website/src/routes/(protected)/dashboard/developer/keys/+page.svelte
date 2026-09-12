@@ -26,7 +26,26 @@
 
   const allApiKeys = getApiKeys();
   let currentTime = $state(new Date());
-  let changingApiKeys = $state<boolean>(false);
+  let changingApiKeys = $state(false);
+  let deletedKeyIds = $state<string[]>([]);
+  const createdKey = $derived(
+    page.form?.createdKey && !deletedKeyIds.includes(page.form.createdKey.id) ? page.form.createdKey : null
+  );
+
+  async function removeKey(id: string) {
+    if (changingApiKeys) return;
+    changingApiKeys = true;
+    const toastId = toast.loading("Deleting key...");
+    try {
+      await deleteApiKey(id);
+      deletedKeyIds.push(id);
+      toast.success("Key deleted successfully!", { id: toastId });
+    } catch {
+      toast.error("Failed to delete key", { id: toastId });
+    } finally {
+      changingApiKeys = false;
+    }
+  }
 
   onMount(() => {
     const interval = setInterval(() => {
@@ -73,24 +92,23 @@
     </Card.Content>
 
     <svelte:boundary>
-      {#if allApiKeys.loading}
-        <div class="flex w-full items-center justify-center py-10">
-          <Spinner />
-        </div>
-      {/if}
-      {#if allApiKeys.error}
-        <div class="text-destructive">Failed to load your API keys. Please try again later.</div>
-      {/if}
-      {#if (allApiKeys.current?.length !== 0 || page.form?.createdKey) && !allApiKeys.loading}
+      {@const apiKeys = await allApiKeys}
+      {#if apiKeys.length > 0 || createdKey}
         <div class="grid grid-cols-1 gap-4 px-6 py-6">
-          {#if page.form?.createdKey}
-            {@render keyCard(page.form.createdKey)}
+          {#if createdKey}
+            {@render keyCard(createdKey)}
           {/if}
-          {#each allApiKeys.current?.filter((apiKey) => !page.form?.createdKey || apiKey.id !== page.form.createdKey.id) as apiKey (apiKey.id)}
+          {#each apiKeys.filter((apiKey) => apiKey.id !== createdKey?.id && !deletedKeyIds.includes(apiKey.id)) as apiKey (apiKey.id)}
             {@render keyCard(apiKey)}
           {/each}
         </div>
       {/if}
+      {#snippet pending()}
+        <div class="flex w-full items-center justify-center py-10"><Spinner /></div>
+      {/snippet}
+      {#snippet failed()}
+        <p class="px-6 py-4 text-destructive">Failed to load your API keys. Please try again later.</p>
+      {/snippet}
     </svelte:boundary>
   </Card.Root>
 </div>
@@ -104,29 +122,7 @@
       size="sm"
       class="group absolute top-2 right-2 aspect-square h-auto"
       disabled={changingApiKeys}
-      onclick={() => {
-        if (!apiKey.id) {
-          toast.error("API key ID is missing");
-          return;
-        }
-        changingApiKeys = true;
-        toast.promise(
-          new Promise((resolve, reject) => {
-            deleteApiKey(apiKey.id!)
-              .then(resolve)
-              .catch(reject)
-              .finally(async () => {
-                await getApiKeys().refresh();
-                changingApiKeys = false;
-              });
-          }),
-          {
-            loading: "Deleting key...",
-            success: "Key deleted successfully!",
-            error: "Failed to delete Key"
-          }
-        );
-      }}
+      onclick={() => removeKey(apiKey.id)}
       aria-label="Delete API Key">
       <Trash2 class="opacity-50 transition-opacity duration-300 group-hover:opacity-100 hover:text-destructive" />
     </Button>

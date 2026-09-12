@@ -10,6 +10,7 @@
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
   import XIcon from "@lucide/svelte/icons/x";
   import type { ZxcvbnResult } from "@zxcvbn-ts/core";
+  import { untrack } from "svelte";
   import { toast } from "svelte-sonner";
   import { cubicInOut } from "svelte/easing";
   import { SvelteURLSearchParams } from "svelte/reactivity";
@@ -23,13 +24,12 @@
 
   let toastLoading = $state<number | string>();
   let strength = $state<ZxcvbnResult>();
-  let anyErrors = $state(false);
 
   const passesStrength = $derived((strength?.score ?? 0) >= 3);
   const queryParams = $derived(new SvelteURLSearchParams(page.url.searchParams));
   const token = $derived(queryParams.get("token"));
 
-  const form = $derived(
+  const form = untrack(() =>
     superForm(data.resetPasswordForm, {
       validators: zodClient(resetPasswordFormSchema),
       dataType: "json",
@@ -38,22 +38,16 @@
     })
   );
 
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = $derived(form);
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = form;
+
+  const anyErrors = $derived(Object.values($errors).some((v) => v !== undefined && v.length > 0));
 
   $effect(() => {
-    errors.subscribe((value) => {
-      anyErrors = Object.values(value).some((v) => v !== undefined && v.length > 0);
-    });
-  });
-
-  $effect(() => {
-    timeout.subscribe((value) => {
-      if (value) {
-        toast.loading("It's taking longer than expected to reset your password...", {
-          id: toastLoading
-        });
-      }
-    });
+    if ($timeout && toastLoading !== undefined) {
+      toast.loading("It's taking longer than expected to reset your password...", {
+        id: toastLoading
+      });
+    }
   });
 </script>
 
