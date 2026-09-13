@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/state";
   import { authClient } from "$lib/auth-client";
   import { createBotttsNeutralAvatar } from "$lib/avatar";
   import * as Alert from "$lib/components/ui/alert";
@@ -6,6 +7,9 @@
   import * as Avatar from "$ui/avatar";
   import { Button } from "$ui/button";
   import * as Card from "$ui/card";
+  import { CopyButton } from "$ui/extras/copy-button";
+  import * as Password from "$ui/extras/password";
+  import { Label } from "$ui/label";
   import AlertCircle from "@lucide/svelte/icons/alert-circle";
   import type { PageProps } from "./$types";
   import AppForm from "./app-form.svelte";
@@ -13,6 +17,7 @@
 
   const { data }: PageProps = $props();
   const { appsData: apps } = $derived(data);
+  const createdApp = $derived(page.form?.createdApp);
 
   const session = authClient.useSession();
   const emailVerified = $derived($session.data?.user?.emailVerified ?? false);
@@ -37,7 +42,44 @@
     </Card.Header>
 
     <Card.Content>
-      <AppForm variant={AppFormVariant.CREATE} {data} />
+      {#if createdApp}
+        <div class="flex flex-col gap-4" role="status">
+          <Alert.Root>
+            <Alert.Title>App created</Alert.Title>
+            <Alert.Description>
+              {#if createdApp.client_secret}
+                Copy your secret now and store it securely. It will not be shown again after you leave this page.
+              {:else}
+                This authentication method does not use a client secret.
+              {/if}
+            </Alert.Description>
+          </Alert.Root>
+          <div class="flex flex-col gap-2">
+            <Label for="created-client-id">Client ID</Label>
+            <CopyButton
+              id="created-client-id"
+              text={createdApp.client_id}
+              variant="outline"
+              class="w-full justify-start">
+              <span class="truncate">{createdApp.client_id}</span>
+            </CopyButton>
+          </div>
+          {#if createdApp.client_secret}
+            <div class="flex flex-col gap-2">
+              <Label for="created-client-secret">Client secret</Label>
+              <Password.Root>
+                <Password.Input id="created-client-secret" value={createdApp.client_secret} readonly autocomplete="off">
+                  <Password.Copy />
+                  <Password.ToggleVisibility />
+                </Password.Input>
+              </Password.Root>
+            </div>
+          {/if}
+          <Button href="apps/{createdApp.client_id}">Configure app and view integration details</Button>
+        </div>
+      {:else}
+        <AppForm variant={AppFormVariant.CREATE} {data} />
+      {/if}
     </Card.Content>
     <div class="grid grid-cols-1 gap-4 px-6 py-6 @lg:grid-cols-2">
       {#each apps as app (app.client_id)}
@@ -50,7 +92,7 @@
 {#snippet appCard(app: MCIDOAuthClient)}
   {@const avatar = createBotttsNeutralAvatar(app.client_id)}
   <Button href="apps/{app.client_id}" class="contents cursor-pointer">
-    <Card.Root class="gap-0 space-y-2 truncate p-0 pb-2">
+    <Card.Root class="gap-2 truncate p-0 pb-2">
       {#if app.logo_uri}
         <Avatar.Root
           class="pointer-events-none size-40 w-full rounded-none select-none after:rounded-none after:border-0">

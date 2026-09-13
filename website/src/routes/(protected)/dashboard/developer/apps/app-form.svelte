@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/state";
   import { authClient } from "$lib/auth-client";
   import { createBotttsNeutralAvatar } from "$lib/avatar";
   import * as Accordion from "$lib/components/ui/accordion";
@@ -15,6 +16,7 @@
   import { Textarea } from "$ui/textarea";
   import * as Tooltip from "$ui/tooltip";
   import type { OAuthClient } from "@better-auth/oauth-provider";
+  import AlertCircle from "@lucide/svelte/icons/alert-circle";
   import CircleMinus from "@lucide/svelte/icons/circle-minus";
   import CircleQuestionMark from "@lucide/svelte/icons/circle-question-mark";
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
@@ -27,6 +29,7 @@
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
   import { zod4Client as zodClient } from "sveltekit-superforms/adapters";
   import { resetSecret } from "./[id]/reset.remote";
+  import ProtocolFields from "./protocol-fields.svelte";
   import { appSchema, deleteAppSchema, type AppSchema, type DeleteAppSchema } from "./schema";
   import { AppFormVariant } from "./types.d";
 
@@ -130,6 +133,11 @@
     });
   };
 
+  const usesClientSecret = $derived(
+    $appFormData.tokenEndpointAuthMethod === "client_secret_basic" ||
+      $appFormData.tokenEndpointAuthMethod === "client_secret_post"
+  );
+
   function addItem(value: Scope) {
     $appFormData.scopes = [...$appFormData.scopes, value];
   }
@@ -178,8 +186,8 @@
     onResult: async () => {
       setTimeout(() => toast.dismiss(toastLoading), 300);
     },
-    onUpdate: async ({ result }) => {
-      if (result.type === "success") {
+    onUpdate: async ({ form, result }) => {
+      if (result.type === "success" && form.valid) {
         toast.success(`App ${language.success} successfully!`);
       } else {
         toast.error(`Failed to ${language.normal} app. Please check the form for errors.`);
@@ -189,12 +197,19 @@
       toast.error(`An error occurred while ${language.action} your app. Please try again.`);
     }
   }}
-  class="relative mx-auto flex h-1/2 flex-col justify-center space-y-4 self-center px-4 md:px-0">
+  class="relative mx-auto flex h-1/2 flex-col justify-center gap-4 self-stretch px-4 md:px-0">
+  {#if page.form?.error}
+    <Alert.Root class="border-destructive">
+      <AlertCircle />
+      <Alert.Title>Could not save app</Alert.Title>
+      <Alert.Description>{page.form.error}</Alert.Description>
+    </Alert.Root>
+  {/if}
   {#if isEdit}
     <div class="flex items-center justify-center">
       <Avatar.Root
-        class="pointer-events-none flex h-16 w-16 items-center justify-center rounded-none select-none after:rounded-none after:border-0">
-        <Avatar.Image src={avatar} alt="App Avatar" class="h-16 w-16 rounded-none" />
+        class="pointer-events-none flex size-16 items-center justify-center rounded-none select-none after:rounded-none after:border-0">
+        <Avatar.Image src={avatar} alt="App Avatar" class="size-16 rounded-none" />
         <Avatar.Fallback class="rounded-none">{$appFormData.name.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
     </div>
@@ -229,59 +244,61 @@
             </Form.Control>
           </Form.Field>
         {/if}
-        <div class="space-y-2">
-          <Label for="secret" class="flex items-center gap-2">
-            <Tooltip.Root>
-              <Tooltip.Trigger>
-                <CircleQuestionMark class="size-4 text-muted-foreground" />
-              </Tooltip.Trigger>
-              <Tooltip.Content>
-                <p>Used in API requests and can not be changed.</p>
-              </Tooltip.Content>
-            </Tooltip.Root>
-            App Secret
-          </Label>
-          <div class="text-sm text-muted-foreground">This is your app's secret key</div>
+        {#if usesClientSecret}
+          <div class="flex flex-col gap-2">
+            <Label for="secret" class="flex items-center gap-2">
+              <Tooltip.Root>
+                <Tooltip.Trigger>
+                  <CircleQuestionMark class="size-4 text-muted-foreground" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  <p>Used in API requests and can not be changed.</p>
+                </Tooltip.Content>
+              </Tooltip.Root>
+              App Secret
+            </Label>
+            <div class="text-sm text-muted-foreground">This is your app's secret key</div>
 
-          <div class="flex gap-2">
-            <Password.Root class="w-full">
-              <Password.Input value={appSecret} readonly autocomplete="off" id="secret">
-                <Password.Copy />
-                <Password.ToggleVisibility />
-              </Password.Input>
-            </Password.Root>
+            <div class="flex gap-2">
+              <Password.Root class="w-full">
+                <Password.Input value={appSecret} readonly autocomplete="off" id="secret">
+                  <Password.Copy />
+                  <Password.ToggleVisibility />
+                </Password.Input>
+              </Password.Root>
 
-            <Button
-              class="group"
-              variant="secondary"
-              type="button"
-              disabled={resettingSecret || $appSubmitting}
-              onclick={() => {
-                toast.promise(rotateSecret(), {
-                  loading: "Resetting secret...",
-                  success: "Secret reset successfully!",
-                  error: "Failed to reset secret."
-                });
-              }}>
-              <RefreshCw
-                class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin"
-                data-syncing={resettingSecret} />
-              Reset Secret
-            </Button>
-          </div>
-          {#if appSecret}
-            <div transition:slide={{ duration: 300, easing: cubicOut }}>
-              <Alert.Root>
-                <Alert.Title class="text-lg">Heads up!</Alert.Title>
-                <Alert.Description>
-                  Make sure to store your app secret securely. You won't be able to see it again after this page.
-                  <br /> <br />
-                  If you lose it, you will need to reset it.
-                </Alert.Description>
-              </Alert.Root>
+              <Button
+                class="group"
+                variant="secondary"
+                type="button"
+                disabled={resettingSecret || $appSubmitting}
+                onclick={() => {
+                  toast.promise(rotateSecret(), {
+                    loading: "Resetting secret...",
+                    success: "Secret reset successfully!",
+                    error: "Failed to reset secret."
+                  });
+                }}>
+                <RefreshCw
+                  class="size-4 transition-transform duration-300 group-hover:rotate-90 data-[syncing=true]:animate-spin"
+                  data-syncing={resettingSecret} />
+                Reset Secret
+              </Button>
             </div>
-          {/if}
-        </div>
+            {#if appSecret}
+              <div transition:slide={{ duration: 300, easing: cubicOut }}>
+                <Alert.Root>
+                  <Alert.Title class="text-lg">Heads up!</Alert.Title>
+                  <Alert.Description>
+                    Make sure to store your app secret securely. You won't be able to see it again after this page.
+                    <br /> <br />
+                    If you lose it, you will need to reset it.
+                  </Alert.Description>
+                </Alert.Root>
+              </div>
+            {/if}
+          </div>
+        {/if}
       </div>
     {/if}
   {/if}
@@ -308,6 +325,8 @@
       {/snippet}
     </Form.Control>
   </Form.Field>
+
+  <ProtocolFields {appForm} {isEdit} />
 
   <Accordion.Root type="single">
     <Accordion.Item value="redirect-uris" class="group/redirect-uris">
@@ -416,14 +435,14 @@
     <Accordion.Item value="scopes" class="group/scopes">
       <Accordion.Trigger class="group-has-data-fs-error/scopes:text-destructive">Scopes</Accordion.Trigger>
       <Accordion.Content>
-        <Form.Fieldset form={appForm} name="scopes" class="space-y-0">
+        <Form.Fieldset form={appForm} name="scopes" class="gap-0">
           <div class="mb-4">
             <Form.Description>Select the scopes that your app will request</Form.Description>
           </div>
-          <div class="space-y-2">
+          <div class="flex flex-col gap-2">
             {#each scopes as scope (scope.value)}
               {@const checked = $appFormData.scopes.includes(scope.value)}
-              <div class="flex flex-row items-start space-x-3">
+              <div class="flex flex-row items-start gap-3">
                 <Form.Control>
                   {#snippet children({ props })}
                     <Checkbox
@@ -437,7 +456,7 @@
                           removeItem(scope.value);
                         }
                       }} />
-                    <div class="space-y-1">
+                    <div class="flex flex-col gap-1">
                       <Form.Label class="font-normal">
                         {scope.label}
                       </Form.Label>
@@ -457,7 +476,7 @@
 
     <Accordion.Item value="metadata" class="group/metadata">
       <Accordion.Trigger class="group-has-data-fs-error/metadata:text-destructive">Metadata</Accordion.Trigger>
-      <Accordion.Content class="space-y-4">
+      <Accordion.Content class="flex flex-col gap-4">
         <Form.Field form={appForm} name="description">
           <Form.Control>
             {#snippet children({ props })}
@@ -522,7 +541,7 @@
     {#if !$appSubmitting}
       Save
     {:else}
-      <LoaderCircle class="h-4 w-4 animate-spin" />
+      <LoaderCircle class="size-4 animate-spin" />
     {/if}
   </Form.Button>
 </form>
@@ -549,7 +568,7 @@
         toast.error("An error occurred while deleting your app. Please try again.");
       }
     }}
-    class="relative mx-auto flex h-1/2 flex-col justify-center space-y-4 self-center px-4 md:px-0">
+    class="relative mx-auto flex h-1/2 flex-col justify-center gap-4 self-stretch px-4 md:px-0">
     <Form.Field form={deleteAppForm} name="id" class="hidden">
       <Form.Control>
         {#snippet children({ props })}
@@ -565,7 +584,7 @@
       {#if !$deleteAppSubmitting}
         Delete App
       {:else}
-        <LoaderCircle class="h-4 w-4 animate-spin" />
+        <LoaderCircle class="size-4 animate-spin" />
       {/if}
     </Form.Button>
   </form>

@@ -4,7 +4,13 @@ import { z } from "zod";
 const oauthAppIDSchema = z.string().min(1, "OAuth App ID is required");
 export const updateOauthAppSchema = z.object({
   oauthAppID: oauthAppIDSchema,
-  disabled: z.boolean().optional().nullable()
+  disabled: z.boolean(),
+  skipConsent: z.boolean(),
+  enableEndSession: z.boolean(),
+  dpopBoundAccessTokens: z.boolean(),
+  verified: z.boolean(),
+  official: z.boolean(),
+  trusted: z.boolean()
 });
 
 export const deleteOauthAppSchema = z.object({

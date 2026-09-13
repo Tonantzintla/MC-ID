@@ -138,7 +138,18 @@ const options = {
       },
       loginPage: "/login",
       consentPage: "/dashboard/oauth/authorize",
-      // Note: Existing plain secrets need to be migrated to hashed format
+      grantTypes: ["authorization_code", "refresh_token"],
+      allowDynamicClientRegistration: false,
+      allowUnauthenticatedClientRegistration: false,
+      clientPrivileges: async ({ action, user }) => {
+        if (!user || action === "configure-client-credentials-scopes") return false;
+        if (action !== "create") return true;
+        const account = await db.query.user.findFirst({
+          where: (table, { eq }) => eq(table.id, user.id),
+          columns: { emailVerified: true }
+        });
+        return account?.emailVerified === true;
+      },
       generateClientSecret() {
         return generateRandomSecret();
       },

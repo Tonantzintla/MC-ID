@@ -8,9 +8,15 @@ enum Scope {
 
 const scopes = [
   {
+    label: "OpenID Connect",
+    value: Scope.OPENID,
+    description: "Identify users with OpenID Connect ID tokens",
+    consentDescription: "Identify your MC-ID account"
+  },
+  {
     label: cap(Scope.PROFILE),
     value: Scope.PROFILE,
-    description: "Access to basic Minecraft profile information (required)",
+    description: "Access to basic Minecraft profile information",
     consentDescription: "Know which Minecraft accounts you own"
   },
   {
@@ -24,6 +30,12 @@ const scopes = [
     value: Scope.CONNECTIONS,
     description: "Access to connections; e.g. Discord",
     consentDescription: "Access your linked connections, e.g. Discord"
+  },
+  {
+    label: "Offline access",
+    value: Scope.OFFLINE_ACCESS,
+    description: "Allow refresh tokens to keep access after the initial sign-in",
+    consentDescription: "Keep access while you are away until you revoke it"
   }
 ] as const;
 

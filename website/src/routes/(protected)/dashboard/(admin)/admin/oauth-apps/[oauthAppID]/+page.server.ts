@@ -1,13 +1,22 @@
+import { UserRole } from "$lib/roles";
 import { db } from "$lib/server/db";
 import { oauthClient, oauthClientReport } from "$lib/shared/db/schema";
 import { error, fail, redirect } from "@sveltejs/kit";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 as zod } from "sveltekit-superforms/adapters";
 import type { Actions, PageServerLoad } from "./$types";
 import { deleteOauthAppSchema, handleReportSchema, updateOauthAppSchema } from "./schema";
 
-export const load = (async ({ params }) => {
+function requireAdmin(locals: App.Locals) {
+  if (!locals.user?.role?.split(",").includes(UserRole.Admin)) {
+    error(403, "Administrator access is required");
+  }
+  return locals.user;
+}
+
+export const load = (async ({ params, locals }) => {
+  requireAdmin(locals);
   const { oauthAppID } = params;
   const oauthApp = await db.query.oauthClient.findFirst({
     where: (key, { eq }) => eq(key.id, oauthAppID),
@@ -55,11 +64,19 @@ export const load = (async ({ params }) => {
     minecraftAccount: user?.minecraftAccounts[0] ?? null
   };
 
+  const metadata = (oauthApp.metadata ?? {}) as Record<string, unknown>;
+
   const [updateOauthAppForm, deleteOauthAppForm, handleReportForm] = await Promise.all([
     superValidate(zod(updateOauthAppSchema), {
       defaults: {
         oauthAppID: oauthApp.id,
-        disabled: oauthApp.disabled
+        disabled: oauthApp.disabled ?? false,
+        skipConsent: oauthApp.skipConsent ?? false,
+        enableEndSession: oauthApp.enableEndSession ?? false,
+        dpopBoundAccessTokens: oauthApp.dpopBoundAccessTokens ?? false,
+        verified: metadata.verified === true,
+        official: metadata.official === true,
+        trusted: metadata.trusted === true
       }
     }),
     superValidate(zod(deleteOauthAppSchema), {
@@ -79,9 +96,10 @@ export const load = (async ({ params }) => {
 
 export const actions: Actions = {
   updateOauthApp: async (event) => {
+    requireAdmin(event.locals);
     const form = await superValidate(event, zod(updateOauthAppSchema));
     try {
-      if (!form.valid) {
+      if (!form.valid || form.data.oauthAppID !== event.params.oauthAppID) {
         return fail(400, {
           form
         });
@@ -90,12 +108,21 @@ export const actions: Actions = {
       const data = await db
         .update(oauthClient)
         .set({
-          disabled: form.data.disabled ?? false
+          disabled: form.data.disabled,
+          skipConsent: form.data.skipConsent,
+          enableEndSession: form.data.enableEndSession,
+          dpopBoundAccessTokens: form.data.dpopBoundAccessTokens,
+          metadata: sql`coalesce(${oauthClient.metadata}, '{}'::jsonb) || ${JSON.stringify({
+            verified: form.data.verified,
+            official: form.data.official,
+            trusted: form.data.trusted
+          })}::jsonb`,
+          updatedAt: new Date()
         })
         .where(eq(oauthClient.id, form.data.oauthAppID))
         .returning();
 
-      if (!data) {
+      if (data.length === 0) {
         console.error("Update OAuth app failed: Invalid data");
         return fail(400, {
           form,
@@ -124,10 +151,21 @@ export const actions: Actions = {
     };
   },
   deleteOauthApp: async (event) => {
+    requireAdmin(event.locals);
     const form = await superValidate(event, zod(deleteOauthAppSchema));
 
+    if (!form.valid || form.data.oauthAppID !== event.params.oauthAppID) {
+      return fail(400, { form });
+    }
+
     try {
-      await db.delete(oauthClient).where(eq(oauthClient.id, form.data.oauthAppID));
+      const deleted = await db
+        .delete(oauthClient)
+        .where(eq(oauthClient.id, form.data.oauthAppID))
+        .returning({ id: oauthClient.id });
+      if (deleted.length === 0) {
+        return fail(404, { form, error: "OAuth app not found" });
+      }
     } catch (err) {
       console.error("Exception while trying to delete OAuth app:", err);
       if (err instanceof Error) {
@@ -148,10 +186,11 @@ export const actions: Actions = {
     redirect(303, "/dashboard/admin/oauth-apps");
   },
   handleReport: async (event) => {
+    requireAdmin(event.locals);
     const { locals } = event;
     const form = await superValidate(event, zod(handleReportSchema));
 
-    if (!form.valid) {
+    if (!form.valid || form.data.oauthAppID !== event.params.oauthAppID) {
       console.error("Invalid form submission while trying to handle OAuth app report", form);
       return fail(400, {
         form
