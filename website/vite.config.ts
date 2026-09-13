@@ -34,6 +34,9 @@ export default defineConfig({
         precompress: true
       }),
 
+      csrf: {
+        trustedOrigins: ["*"]
+      },
       csp: {
         mode: "auto",
         directives: {
