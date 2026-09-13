@@ -1,11 +1,11 @@
-import { Scope } from "$lib/scopes";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
-import type { OAuthClient } from "@better-auth/oauth-provider";
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
+import { APIError } from "better-auth/api";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 as zod } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types";
+import { clientMetadata } from "./client";
 import { appSchema, deleteAppSchema } from "./schema";
 
 export const load = (async (event) => {
@@ -32,9 +32,10 @@ export const load = (async (event) => {
 export const actions: Actions = {
   createApp: async (event) => {
     const { request, locals } = event;
+    if (!locals.user) error(401, "Unauthorized");
+    event.setHeaders({ "cache-control": "no-store" });
     const form = await superValidate(event, zod(appSchema));
 
-    let createdApp: OAuthClient;
     try {
       if (!form.valid) {
         return fail(400, {
@@ -55,24 +56,17 @@ export const actions: Actions = {
         });
       }
 
-      // Always include openid and offline_access scopes for OIDC compatibility
-      const clientScopes = [Scope.OPENID, ...form.data.scopes, Scope.OFFLINE_ACCESS];
-      createdApp = await auth.api.adminCreateOAuthClient({
+      const createdApp = await auth.api.adminCreateOAuthClient({
         headers: request.headers,
         body: {
-          redirect_uris: form.data.redirectUris,
-          token_endpoint_auth_method: "client_secret_basic",
-          grant_types: ["authorization_code", "refresh_token"],
-          response_types: ["code"],
-          client_name: form.data.name,
-          client_uri: form.data.uri,
-          scope: clientScopes.join(" "),
-          contacts: form.data.contacts,
-          tos_uri: form.data.tosUri,
-          policy_uri: form.data.policyUri,
-          application_type: "web",
+          ...clientMetadata(form.data),
+          token_endpoint_auth_method: form.data.tokenEndpointAuthMethod,
+          jwks: form.data.jwks.trim() ? JSON.parse(form.data.jwks) : undefined,
+          jwks_uri: form.data.jwksUri || undefined,
+          require_pkce: true,
+          subject_type: "public",
           skip_consent: false,
-          logo_uri: form.data.logoUrl,
+          enable_end_session: false,
           metadata: {
             description: form.data.description,
             owner_user_id: locals.user?.id ?? "",
@@ -82,14 +76,26 @@ export const actions: Actions = {
           }
         }
       });
+      return {
+        form,
+        createdApp: {
+          client_id: createdApp.client_id,
+          client_secret: createdApp.client_secret,
+          token_endpoint_auth_method: createdApp.token_endpoint_auth_method
+        }
+      };
     } catch (err) {
+      if (err instanceof APIError && err.statusCode >= 400 && err.statusCode < 500) {
+        return fail(err.statusCode, {
+          form,
+          error: err.body?.error_description ?? err.body?.message ?? "Invalid OAuth client configuration"
+        });
+      }
       console.error("Error during app creation:", err);
       return fail(500, {
         form,
         error: "Internal server error during app creation"
       });
     }
-
-    redirect(303, `/dashboard/developer/apps/${createdApp.client_id}`);
   }
 };

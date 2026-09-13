@@ -3,18 +3,34 @@ import { Scope } from "$lib/scopes";
 import { auth } from "$lib/server/auth";
 import { db } from "$lib/server/db";
 import type { MCIDOAuthClient } from "$lib/types/oauth";
+import { z } from "zod";
 import type { PageServerLoad } from "./$types";
+
+const claimsSchema = z.object({ userinfo: z.record(z.string(), z.unknown()).optional() });
 
 export const load = (async ({ url, request }) => {
   const params = url.searchParams;
 
   const client_id = params.get("client_id");
-  const scope = params.get("scope")?.split(" ");
+  const scope = params.get("scope")?.split(/\s+/).filter(Boolean);
 
   // Preserve only parameters covered by the provider's signature.
   const oauthQuery = getOAuthQuery(params);
 
-  if (!oauthQuery || !client_id || !scope || !scope.includes(Scope.PROFILE)) {
+  let requestedClaims: string[];
+  try {
+    const claims = claimsSchema.parse(JSON.parse(params.get("claims") || "{}"));
+    requestedClaims = Object.keys(claims.userinfo ?? {});
+  } catch {
+    return { error: "invalid_request", error_description: "Invalid OpenID claims request.", status: 400 };
+  }
+
+  if (
+    !oauthQuery ||
+    !client_id ||
+    !scope?.length ||
+    scope.some((value) => !Object.values(Scope).includes(value as Scope))
+  ) {
     return {
       error: "invalid_request",
       error_description:
@@ -51,6 +67,7 @@ export const load = (async ({ url, request }) => {
   return {
     oauthClient,
     scope,
+    requestedClaims,
     oauthQuery
   };
 }) satisfies PageServerLoad;

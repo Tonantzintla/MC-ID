@@ -128,6 +128,15 @@
             {/each}
           </Item.Group>
 
+          {#if data.requestedClaims?.length}
+            <Item.Group class="rounded-xl border p-4">
+              <p class="text-sm text-muted-foreground">This app also explicitly requests these profile fields:</p>
+              {#each data.requestedClaims as claim (claim)}
+                {@render scopeItem({ canAccess: true, description: claim.replaceAll("_", " ") })}
+              {/each}
+            </Item.Group>
+          {/if}
+
           {#if oauthClient?.description || safeExternalUrl(oauthClient?.client_uri)}
             <div class="rounded-xl border p-4">
               {#if oauthClient?.description}

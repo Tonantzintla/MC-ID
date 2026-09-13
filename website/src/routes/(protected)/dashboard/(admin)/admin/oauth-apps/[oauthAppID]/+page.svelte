@@ -92,6 +92,61 @@
     timeout: handleReportTimeout
   } = handleReportForm;
 
+  function reportBadgeVariant(status: string) {
+    switch (status) {
+      case "under_review":
+        return "secondary";
+      case "pending":
+        return "outline";
+      default:
+        return "default";
+    }
+  }
+
+  const controlGroups = [
+    {
+      title: "Authorization and security",
+      controls: [
+        {
+          name: "disabled",
+          label: "Disable app",
+          description:
+            "Block new authorization and token requests. Existing JWT access tokens can remain valid until they expire."
+        },
+        {
+          name: "skipConsent",
+          label: "Skip consent",
+          description:
+            "Allow this app to access requested scopes without asking the user. Only enable for approved first-party apps."
+        },
+        {
+          name: "enableEndSession",
+          label: "Allow provider logout",
+          description: "Allow this app to end the user’s MC-ID session through the OpenID Connect logout endpoint."
+        },
+        {
+          name: "dpopBoundAccessTokens",
+          label: "Require DPoP proofs",
+          description:
+            "Bind tokens to the app’s key. Its token requests must send valid DPoP proofs; enable only after the integration supports DPoP."
+        }
+      ]
+    },
+    {
+      title: "MC-ID labels",
+      controls: [
+        { name: "verified", label: "Verified", description: "Show that MC-ID has reviewed this app." },
+        { name: "official", label: "Official", description: "Identify this as an official MC-ID app." },
+        {
+          name: "trusted",
+          label: "Trusted label",
+          description:
+            "Display the MC-ID trusted label. This does not skip consent or grant additional OAuth permissions."
+        }
+      ]
+    }
+  ] as const;
+
   $effect(() => {
     if ($updateOauthAppTimeout && toastLoading !== undefined) {
       toast.loading("It's taking longer than expected to process your request...", {
@@ -119,7 +174,7 @@
       <Card.Title class="flex items-center gap-2">OAuth App Details</Card.Title>
       <Card.Description>Detailed information about the OAuth app.</Card.Description>
     </Card.Header>
-    <Card.Content class="space-y-4">
+    <Card.Content class="flex flex-col gap-4">
       <Item.Root variant="outline">
         <Item.Header class="justify-start">Owner</Item.Header>
         <Item.Media variant="image" class="rounded-none">
@@ -198,7 +253,7 @@
 
       <!-- Lazily show every property -->
       <ScrollArea class="h-72 rounded-md border px-4">
-        {#each Object.entries(oauthApp) as [key, value], index (index)}
+        {#each Object.entries(oauthApp) as [key, value] (key)}
           {#if !["id", "clientId", "name", "icon", "disabled", "createdAt", "updatedAt", "minecraftAccount", "oauthClientReports"].includes(key)}
             <Collapsible.Root class="group/data my-4 w-full">
               <Collapsible.Trigger
@@ -239,7 +294,7 @@
               <Button {...props} variant="default">Update OAuth App</Button>
             {/snippet}
           </AlertDialog.Trigger>
-          <AlertDialog.Content>
+          <AlertDialog.Content class="max-h-[85vh] overflow-y-auto">
             <form
               method="POST"
               action="?/updateOauthApp"
@@ -251,8 +306,8 @@
                 onResult: async () => {
                   setTimeout(() => toast.dismiss(toastLoading), 300);
                 },
-                onUpdate: async ({ result }) => {
-                  if (result.type === "success") {
+                onUpdate: async ({ result, form }) => {
+                  if (result.type === "success" && form.valid) {
                     toast.success("OAuth App updated successfully!");
                     updateModalOpen = false;
                   } else {
@@ -270,40 +325,33 @@
                   This action will update the OAuth App <span class="font-semibold">{oauthApp.name}</span>.
                 </AlertDialog.Description>
               </AlertDialog.Header>
-              <Form.Field form={updateOauthAppForm} name="disabled">
-                <Form.Control>
-                  {#snippet children({ props })}
-                    <Form.Label for={props.name}>Enabled</Form.Label>
-                    <Form.Description>Toggle whether the OAuth App is enabled or disabled.</Form.Description>
-                    {#if $updateOauthAppFormData.disabled != null}
-                      <Switch
-                        {...props}
-                        bind:checked={
-                          () => !$updateOauthAppFormData.disabled,
-                          (v) => {
-                            $updateOauthAppFormData.disabled = !v;
-                          }
-                        } />
-                    {/if}
-                    <Form.FieldErrors variant="single" />
-                  {/snippet}
-                </Form.Control>
-              </Form.Field>
+              {#each controlGroups as group (group.title)}
+                <fieldset class="flex flex-col gap-4" disabled={$updateOauthAppSubmitting}>
+                  <legend class="mb-4">{group.title}</legend>
+                  {#each group.controls as control (control.name)}
+                    <Form.Field form={updateOauthAppForm} name={control.name}>
+                      <Form.Control>
+                        {#snippet children({ props })}
+                          <div class="flex items-center justify-between gap-4">
+                            <Form.Label>{control.label}</Form.Label>
+                            <Switch {...props} bind:checked={$updateOauthAppFormData[control.name]} />
+                          </div>
+                          <Form.Description>{control.description}</Form.Description>
+                        {/snippet}
+                      </Form.Control>
+                      <Form.FieldErrors variant="single" />
+                    </Form.Field>
+                  {/each}
+                </fieldset>
+              {/each}
               <AlertDialog.Footer>
                 <AlertDialog.Cancel type="button">Cancel</AlertDialog.Cancel>
-                <AlertDialog.Action
-                  disabled={!updateOauthAppIsTainted($updateOauthAppTainted) || $updateOauthAppSubmitting}
-                  class="transition-all duration-300">
-                  {#snippet child({ props })}
-                    <Form.Button {...props}>
-                      {#if !$updateOauthAppSubmitting}
-                        Confirm Update
-                      {:else}
-                        <Spinner />
-                      {/if}
-                    </Form.Button>
-                  {/snippet}
-                </AlertDialog.Action>
+                <Form.Button disabled={!updateOauthAppIsTainted($updateOauthAppTainted) || $updateOauthAppSubmitting}>
+                  {#if $updateOauthAppSubmitting}
+                    <Spinner data-icon="inline-start" />
+                  {/if}
+                  Save changes
+                </Form.Button>
               </AlertDialog.Footer>
             </form>
           </AlertDialog.Content>
@@ -326,8 +374,8 @@
                 onResult: async () => {
                   setTimeout(() => toast.dismiss(toastLoading), 300);
                 },
-                onUpdate: async ({ result }) => {
-                  if (result.type === "success") {
+                onUpdate: async ({ result, form }) => {
+                  if (result.type === "success" && form.valid) {
                     toast.success("OAuth App deleted successfully!");
                     deleteModalOpen = false;
                   } else {
@@ -396,14 +444,7 @@
                       Reason: <Badge variant="outline">{report.reason}</Badge>
                     </span>
                     <span class="capitalize">
-                      Status: <Badge
-                        variant={report.status === "resolved" || report.status === "dismissed"
-                          ? "default"
-                          : report.status === "under_review"
-                            ? "secondary"
-                            : report.status === "pending"
-                              ? "outline"
-                              : "default"}>{report.status}</Badge>
+                      Status: <Badge variant={reportBadgeVariant(report.status)}>{report.status}</Badge>
                     </span>
                     <span>
                       Created <DateTooltip date={report.createdAt} />

@@ -38,7 +38,7 @@ If you are self-hosting MC-ID or configuring a client manually, use the followin
 | **Authorization** | `/api/auth/oauth2/authorize` | URL to redirect users to for login. |
 | **Token**         | `/api/auth/oauth2/token`     | URL to exchange code for tokens.    |
 | **Userinfo**      | `/api/auth/oauth2/userinfo`  | URL to fetch user claims.           |
-| **JWKS**          | `/api/auth/oauth2/jwks`      | URL to fetch public signing keys.   |
+| **JWKS**          | `/api/auth/jwks`      | URL to fetch public signing keys.   |
 
 ## Scopes
 
@@ -47,12 +47,12 @@ MC-ID supports the following scopes:
 | Scope            | Required | Description                                                         |
 | :--------------- | :------- | :------------------------------------------------------------------ |
 | `openid`         | Yes      | Required for OIDC. Returns the `sub` claim.                         |
-| `profile`        | Yes      | Access to MC-ID account details (`name`, `accounts`).               |
+| `profile`        | No      | Access to MC-ID account details (`name`, `accounts`).               |
 | `email`          | No       | Access to email address (`email`, `email_verified`).                |
 | `connections`    | No       | Access to linked accounts, e.g. Minecraft, Discord (`connections`). |
 | `offline_access` | No       | Enables refresh tokens for long-lived sessions.                     |
 
-<Aside type="tip">The `openid` scope is automatically included if omitted. For refresh tokens, you must explicitly request `offline_access`.</Aside>
+<Aside type="tip">Request `openid` explicitly for ID tokens. Refresh tokens require the app to allow the `refresh_token` grant and the authorization request to include `offline_access`.</Aside>
 
 ## Authorization Request Parameters
 
@@ -69,6 +69,9 @@ When redirecting users to the authorization endpoint, include these parameters:
 | `code_challenge_method` | Must be `S256` (case-sensitive).                        |
 
 ## Token Request Parameters
+
+This example sends credentials in the request body. Register the app with `client_secret_post`. If the app uses `client_secret_basic`, send credentials with HTTP Basic authentication instead and omit `client_secret` from the body.
+
 
 When exchanging the authorization code for tokens:
 

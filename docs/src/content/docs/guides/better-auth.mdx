@@ -9,7 +9,7 @@ import { Aside, Code, LinkButton } from "@astrojs/starlight/components";
 
 MC-ID is built using `better-auth` and is fully compatible with it. This guide shows how to add MC-ID as an identity provider in your better-auth application.
 
-<Aside type="tip">The `genericOAuth` plugin handles PKCE automatically, so you don't need to implement it manually.</Aside>
+<Aside type="tip">Set `pkce: true` so the `genericOAuth` plugin generates the verifier and S256 challenge required by MC-ID.</Aside>
 
 ## Installation
 
@@ -32,6 +32,8 @@ export const auth = betterAuth({
           clientId: process.env.MCID_CLIENT_ID!,
           clientSecret: process.env.MCID_CLIENT_SECRET!,
           discoveryUrl: "https://mc-id.com/.well-known/openid-configuration",
+          pkce: true,
+          tokenEndpointAuth: { method: "client_secret_basic" },
           scopes: ["openid", "profile", "email", "connections"],
         }
       ]
@@ -40,6 +42,22 @@ export const auth = betterAuth({
 });`} lang="typescript" />
 
 <Aside type="note">The `openid` scope is required for OIDC compliance. The plugin uses the discovery URL to automatically configure the authorization, token, and userinfo endpoints.</Aside>
+
+The token authentication method must match the method selected when registering your app. Use `client_secret_post` instead if you selected credentials in the POST body. Public browser/native apps use `none` and must not contain a client secret; applications using `private_key_jwt` sign assertions with their own private key.
+
+## Registering an App
+
+Create an app in [Developer Apps](https://mc-id.com/dashboard/developer/apps). Choose web or native redirect behavior independently from client authentication. Native apps may use loopback callbacks or reverse-domain custom schemes; the server validates every redirect URI.
+
+The client ID and any generated secret appear after creation. Copy the secret immediately: it cannot be retrieved later. The app's edit page provides discovery endpoints and a configuration example matching its authentication method.
+
+The authorization-code grant and S256 PKCE are required. Enable the refresh-token grant and allow `offline_access` if your app needs refresh tokens, then include `offline_access` in authorization requests. Scopes are capabilities, not automatic user consent.
+
+Register post-logout redirect URIs before using RP-initiated logout. An MC-ID administrator must separately enable end-session support. Back-channel logout requires a public HTTPS endpoint accepting signed logout tokens. DPoP requires a compatible client that supplies proof-of-possession headers.
+
+Authentication method and public key source are fixed at registration in the installed provider version. A JWKS URL can serve rotated keys, but its HTTPS origin must already be trusted by the operator. Never submit private keys.
+
+Dynamic registration, device authorization, client-credentials grants and pairwise subjects are not enabled in this deployment. Verification labels and consent bypass are administrator-managed.
 
 ## Available Scopes
 
@@ -52,10 +70,12 @@ export const auth = betterAuth({
 Once configured, you can trigger the MC-ID login flow:
 
 <Code code={`
-  import { signIn } from "./auth-client";
+import { createAuthClient } from "better-auth/client";
+import { genericOAuthClient } from "better-auth/client/plugins";
 
-// Redirect to MC-ID login
-signIn("mc-id", { callbackURL: "/dashboard" });
+const authClient = createAuthClient({ plugins: [genericOAuthClient()] });
+
+await authClient.signIn.oauth2({ providerId: "mc-id", callbackURL: "/dashboard" });
 `} lang="typescript" />
 
 ## User Data
